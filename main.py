@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 import uvicorn
 import logging
 from datetime import datetime
@@ -42,19 +41,6 @@ async def root():
         "status": "running",
         "environment": settings.APP_ENV
     }
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for monitoring"""
-    return JSONResponse(
-        status_code=200,
-        content={
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "service": "saransh-news-app",
-            "environment": settings.APP_ENV
-        }
-    )
 
 if __name__ == "__main__":
     uvicorn.run(

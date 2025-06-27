@@ -54,7 +54,7 @@ Saransh is an open-source alternative to InShorts that uses AI to:
 5. **Run the application**
 
     ```bash
-    python main.py
+    uvicorn main:app --host 0.0.0.0 --port 8000
     ```
 
 6. **Access the application**
