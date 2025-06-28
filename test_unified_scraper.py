@@ -33,6 +33,7 @@ def test_unified_scraper():
         # Print results
         print(f"📰 Title: {article.title}")
         print(f"📝 Content Length: {len(article.content)} characters")
+        print(f"🖼️ Image URL: {article.image_url}")
         print(f"👤 Author: {article.author}")
         print(f"📅 Published Date: {article.published_date}")
         print(f"🏷️ Category: {article.category}")

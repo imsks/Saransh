@@ -120,3 +120,50 @@ class NDTVScraper(SeleniumBaseScraper):
             logger.error(f"Error extracting metadata: {e}")
         
         return metadata
+    
+    def extract_image(self, soup: BeautifulSoup) -> str:
+        """Extract image URL from NDTV"""
+        try:
+            # Try multiple selectors for images
+            image_selectors = [
+                'meta[property="og:image"]',
+                'meta[name="twitter:image"]',
+                '.article_image img',
+                '.story_image img',
+                '.featured_image img',
+                '[class*="image"] img',
+                'img[class*="article"]',
+                'img[class*="story"]'
+            ]
+            
+            for selector in image_selectors:
+                elem = soup.select_one(selector)
+                if elem:
+                    # Get image URL from src attribute
+                    image_url = elem.get('src') or elem.get('data-src')
+                    if image_url:
+                        # Handle relative URLs
+                        if image_url.startswith('//'):
+                            image_url = 'https:' + image_url
+                        elif image_url.startswith('/'):
+                            image_url = 'https://www.ndtv.com' + image_url
+                        return image_url
+            
+            # Try meta tags for Open Graph images
+            og_image = soup.find('meta', {'property': 'og:image'})
+            if og_image:
+                image_url = og_image.get('content')
+                if image_url:
+                    return image_url
+            
+            # Try Twitter card images
+            twitter_image = soup.find('meta', {'name': 'twitter:image'})
+            if twitter_image:
+                image_url = twitter_image.get('content')
+                if image_url:
+                    return image_url
+                    
+        except Exception as e:
+            logger.error(f"Error extracting image: {e}")
+        
+        return ""

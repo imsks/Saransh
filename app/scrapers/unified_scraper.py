@@ -24,6 +24,7 @@ class UnifiedScraper:
                 content="",
                 source=platform,
                 url=url,
+                image_url="",
                 scraped_at=datetime.now(),
                 status="failed"
             )

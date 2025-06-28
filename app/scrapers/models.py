@@ -8,6 +8,7 @@ class ScrapedArticle(BaseModel):
     content: str
     source: str
     url: str
+    image_url: Optional[str] = None
     published_date: Optional[str] = None
     author: Optional[str] = None
     category: Optional[str] = None

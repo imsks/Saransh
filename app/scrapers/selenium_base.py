@@ -51,6 +51,7 @@ class SeleniumBaseScraper(ABC):
             title = self.extract_title(soup)
             content = self.extract_content(soup)
             metadata = self.extract_metadata(soup)
+            image_url = self.extract_image(soup)
             
             # Clean text
             title = self.clean_text(title)
@@ -61,6 +62,7 @@ class SeleniumBaseScraper(ABC):
                 content=content,
                 source=self.source_name,
                 url=url,
+                image_url=image_url,
                 published_date=metadata.get('published_date'),
                 author=metadata.get('author'),
                 category=metadata.get('category'),
@@ -76,6 +78,7 @@ class SeleniumBaseScraper(ABC):
                 content="",
                 source=self.source_name,
                 url=url,
+                image_url="",
                 scraped_at=datetime.now(),
                 status="failed"
             )
@@ -93,6 +96,11 @@ class SeleniumBaseScraper(ABC):
     @abstractmethod
     def extract_metadata(self, soup: BeautifulSoup) -> dict:
         """Extract metadata - must be implemented by child classes"""
+        pass
+    
+    @abstractmethod
+    def extract_image(self, soup: BeautifulSoup) -> str:
+        """Extract image URL - must be implemented by child classes"""
         pass
     
     def clean_text(self, text: str) -> str:
