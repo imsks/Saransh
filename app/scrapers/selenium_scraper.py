@@ -37,7 +37,7 @@ class SeleniumNDTVScraper(BaseScrapper):
             self.driver.get(url)
             
             # Wait for page to load
-            time.sleep(3)
+            time.sleep(1)
             
             # Get page source after JavaScript execution
             page_source = self.driver.page_source
@@ -92,33 +92,20 @@ class SeleniumNDTVScraper(BaseScrapper):
     
     def extract_content(self, soup: BeautifulSoup) -> str:
         """Extract content from NDTV"""
-        selectors = [
-            '.sp-descp',
-            '.Art-exp_wr'
-        ]
+        # Target the specific div with id="ignorediv"
+        content_div = soup.find('div', {'class': 'Art-exp_wr', 'id': 'ignorediv'})
         
-        for selector in selectors:
-            elements = soup.select(selector)
-            if elements:
-                content_parts = []
-                for elem in elements:
-                    # Get all text content, including direct text and paragraphs
-                    # First, get all paragraphs
-                    paragraphs = elem.find_all('p')
-                    for p in paragraphs:
-                        text = p.get_text(strip=True)
-                        if text and len(text) > 20:  # Only meaningful paragraphs
-                            content_parts.append(text)
-                    
-                    # If no paragraphs found, get direct text content
-                    if not content_parts:
-                        # Get all text content from the element
-                        text_content = elem.get_text(strip=True)
-                        if text_content and len(text_content) > 50:
-                            content_parts.append(text_content)
-                
-                if content_parts:
-                    return ' '.join(content_parts)
+        if content_div:
+            content_parts = []
+            
+            # Get all paragraphs
+            paragraphs = content_div.find_all('p')
+            for p in paragraphs:
+                text = p.get_text(strip=True)
+                if text and len(text) > 20:
+                    content_parts.append(text)
+            
+            return ' '.join(content_parts)
         
         return ""
     
