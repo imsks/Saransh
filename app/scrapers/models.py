@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 
@@ -14,7 +14,9 @@ class ScrapedArticle(BaseModel):
     scraped_at: datetime
     status: str = "success"
 
-    class Config:
-        json_encoders = {
+    # Pydantic v2 configuration
+    model_config = ConfigDict(
+        json_encoders={
             datetime: lambda v: v.isoformat()
         }
+    )
