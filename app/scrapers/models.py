@@ -11,6 +11,7 @@ class ScrapedArticle(BaseModel):
     published_date: Optional[str] = None
     author: Optional[str] = None
     category: Optional[str] = None
+    language: Optional[str] = None
     scraped_at: datetime
     status: str = "success"
 

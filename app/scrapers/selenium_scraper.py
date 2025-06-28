@@ -59,6 +59,7 @@ class SeleniumNDTVScraper(BaseScrapper):
                 published_date=metadata.get('published_date'),
                 author=metadata.get('author'),
                 category=metadata.get('category'),
+                language=metadata.get('language'),
                 scraped_at=datetime.now(),
                 status="success"
             )
@@ -110,24 +111,66 @@ class SeleniumNDTVScraper(BaseScrapper):
         return ""
     
     def extract_metadata(self, soup: BeautifulSoup) -> dict:
-        """Extract metadata"""
+        """Extract metadata from NDTV"""
         metadata = {}
         
-        # Date
-        date_selectors = ['[class*="date"]', 'time', '.published_date']
-        for selector in date_selectors:
-            elem = soup.select_one(selector)
-            if elem:
-                metadata['published_date'] = elem.get_text(strip=True)
-                break
-        
-        # Author
-        author_selectors = ['[class*="author"]', '.author_name']
-        for selector in author_selectors:
-            elem = soup.select_one(selector)
-            if elem:
-                metadata['author'] = elem.get_text(strip=True)
-                break
+        try:
+            # Find the navigation section with metadata
+            nav_section = soup.find('nav', {'class': 'pst-by'})
+            if nav_section:
+                # Extract Author
+                author_spans = nav_section.find_all('span', {'class': 'pst-by_txt'})
+                for span in author_spans:
+                    text = span.get_text(strip=True)
+                    if text and text != "Reported by":
+                        metadata['author'] = text
+                        break
+                
+                # Extract Category (from links)
+                category_links = nav_section.find_all('a', {'class': 'pst-by_lnk'})
+                for link in category_links:
+                    href = link.get('href', '')
+                    if 'india' in href or 'world' in href or 'business' in href:
+                        metadata['category'] = link.get_text(strip=True)
+                        break
+                
+                # Extract Language from meta tag, default to "English"
+                lang_meta = soup.find('meta', {'name': 'inLanguage'})
+                if lang_meta:
+                    metadata['language'] = lang_meta.get('content', 'English')
+                else:
+                    metadata['language'] = 'English'
+                
+                # Extract Published Date from multiple sources
+                # 1. Try meta tag first (most accurate)
+                publish_meta = soup.find('meta', {'name': 'publish-date'})
+                if publish_meta:
+                    metadata['published_date'] = publish_meta.get('content', '')
+                else:
+                    # 2. Try span with itemprop
+                    date_span = nav_section.find('span', {'itemprop': 'dateModified'})
+                    if date_span:
+                        metadata['published_date'] = date_span.get_text(strip=True)
+            
+            # Fallback selectors if nav section not found
+            if not metadata.get('published_date'):
+                date_selectors = ['[class*="date"]', 'time', '.published_date']
+                for selector in date_selectors:
+                    elem = soup.select_one(selector)
+                    if elem:
+                        metadata['published_date'] = elem.get_text(strip=True)
+                        break
+            
+            if not metadata.get('author'):
+                author_selectors = ['[class*="author"]', '.author_name']
+                for selector in author_selectors:
+                    elem = soup.select_one(selector)
+                    if elem:
+                        metadata['author'] = elem.get_text(strip=True)
+                        break
+                    
+        except Exception as e:
+            print(f"Error extracting metadata: {e}")
         
         return metadata
     

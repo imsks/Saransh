@@ -72,6 +72,9 @@ class NDTVScraper(BaseScrapper):
         metadata = {}
         
         try:
+            # Set default language to English
+            metadata['language'] = 'English'
+            
             # Extract published date
             date_selectors = [
                 '[class*="date"]',

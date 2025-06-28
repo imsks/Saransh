@@ -116,6 +116,7 @@ class BaseScrapper(ABC):
                 published_date=metadata.get('published_date'),
                 author=metadata.get('author'),
                 category=metadata.get('category'),
+                language=metadata.get('language'),
                 scraped_at=datetime.now(),
                 status="success"
             )

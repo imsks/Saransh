@@ -17,8 +17,9 @@ def test_selenium_scraper():
     print(f"\n📰 Title: {article.title}")
     print(f"📝 Content Length: {len(article.content)} characters")
     print(f"👤 Author: {article.author}")
-    print(f"📅 Date: {article.published_date}")
+    print(f"📅 Published Date: {article.published_date}")
     print(f"🏷️ Category: {article.category}")
+    print(f"🌐 Language: {article.language}")
     print(f"✅ Status: {article.status}")
     
     if article.status == "success":
