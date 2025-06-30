@@ -1,0 +1,52 @@
+{
+  "original_article_id": "https://www.ndtv.com/india-news/office-party-days-after-air-india-boeing-787-crash-aisats-sacks-4-senior-employees-8777266",
+  "title": "Office Party Days After Plane Crash, Air India Venture Sacks 4 Senior Staff",
+  "clean_content": "Four senior employees of Air India's airport gateway services provider AISATS have been told to resign after a video showing employees partying in the workplace went viral on social media. The party at AISATS' Gurugram office was reportedly organised just days after the Air India Boeing 787-8 Dreamliner crash in Ahmedabad that killed 259 people. An AISATS spokesperson said the company stands in solidarity with the families affected by the tragic loss of flight AI 171, and expressed regret over the \"internal video\", which was seen by many on social media as a time not appropriate for celebrations. \"At AISATS, we stand in solidarity with families affected by the tragic loss of AI 171 and deeply regret the lapse in judgment reflected in a recent internal video,\" the spokesperson said. \"The behaviour does not align with our values, and firm disciplinary action has been taken against those responsible as we reaffirm our commitment to empathy, professionalism, and accountability,\" the spokesperson said. The company said it has asked four senior officials to go and warned many others. AISATS is a 50-50 joint venture between Air India Ltd, which is part of the Tata Group, and SATS Ltd, a player in gateway services and food solutions. The Boeing Dreamliner bound for London on June 12 started losing altitude and crashed seconds after the take-off. It slammed into a residential campus of BJ Medical College in Meghani Nagar, located just outside the airport perimeter. Only one passenger out of the 242 on board -- an Indian-origin British national seated in seat 11A -- survived.",
+  "chunks": [
+    {
+      "id": "06c394fd-9b29-4dd8-8045-eeebb7bbc0ab",
+      "content": "Four senior employees of Air India's airport gateway services provider AISATS have been told to resign after a video showing employees partying in the workplace went viral on social media. The party at AISATS' Gurugram office was reportedly organised just days after the Air India Boeing 787-8 Dreamliner crash in Ahmedabad that killed 259 people. An AISATS spokesperson said the company stands in solidarity with the families affected by the tragic loss of flight AI 171, and expressed regret over the \"internal video\", which was seen by many on social media as a time not appropriate for celebrations. \"At AISATS, we stand in solidarity with families affected by the tragic loss of AI 171 and deeply regret the lapse in judgment reflected in a recent internal video,\" the spokesperson said. \"The behaviour does not align with our values, and firm disciplinary action has been taken against those responsible as we reaffirm our commitment to empathy, professionalism, and accountability,\" the spokesperson said. The company said it has asked four senior officials to go and warned many others. AISATS is a 50-50 joint venture between Air India Ltd, which is part of the Tata Group, and SATS Ltd, a player in gateway",
+      "chunk_index": 0,
+      "word_count": 200,
+      "start_position": 0,
+      "end_position": 200,
+      "metadata": {}
+    },
+    {
+      "id": "78725151-48f7-4446-93b1-fa49b078c17a",
+      "content": "to go and warned many others. AISATS is a 50-50 joint venture between Air India Ltd, which is part of the Tata Group, and SATS Ltd, a player in gateway services and food solutions. The Boeing Dreamliner bound for London on June 12 started losing altitude and crashed seconds after the take-off. It slammed into a residential campus of BJ Medical College in Meghani Nagar, located just outside the airport perimeter. Only one passenger out of the 242 on board -- an Indian-origin British national seated in seat 11A -- survived.",
+      "chunk_index": 1,
+      "word_count": 91,
+      "start_position": 170,
+      "end_position": 261,
+      "metadata": {}
+    }
+  ],
+  "analysis": {
+    "word_count": 261,
+    "sentence_count": 11,
+    "readability_score": 33.000094043887145,
+    "sentiment_score": -0.0038314176245210726,
+    "entities": [
+      "Meghani Nagar",
+      "Gurugram",
+      "British",
+      "Dreamliner",
+      "The Boeing Dreamliner",
+      "Medical College",
+      "The",
+      "An",
+      "Ahmedabad",
+      "Only"
+    ],
+    "key_topics": [
+      "aisats",
+      "after",
+      "spokesperson",
+      "senior",
+      "employees"
+    ],
+    "language": "English",
+    "content_type": "news"
+  },
+  "processed_at": 
