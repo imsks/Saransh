@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from .factory import ScraperFactory
 from .models import ScrapedArticle
 from datetime import datetime

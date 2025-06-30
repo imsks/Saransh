@@ -42,15 +42,7 @@ class NDTVScraper(SeleniumBaseScraper):
                     paragraphs = elem.find_all('p')
                     for p in paragraphs:
                         text = p.get_text(strip=True)
-                        if text and len(text) > 20:  # Only meaningful paragraphs
-                            content_parts.append(text)
-                    
-                    # If no paragraphs found, get direct text content
-                    if not content_parts:
-                        # Get all text content from the element
-                        text_content = elem.get_text(strip=True)
-                        if text_content and len(text_content) > 50:
-                            content_parts.append(text_content)
+                        content_parts.append(text)
                 
                 if content_parts:
                     return ' '.join(content_parts)
@@ -71,14 +63,6 @@ class NDTVScraper(SeleniumBaseScraper):
                     text = span.get_text(strip=True)
                     if text and text != "Reported by":
                         metadata['author'] = text
-                        break
-                
-                # Extract Category (from links)
-                category_links = nav_section.find_all('a', {'class': 'pst-by_lnk'})
-                for link in category_links:
-                    href = link.get('href', '')
-                    if 'india' in href or 'world' in href or 'business' in href:
-                        metadata['category'] = link.get_text(strip=True)
                         break
                 
                 # Extract Language from meta tag, default to "English"
