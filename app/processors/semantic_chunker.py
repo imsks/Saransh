@@ -1,8 +1,11 @@
 from typing import List
+import logging
 
 from ..ai.openai_service import OpenAIService
 from .models import ContentChunk
 import re
+
+logger = logging.getLogger(__name__)
 
 class SemanticChunker:
     """Semantic chunking that splits at natural boundaries"""
@@ -14,8 +17,10 @@ class SemanticChunker:
     def chunk_text(self, text: str) -> List[ContentChunk]:
         """Split text semantically using AI"""
         
+        logger.info("[Chunker] Starting semantic chunking")
         # First, try to split at natural boundaries
         natural_chunks = self._split_at_natural_boundaries(text)
+        logger.debug(f"[Chunker] Split into {len(natural_chunks)} natural chunks")
         
         # If chunks are too large, use AI to split them
         final_chunks = []
@@ -23,8 +28,11 @@ class SemanticChunker:
             if len(chunk.split()) <= self.max_chunk_size:
                 final_chunks.append(chunk)
             else:
+                logger.info(f"[Chunker] Chunk too large, using AI to split (words: {len(chunk.split())})")
                 ai_chunks = self._ai_split_chunk(chunk)
+                logger.debug(f"[Chunker] AI split into {len(ai_chunks)} chunks")
                 final_chunks.extend(ai_chunks)
+        logger.info(f"[Chunker] Final chunk count: {len(final_chunks)}")
         
         # Convert to ContentChunk objects
         return [self._create_chunk(chunk, i) for i, chunk in enumerate(final_chunks)]

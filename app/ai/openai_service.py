@@ -21,11 +21,11 @@ class OpenAIService:
     def _handle_rate_limit(self, retry_after: int = None) -> None:
         """Handle rate limit errors by waiting and retrying"""
         delay = retry_after or self.rate_limit_delay
-        logger.warning(f"Rate limited. Waiting {delay} seconds...")
+        logger.warning(f"[OpenAI] Rate limited. Waiting {delay} seconds...")
         time.sleep(delay)
 
     def _make_request(self, messages: List[Dict], max_retries: int = 3) -> Optional[str]:
-        """Make OpenAI API request with retry logic"""
+        logger.info(f"[OpenAI] Making API call with {len(messages)} messages")
         for attempt in range(max_retries):
             try:
                 response = self.client.chat.completions.create(
@@ -34,18 +34,19 @@ class OpenAIService:
                     max_tokens=1000,
                     temperature=0.7,
                 )
+                logger.info("[OpenAI] API call successful")
                 return response.choices[0].message.content
             except openai.RateLimitError as e:
                 self._handle_rate_limit()
                 if attempt == max_retries - 1:
-                    logger.error(f"Rate limit exceeded after {max_retries} attempts")
+                    logger.error(f"[OpenAI] Rate limit exceeded after {max_retries} attempts")
                     raise
             except openai.APIError as e:
-                logger.error(f"OpenAI API error: {e}")
+                logger.error(f"[OpenAI] API error: {e}")
                 if attempt == max_retries - 1:
                     raise
             except Exception as e:
-                logger.error(f"Unexpected error: {e}")
+                logger.error(f"[OpenAI] Unexpected error: {e}")
                 if attempt == max_retries - 1:
                     raise
 

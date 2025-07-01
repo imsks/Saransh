@@ -3,6 +3,9 @@ from typing import List, Dict, Any
 from .models import ContentAnalysis
 from ..ai.openai_service import OpenAIService
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ContentAnalyzer:
     """Analyzes content for various metrics"""
@@ -104,21 +107,23 @@ class AIContentAnalyzer:
         self.openai_service = OpenAIService()
     
     def analyze(self, content: str) -> ContentAnalysis:
-        """Perform comprehensive AI-powered content analysis"""
-        
-        # Basic metrics (keep existing)
+        logger.info("[Analyzer] Starting AI-powered analysis")
         word_count = len(content.split())
         sentence_count = len(content.split('.'))
-        
-        # AI-powered analysis
         sentiment = self._analyze_sentiment(content)
+        logger.debug(f"[Analyzer] Sentiment: {sentiment}")
         entities = self._extract_entities(content)
+        logger.debug(f"[Analyzer] Entities: {entities}")
         topics = self._classify_topics(content)
+        logger.debug(f"[Analyzer] Topics: {topics}")
         summary = self._generate_summary(content)
+        logger.info("[Analyzer] AI summary generated")
         keywords = self._extract_keywords(content)
+        logger.debug(f"[Analyzer] Keywords: {keywords}")
         language = self._detect_language(content)
+        logger.debug(f"[Analyzer] Language: {language}")
         quality_score = self._assess_quality(content)
-        
+        logger.debug(f"[Analyzer] Quality score: {quality_score}")
         return ContentAnalysis(
             word_count=word_count,
             sentence_count=sentence_count,

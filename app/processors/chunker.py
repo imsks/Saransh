@@ -1,6 +1,9 @@
 import uuid
 from typing import List
 from .models import ContentChunk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ContentChunker:
     """Splits content into overlapping chunks"""
@@ -11,6 +14,7 @@ class ContentChunker:
     
     def chunk_text(self, text: str) -> List[ContentChunk]:
         """Split text into overlapping chunks"""
+        logger.info("[Chunker] Starting basic chunking")
         words = text.split()
         chunks = []
         
@@ -27,5 +31,5 @@ class ContentChunker:
                 end_position=min(i + self.chunk_size, len(words))
             )
             chunks.append(chunk)
-        
+        logger.info(f"[Chunker] Created {len(chunks)} basic chunks")
         return chunks
