@@ -1,6 +1,8 @@
 import re
-from typing import List
+from typing import List, Dict, Any
 from .models import ContentAnalysis
+from ..ai.openai_service import OpenAIService
+import json
 
 class ContentAnalyzer:
     """Analyzes content for various metrics"""
@@ -94,3 +96,175 @@ class ContentAnalyzer:
             on_vowel = is_vowel
         
         return max(1, count)  # At least 1 syllable
+
+class AIContentAnalyzer:
+    """AI-powered content analysis using OpenAI"""
+    
+    def __init__(self):
+        self.openai_service = OpenAIService()
+    
+    def analyze(self, content: str) -> ContentAnalysis:
+        """Perform comprehensive AI-powered content analysis"""
+        
+        # Basic metrics (keep existing)
+        word_count = len(content.split())
+        sentence_count = len(content.split('.'))
+        
+        # AI-powered analysis
+        sentiment = self._analyze_sentiment(content)
+        entities = self._extract_entities(content)
+        topics = self._classify_topics(content)
+        summary = self._generate_summary(content)
+        keywords = self._extract_keywords(content)
+        language = self._detect_language(content)
+        quality_score = self._assess_quality(content)
+        
+        return ContentAnalysis(
+            word_count=word_count,
+            sentence_count=sentence_count,
+            readability_score=0.0,  # We'll enhance this later
+            sentiment_score=sentiment['score'],
+            entities=entities,
+            key_topics=topics,
+            language=language,
+            content_type="news",
+            ai_summary=summary,
+            keywords=keywords,
+            quality_score=quality_score,
+            sentiment_label=sentiment['label']
+        )
+    
+    def _analyze_sentiment(self, content: str) -> Dict[str, Any]:
+        """Analyze sentiment using OpenAI"""
+        prompt = f"""
+        Analyze the sentiment of this news article. Return a JSON response with:
+        - "score": float between -1 (very negative) and 1 (very positive)
+        - "label": string ("positive", "negative", "neutral")
+        - "confidence": float between 0 and 1
+        
+        Article: {content[:1000]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a sentiment analysis expert. Return only valid JSON."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        try:
+            return json.loads(response)
+        except:
+            return {"score": 0.0, "label": "neutral", "confidence": 0.0}
+    
+    def _extract_entities(self, content: str) -> List[str]:
+        """Extract named entities using OpenAI"""
+        prompt = f"""
+        Extract named entities (people, organizations, locations) from this text.
+        Return a JSON array of entity names.
+        
+        Text: {content[:1000]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are an NER expert. Return only a JSON array of entity names."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        try:
+            entities = json.loads(response)
+            return entities if isinstance(entities, list) else []
+        except:
+            return []
+    
+    def _classify_topics(self, content: str) -> List[str]:
+        """Classify content into topics using zero-shot learning"""
+        topics = ["Politics", "Technology", "Business", "Sports", "Entertainment", 
+                 "Health", "Science", "Education", "Crime", "Environment"]
+        
+        prompt = f"""
+        Classify this news article into the most relevant topics from this list: {topics}
+        Return a JSON array of the top 3 most relevant topics.
+        
+        Article: {content[:1000]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a topic classification expert. Return only a JSON array."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        try:
+            classified_topics = json.loads(response)
+            return classified_topics if isinstance(classified_topics, list) else []
+        except:
+            return []
+    
+    def _generate_summary(self, content: str) -> str:
+        """Generate 60-word summary using OpenAI"""
+        prompt = f"""
+        Summarize this news article in exactly 60 words or less.
+        Focus on the key facts and main story.
+        
+        Article: {content}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a news summarization expert. Create concise, factual summaries."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        return response or "Summary not available"
+    
+    def _extract_keywords(self, content: str) -> List[str]:
+        """Extract keywords using AI"""
+        prompt = f"""
+        Extract 10 most important keywords from this text.
+        Return a JSON array of keyword strings.
+        
+        Text: {content[:1000]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a keyword extraction expert. Return only a JSON array."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        try:
+            keywords = json.loads(response)
+            return keywords if isinstance(keywords, list) else []
+        except:
+            return []
+    
+    def _detect_language(self, content: str) -> str:
+        """Detect language using OpenAI"""
+        prompt = f"""
+        Detect the language of this text. Return only the language name (e.g., "English", "Hindi", "Spanish").
+        
+        Text: {content[:500]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a language detection expert. Return only the language name."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        return response or "English"
+    
+    def _assess_quality(self, content: str) -> float:
+        """Assess content quality using AI"""
+        prompt = f"""
+        Assess the quality of this news article on a scale of 0-10.
+        Consider: factual accuracy, writing quality, relevance, completeness.
+        Return only a number between 0 and 10.
+        
+        Article: {content[:1000]}
+        """
+        
+        response = self.openai_service._make_request([
+            {"role": "system", "content": "You are a content quality assessor. Return only a number."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        try:
+            return float(response) / 10.0  # Normalize to 0-1
+        except:
+            return 0.5

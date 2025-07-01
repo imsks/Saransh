@@ -31,7 +31,7 @@ def test_processing_pipeline():
     
     # Save to JSON
     with open('processed_article.json', 'w', encoding='utf-8') as f:
-        json.dump(processed_article.model_dump(), f, indent=2, ensure_ascii=False)
+        json.dump(processed_article.to_dict(), f, indent=2, ensure_ascii=False)
     
     print(" Saved to processed_article.json")
 

@@ -11,8 +11,15 @@ class Settings:
     # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://localhost:5432/saransh_db")
     
-    # OpenAI
+    # OpenAI Configuration
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+    OPENAI_MAX_TOKENS: int = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
+    OPENAI_TEMPERATURE: float = float(os.getenv("OPENAI_TEMPERATURE", "0.3"))
+    
+    # Rate Limiting
+    OPENAI_RATE_LIMIT_DELAY: float = float(os.getenv("OPENAI_RATE_LIMIT_DELAY", "1.0"))
+    OPENAI_MAX_RETRIES: int = int(os.getenv("OPENAI_MAX_RETRIES", "3"))
     
     # Application
     APP_ENV: str = os.getenv("APP_ENV", "development")

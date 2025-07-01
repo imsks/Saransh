@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import List
+
+from app.processors.semantic_chunker import SemanticChunker
 from ..scrapers.models import ScrapedArticle
-from .models import ContentAnalysis, ProcessedArticle
-from .chunker import ContentChunker
-from .analyzer import ContentAnalyzer
+from .models import ProcessedArticle
+from .analyzer import AIContentAnalyzer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,8 +13,8 @@ class ContentProcessingPipeline:
     """Main pipeline for processing scraped articles"""
     
     def __init__(self, chunk_size: int = 300, overlap: int = 50):
-        self.chunker = ContentChunker(chunk_size, overlap)
-        self.analyzer = ContentAnalyzer()
+        self.chunker = SemanticChunker(chunk_size)
+        self.analyzer = AIContentAnalyzer()
     
     def process_article(self, article: ScrapedArticle) -> ProcessedArticle:
         """Process a single article through the pipeline"""
@@ -43,15 +44,29 @@ class ContentProcessingPipeline:
             
         except Exception as e:
             logger.error(f"Error processing article {article.title}: {e}")
-            return ProcessedArticle(
-                original_article_id=article.url,
-                title=article.title,
-                clean_content="",
-                chunks=[],
-                analysis=ContentAnalysis(word_count=0, sentence_count=0, readability_score=0, sentiment_score=0),
-                processed_at=datetime.now(),
-                processing_status="failed"
-            )
+            return self._fallback_processing(article)
+        
+    def _fallback_processing(self, article: ScrapedArticle) -> ProcessedArticle:
+        """Fallback processing without AI"""
+        # Use basic chunker and analyzer
+        from .chunker import ContentChunker
+        from .analyzer import ContentAnalyzer
+        
+        basic_chunker = ContentChunker()
+        basic_analyzer = ContentAnalyzer()
+        
+        chunks = basic_chunker.chunk_text(article.content)
+        analysis = basic_analyzer.analyze(article.content)
+        
+        return ProcessedArticle(
+            original_article_id=article.url,
+            title=article.title,
+            clean_content=article.content,
+            chunks=chunks,
+            analysis=analysis,
+            processed_at=datetime.now(),
+            processing_status="fallback"
+        )
     
     def process_multiple_articles(self, articles: List[ScrapedArticle]) -> List[ProcessedArticle]:
         """Process multiple articles"""
