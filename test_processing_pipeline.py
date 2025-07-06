@@ -1,6 +1,10 @@
 from app.scrapers import UnifiedScraper
 from app.processors import ContentProcessingPipeline
+from app.utils import setup_logging
 import json
+
+# Setup logging
+setup_logging()
 
 def test_processing_pipeline():
     # Step 1: Scrape an article

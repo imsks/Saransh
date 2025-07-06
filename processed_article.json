@@ -4,7 +4,7 @@
   "clean_content": "Two farmers were killed here when a car hit them while they were repairing a punctured tractor tyre on Saturday, police said. The incident happened at Sangar area in Jaisalmer district. Bhura Ram (42) and Surat Ram (51), residents of Pachpadara, were going to Mohangarh with a tractor-trolley for farming, when a tyre got punctured near Bhelani toll post. When they were repairing it, a speeding car hit them. The farmers were rushed to a nearby hospital, but doctors declared them dead. Police said investigation is on in the matter. (Except for the headline, this story has not been edited by NDTV staff and is published from a syndicated feed.)",
   "chunks": [
     {
-      "id": "chunk_0_7388410931939377643",
+      "id": "chunk_0_1534298067523926380",
       "content": "Two farmers were killed here when a car hit them while they were repairing a punctured tractor tyre on Saturday, police said. The incident happened at Sangar area in Jaisalmer district. Bhura Ram (42) and Surat Ram (51), residents of Pachpadara, were going to Mohangarh with a tractor-trolley for farming, when a tyre got punctured near Bhelani toll post. When they were repairing it, a speeding car hit them. The farmers were rushed to a nearby hospital, but doctors declared them dead. Police said investigation is on in the matter. (Except for the headline, this story has not been edited by NDTV staff and is published from a syndicated feed.)",
       "chunk_index": 0,
       "word_count": 110,
@@ -17,16 +17,25 @@
     "word_count": 110,
     "sentence_count": 8,
     "readability_score": 0.0,
-    "sentiment_score": -0.8,
-    "entities": [],
+    "sentiment_score": -0.7,
+    "entities": [
+      "Bhura Ram",
+      "Surat Ram",
+      "Pachpadara",
+      "Mohangarh",
+      "Bhelani",
+      "Jaisalmer",
+      "Sangar",
+      "NDTV"
+    ],
     "key_topics": [
       "Crime",
-      "Accident",
-      "Politics"
+      "Accidents",
+      "Local News"
     ],
     "language": "English",
     "content_type": "news",
-    "ai_summary": "Two farmers, Bhura Ram and Surat Ram, were killed in Jaisalmer district when a car struck them while they were repairing a punctured tractor tire. The incident occurred at Sangar area as they were en route to Mohangarh for farming. Despite being rushed to a nearby hospital, the doctors pronounced them dead. Police are investigating the matter further.",
+    "ai_summary": "Two farmers, Bhura Ram and Surat Ram, were killed in a car accident while repairing a punctured tractor tire in Jaisalmer district. The incident occurred at Sangar area as they were on their way to Mohangarh. The farmers were hit by a speeding car while fixing the tire near Bhelani toll post. Despite being rushed to a nearby hospital, they were declared dead. Police are investigating the matter.",
     "keywords": [
       "farmers",
       "killed",
@@ -36,13 +45,13 @@
       "punctured",
       "tractor",
       "tyre",
-      "Sangar",
-      "Jaisalmer"
+      "Sangar area",
+      "Jaisalmer district"
     ],
     "quality_score": 0.8,
     "sentiment_label": "negative",
     "confidence_score": 0.0
   },
-  "processed_at": "2025-07-06T09:53:59.581347",
+  "processed_at": "2025-07-06T09:58:50.712349",
   "processing_status": "success"
 }
