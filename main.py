@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 import logging
 from datetime import datetime
+from app.ai.embedding_service import EmbeddingService
 from app.config import settings
 from app.utils import setup_logging
 
@@ -38,6 +39,18 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "environment": settings.APP_ENV
+    }
+
+@app.get("/search")
+async def search_articles(query: str, limit: int = 5):
+    """Search for articles using semantic similarity"""
+    embedding_service = EmbeddingService()
+    results = embedding_service.similarity_search(query, limit)
+    
+    return {
+        "query": query,
+        "results": results,
+        "total_found": len(results)
     }
 
 if __name__ == "__main__":

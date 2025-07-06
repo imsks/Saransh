@@ -29,10 +29,10 @@ class OpenAIService:
         for attempt in range(max_retries):
             try:
                 response = self.client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model=settings.OPENAI_MODEL,
                     messages=messages,
-                    max_tokens=1000,
-                    temperature=0.7,
+                    max_tokens=settings.OPENAI_MAX_TOKENS,
+                    temperature=settings.OPENAI_TEMPERATURE,
                 )
                 logger.info("[OpenAI] API call successful")
                 return response.choices[0].message.content
@@ -53,3 +53,15 @@ class OpenAIService:
             time.sleep(2 ** attempt)
         
         return None
+    
+    def _create_embeddings(self, texts: List[str]) -> List[List[float]]:
+        """Create embeddings for a list of texts using OpenAI"""
+        try:
+            response = self.client.embeddings.create(
+                model=settings.OPENAI_EMBEDDING_MODEL,
+                input=texts
+            )
+            return [embedding.embedding for embedding in response.data]
+        except Exception as e:
+            logger.error(f"[OpenAI] Error creating embeddings: {e}")
+            return []
