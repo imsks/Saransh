@@ -1,91 +1,48 @@
 {
-  "original_article_id": "https://www.ndtv.com/india-news/office-party-days-after-air-india-boeing-787-crash-aisats-sacks-4-senior-employees-8777266",
-  "title": "Office Party Days After Plane Crash, Air India Venture Sacks 4 Senior Staff",
-  "clean_content": "Four senior employees of Air India's airport gateway services provider AISATS have been told to resign after a video showing employees partying in the workplace went viral on social media. The party at AISATS' Gurugram office was reportedly organised just days after the Air India Boeing 787-8 Dreamliner crash in Ahmedabad that killed 259 people. An AISATS spokesperson said the company stands in solidarity with the families affected by the tragic loss of flight AI 171, and expressed regret over the \"internal video\", which was seen by many on social media as a time not appropriate for celebrations. \"At AISATS, we stand in solidarity with families affected by the tragic loss of AI 171 and deeply regret the lapse in judgment reflected in a recent internal video,\" the spokesperson said. \"The behaviour does not align with our values, and firm disciplinary action has been taken against those responsible as we reaffirm our commitment to empathy, professionalism, and accountability,\" the spokesperson said. The company said it has asked four senior officials to go and warned many others. AISATS is a 50-50 joint venture between Air India Ltd, which is part of the Tata Group, and SATS Ltd, a player in gateway services and food solutions. The Boeing Dreamliner bound for London on June 12 started losing altitude and crashed seconds after the take-off. It slammed into a residential campus of BJ Medical College in Meghani Nagar, located just outside the airport perimeter. Only one passenger out of the 242 on board -- an Indian-origin British national seated in seat 11A -- survived.",
+  "original_article_id": "https://www.ndtv.com/india-news/2-farmers-repairing-punctured-tyre-die-after-being-hit-by-speeding-car-in-rajasthan-8831095?pfrom=home-ndtv_mainnavigation",
+  "title": "2 Farmers, Repairing Punctured Tyre, Die After Being Hit By Speeding Car In Rajasthan",
+  "clean_content": "Two farmers were killed here when a car hit them while they were repairing a punctured tractor tyre on Saturday, police said. The incident happened at Sangar area in Jaisalmer district. Bhura Ram (42) and Surat Ram (51), residents of Pachpadara, were going to Mohangarh with a tractor-trolley for farming, when a tyre got punctured near Bhelani toll post. When they were repairing it, a speeding car hit them. The farmers were rushed to a nearby hospital, but doctors declared them dead. Police said investigation is on in the matter. (Except for the headline, this story has not been edited by NDTV staff and is published from a syndicated feed.)",
   "chunks": [
     {
-      "id": "chunk_0_8715122369101891115",
-      "content": "Four senior employees of Air India's airport gateway services provider AISATS have been told to resign after a video showing employees partying in the workplace went viral on social media. The party at AISATS' Gurugram office was reportedly organised just days after the Air India Boeing 787-8 Dreamliner crash in Ahmedabad that killed 259 people.",
+      "id": "chunk_0_7388410931939377643",
+      "content": "Two farmers were killed here when a car hit them while they were repairing a punctured tractor tyre on Saturday, police said. The incident happened at Sangar area in Jaisalmer district. Bhura Ram (42) and Surat Ram (51), residents of Pachpadara, were going to Mohangarh with a tractor-trolley for farming, when a tyre got punctured near Bhelani toll post. When they were repairing it, a speeding car hit them. The farmers were rushed to a nearby hospital, but doctors declared them dead. Police said investigation is on in the matter. (Except for the headline, this story has not been edited by NDTV staff and is published from a syndicated feed.)",
       "chunk_index": 0,
-      "word_count": 55,
+      "word_count": 110,
       "start_position": 0,
-      "end_position": 347,
-      "metadata": {}
-    },
-    {
-      "id": "chunk_1_-6879117486168159856",
-      "content": "An AISATS spokesperson said the company stands in solidarity with the families affected by the tragic loss of flight AI 171, and expressed regret over the 'internal video', which was seen by many on social media as a time not appropriate for celebrations. 'At AISATS, we stand in solidarity with families affected by the tragic loss of AI 171 and deeply regret the lapse in judgment reflected in a recent internal video,' the spokesperson said.",
-      "chunk_index": 1,
-      "word_count": 75,
-      "start_position": 0,
-      "end_position": 444,
-      "metadata": {}
-    },
-    {
-      "id": "chunk_2_-7985377290981453954",
-      "content": "'The behaviour does not align with our values, and firm disciplinary action has been taken against those responsible as we reaffirm our commitment to empathy, professionalism, and accountability,' the spokesperson said. The company said it has asked four senior officials to go and warned many others.",
-      "chunk_index": 2,
-      "word_count": 46,
-      "start_position": 0,
-      "end_position": 301,
-      "metadata": {}
-    },
-    {
-      "id": "chunk_3_-5094270385530375571",
-      "content": "AISATS is a 50-50 joint venture between Air India Ltd, which is part of the Tata Group, and SATS Ltd, a player in gateway services and food solutions. The Boeing Dreamliner bound for London on June 12 started losing altitude and crashed seconds after the take-off. It slammed into a residential campus of BJ Medical College in Meghani Nagar, located just outside the airport perimeter.",
-      "chunk_index": 3,
-      "word_count": 65,
-      "start_position": 0,
-      "end_position": 385,
-      "metadata": {}
-    },
-    {
-      "id": "chunk_4_8053897921498034658",
-      "content": "Only one passenger out of the 242 on board -- an Indian-origin British national seated in seat 11A -- survived.",
-      "chunk_index": 4,
-      "word_count": 20,
-      "start_position": 0,
-      "end_position": 111,
+      "end_position": 647,
       "metadata": {}
     }
   ],
   "analysis": {
-    "word_count": 261,
-    "sentence_count": 11,
+    "word_count": 110,
+    "sentence_count": 8,
     "readability_score": 0.0,
-    "sentiment_score": -0.7,
-    "entities": [
-      "Air India",
-      "AISATS",
-      "Gurugram",
-      "Air India Boeing 787-8 Dreamliner",
-      "Ahmedabad",
-      "AI 171"
-    ],
+    "sentiment_score": -0.8,
+    "entities": [],
     "key_topics": [
-      "Business",
       "Crime",
-      "Environment"
+      "Accident",
+      "Politics"
     ],
     "language": "English",
     "content_type": "news",
-    "ai_summary": "Four senior employees of Air India's airport services provider AISATS are asked to resign following a viral video of office partying days after an Air India Boeing 787-8 Dreamliner crash in Ahmedabad killed 259. The company expresses regret for the video, seen as insensitive. AISATS is a joint venture between Air India Ltd and SATS Ltd. The Dreamliner crash killed all but one passenger.",
+    "ai_summary": "Two farmers, Bhura Ram and Surat Ram, were killed in Jaisalmer district when a car struck them while they were repairing a punctured tractor tire. The incident occurred at Sangar area as they were en route to Mohangarh for farming. Despite being rushed to a nearby hospital, the doctors pronounced them dead. Police are investigating the matter further.",
     "keywords": [
-      "Air India",
-      "AISATS",
-      "employees",
-      "party",
-      "video",
-      "social media",
-      "workplace",
-      "Boeing 787-8 Dreamliner",
-      "crash",
-      "solidarity"
+      "farmers",
+      "killed",
+      "car",
+      "hit",
+      "repairing",
+      "punctured",
+      "tractor",
+      "tyre",
+      "Sangar",
+      "Jaisalmer"
     ],
-    "quality_score": 0.7,
+    "quality_score": 0.8,
     "sentiment_label": "negative",
     "confidence_score": 0.0
   },
-  "processed_at": "2025-07-01T12:00:40.001030",
+  "processed_at": "2025-07-06T09:53:59.581347",
   "processing_status": "success"
 }

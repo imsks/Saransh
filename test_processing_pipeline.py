@@ -6,7 +6,7 @@ def test_processing_pipeline():
     # Step 1: Scrape an article
     scraper = UnifiedScraper()
     article = scraper.scrape_article(
-        "https://www.ndtv.com/india-news/office-party-days-after-air-india-boeing-787-crash-aisats-sacks-4-senior-employees-8777266",
+        "https://www.ndtv.com/india-news/2-farmers-repairing-punctured-tyre-die-after-being-hit-by-speeding-car-in-rajasthan-8831095?pfrom=home-ndtv_mainnavigation",
         "ndtv"
     )
     
