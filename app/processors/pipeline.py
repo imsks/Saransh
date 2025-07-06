@@ -2,10 +2,11 @@ from datetime import datetime
 from typing import List
 
 from app.processors.semantic_chunker import SemanticChunker
-from ..scrapers.models import ScrapedArticle
+from app.scrapers.models import ScrapedArticle
 from .models import ProcessedArticle
 from .analyzer import AIContentAnalyzer
 import logging
+from app.ai.embedding_service import EmbeddingService
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ class ContentProcessingPipeline:
     def __init__(self, chunk_size: int = 300, overlap: int = 50):
         self.chunker = SemanticChunker(chunk_size)
         self.analyzer = AIContentAnalyzer()
+        self.embedding_service = EmbeddingService()
     
     def process_article(self, article: ScrapedArticle) -> ProcessedArticle:
         """Process a single article through the pipeline"""
@@ -37,6 +39,12 @@ class ContentProcessingPipeline:
                 chunks=chunks,
                 analysis=analysis,
                 processed_at=datetime.now()
+            )
+            
+            # Store embeddings
+            self.embedding_service.store_article_chunks(
+                article_id=processed_article.original_article_id,
+                chunks=processed_article.chunks
             )
             
             logger.info(f"Successfully processed article: {article.title}")

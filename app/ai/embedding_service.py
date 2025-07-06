@@ -4,7 +4,7 @@ import logging
 from typing import List, Dict
 
 from app.ai.openai_service import OpenAIService
-from ..config import settings
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -12,19 +12,16 @@ class EmbeddingService:
     """Service for managing embeddings and vector operations"""
 
     def __init__(self):
-        self.client = chromadb.Client(Settings(
-            chroma_db_impl="duckdb+parquet",
-            persist_directory=settings.CHROMA_DB_PATH,
-        ))
+        self.client = chromadb.PersistentClient(path=settings.CHROMA_DB_PATH)
         self.openai_service = OpenAIService()
+        self.collection = self._setup_collection()
 
     def _setup_collection(self):
         """Setup the articles collection"""
-        # Get or create collection
         try:
             collection = self.client.get_or_create_collection(
-            name=settings.CHROMA_COLLECTION_NAME,
-            metadata={"description": "News article chunks and embeddings"}
+                name=settings.CHROMA_COLLECTION_NAME,
+                metadata={"description": "News article chunks and embeddings"}
             )
             logger.info(f"Collection '{settings.CHROMA_COLLECTION_NAME}' created or retrieved")
             return collection
@@ -44,7 +41,7 @@ class EmbeddingService:
         """Store article chunks as vectors"""
         try:
             # Extract chunk texts
-            texts = [chunk["content"] for chunk in chunks]
+            texts = [chunk.content for chunk in chunks]
             
             # Create embeddings
             embeddings = self.create_embeddings(texts)
@@ -56,9 +53,9 @@ class EmbeddingService:
             for i, chunk in enumerate(chunks):
                 metadata = {
                     "article_id": article_id,
-                    "chunk_index": chunk["chunk_index"],
-                    "word_count": chunk["word_count"],
-                    "source": chunk.get("source", "unknown")
+                    "chunk_index": chunk.chunk_index,
+                    "word_count": chunk.word_count,
+                    "source": getattr(chunk, 'source', "unknown")
                 }
                 metadatas.append(metadata)
                 ids.append(f"{article_id}_chunk_{i}")
