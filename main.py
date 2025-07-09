@@ -5,6 +5,10 @@ from datetime import datetime
 from app.ai.embedding_service import EmbeddingService
 from app.config import settings
 from app.utils import setup_logging
+from typing import Dict, Any, List
+import json
+import requests
+import logging
 
 # Setup logging
 setup_logging()
@@ -52,6 +56,45 @@ async def search_articles(query: str, limit: int = 5):
         "results": results,
         "total_found": len(results)
     }
+
+from app.agents.agent_manager import agent_manager
+
+# Add these new endpoints after your existing ones
+
+@app.post("/agents/curate")
+async def curate_article(article_data: Dict):
+    """Curate an article using the Content Curation Agent"""
+    result = agent_manager.execute_agent("curation", article_data)
+    return result
+
+@app.post("/agents/summarize")
+async def summarize_article(article_data: Dict):
+    """Summarize an article using the Summarization Agent"""
+    result = agent_manager.execute_agent("summarization", article_data)
+    return result
+
+@app.post("/agents/fact-check")
+async def fact_check_article(article_data: Dict):
+    """Fact-check an article using the Fact-Checking Agent"""
+    result = agent_manager.execute_agent("fact_checking", article_data)
+    return result
+
+@app.post("/agents/analyze-trends")
+async def analyze_trends(article_data: Dict):
+    """Analyze trends using the Trend Analysis Agent"""
+    result = agent_manager.execute_agent("trend_analysis", article_data)
+    return result
+
+@app.post("/agents/pipeline")
+async def run_agent_pipeline(article_data: Dict, pipeline: List[str] = None):
+    """Run a complete agent pipeline on an article"""
+    result = agent_manager.execute_pipeline(article_data, pipeline)
+    return result
+
+@app.get("/agents/stats")
+async def get_agent_stats():
+    """Get statistics for all agents"""
+    return agent_manager.get_agent_stats()
 
 if __name__ == "__main__":
     uvicorn.run(

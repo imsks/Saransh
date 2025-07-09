@@ -38,6 +38,8 @@ Saransh is an open-source alternative to InShorts that uses AI to:
 3. **Install dependencies**
 
     ```bash
+    CREATE requirements.in
+    pip-compile requirements.in
     pip install -r requirements.txt
     pip freeze > requirements.txt
     ```
