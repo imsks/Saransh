@@ -25,7 +25,7 @@ def test_agents():
             "article_data": {
                 "article_content": article_data["clean_content"],
                 "article_metadata": {
-                    "article_id": article_data["original_article_id"],
+                    "article_id": article_data["original_article_link"],
                     "title": article_data["title"],
                     "entities": article_data["analysis"]["entities"],
                     "key_topics": article_data["analysis"]["key_topics"]
@@ -54,7 +54,7 @@ def test_agents():
         "article_data": {
             "article_content": article_data["clean_content"],
             "article_metadata": {
-                "article_id": article_data["original_article_id"],
+                "article_id": article_data["original_article_link"],
                 "title": article_data["title"],
                 "entities": article_data["analysis"]["entities"],
                 "key_topics": article_data["analysis"]["key_topics"]

@@ -4,8 +4,6 @@ from datetime import datetime
 
 from app.agents.content_curation_agent import ContentCurationAgent
 from app.agents.summarization_agent import SummarizationAgent
-from app.agents.fact_checking_agent import FactCheckingAgent
-from app.agents.trend_analysis_agent import TrendAnalysisAgent
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +14,6 @@ class AgentManager:
         self.agents = {
             "curation": ContentCurationAgent(),
             "summarization": SummarizationAgent(),
-            "fact_checking": FactCheckingAgent(),
-            "trend_analysis": TrendAnalysisAgent()
         }
         logger.info(f"🤖 Agent Manager initialized with {len(self.agents)} agents")
     
@@ -47,7 +43,7 @@ class AgentManager:
     def execute_pipeline(self, input_data: Dict[str, Any], pipeline: List[str] = None) -> Dict[str, Any]:
         """Execute a pipeline of agents"""
         if pipeline is None:
-            pipeline = ["curation", "summarization", "fact_checking", "trend_analysis"]
+            pipeline = ["curation", "summarization"]
         
         results = {}
         start_time = datetime.now()

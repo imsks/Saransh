@@ -3,11 +3,10 @@ import uvicorn
 import logging
 from datetime import datetime
 from app.ai.embedding_service import EmbeddingService
+from app.agents.agent_manager import agent_manager
 from app.config import settings
 from app.utils import setup_logging
-from typing import Dict, Any, List
-import json
-import requests
+from typing import Dict, List
 import logging
 
 # Setup logging
@@ -57,9 +56,6 @@ async def search_articles(query: str, limit: int = 5):
         "total_found": len(results)
     }
 
-from app.agents.agent_manager import agent_manager
-
-# Add these new endpoints after your existing ones
 
 @app.post("/agents/curate")
 async def curate_article(article_data: Dict):

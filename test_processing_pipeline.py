@@ -16,7 +16,7 @@ def test_full_pipeline():
     print("📰 Step 1: Scraping article...")
     scraper = UnifiedScraper()
     article = scraper.scrape_article(
-        "https://www.ndtv.com/india-news/2-farmers-repairing-punctured-tyre-die-after-being-hit-by-speeding-car-in-rajasthan-8831095?pfrom=home-ndtv_mainnavigation",
+        "https://www.ndtv.com/lifestyle/assam-what-babydoll-archi-viral-fame-says-about-india-porn-problem-8878689",
         "ndtv"
     )
     
@@ -38,7 +38,7 @@ def test_full_pipeline():
     print("\n💾 Step 3: Storing embeddings...")
     embedding_service = EmbeddingService()
     success = embedding_service.store_article_chunks(
-        article_id=processed_article.original_article_id,
+        article_id=processed_article.original_article_link,
         chunks=processed_article.chunks
     )
     

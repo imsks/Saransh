@@ -32,7 +32,7 @@ class ContentAnalysis(BaseModel):
 
 class ProcessedArticle(BaseModel):
     """Final processed article with chunks and analysis"""
-    original_article_id: str
+    original_article_link: str
     title: str
     clean_content: str
     chunks: List[ContentChunk]

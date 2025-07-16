@@ -33,7 +33,7 @@ class ContentProcessingPipeline:
             
             # Step 3: Create processed article
             processed_article = ProcessedArticle(
-                original_article_id=article.url,
+                original_article_link=article.url,
                 title=article.title,
                 clean_content=article.content,
                 chunks=chunks,
@@ -43,7 +43,7 @@ class ContentProcessingPipeline:
             
             # Store embeddings
             self.embedding_service.store_article_chunks(
-                article_id=processed_article.original_article_id,
+                article_id=processed_article.original_article_link,
                 chunks=processed_article.chunks
             )
             
@@ -67,7 +67,7 @@ class ContentProcessingPipeline:
         analysis = basic_analyzer.analyze(article.content)
         
         return ProcessedArticle(
-            original_article_id=article.url,
+            original_article_link=article.url,
             title=article.title,
             clean_content=article.content,
             chunks=chunks,
