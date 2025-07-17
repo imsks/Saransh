@@ -33,6 +33,7 @@ async def shutdown_event():
     logger.info("🛑 Saransh AI News App shutting down...")
 
 if __name__ == "__main__":
+    # Development configuration with auto-reload
     uvicorn.run(
         "main:app",
         host=settings.HOST,
