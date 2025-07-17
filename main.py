@@ -19,7 +19,7 @@ app = FastAPI(
 )
 
 # Include versioned API router
-app.include_router(api_router, prefix="/api")
+app.include_router(api_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup_event():
