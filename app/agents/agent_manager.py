@@ -7,7 +7,7 @@ from app.agents.summarization_agent import SummarizationAgent
 
 logger = logging.getLogger(__name__)
 
-class AgentManager:
+class NewsManager:
     """Manages all LangChain agents and orchestrates their execution"""
     
     def __init__(self):
@@ -83,4 +83,4 @@ class AgentManager:
         return stats
 
 # Global agent manager instance
-agent_manager = AgentManager()
+agent_manager = NewsManager()
