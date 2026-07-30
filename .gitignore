@@ -1,7 +1,6 @@
 # Environment
 .env
-venv/
-
+.venv
 # Vector Database
 chroma_db/
 
