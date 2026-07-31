@@ -20,6 +20,7 @@ from typing import Generator
 # ---------------------------------------------------------------------------
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("OPENAI_API_KEY", "test-key-not-used")
+os.environ.setdefault("SARANSH_INGEST_API_KEY", "test-api-key")
 
 import pytest  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
