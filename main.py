@@ -5,6 +5,7 @@ from datetime import datetime
 from app.config import settings
 from app.utils import setup_logging
 from app.api import router as api_router
+from app.api.stories import router as stories_router
 
 # Setup logging
 setup_logging()
@@ -20,6 +21,8 @@ app = FastAPI(
 
 # Include versioned API router
 app.include_router(api_router, prefix="/api/v1")
+# Story ingestion endpoint at /api/stories (used by AI agents)
+app.include_router(stories_router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
