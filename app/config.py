@@ -34,6 +34,9 @@ class Settings:
     # Redis
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
+    # Story ingestion API key (required for POST /api/stories)
+    SARANSH_INGEST_API_KEY: Optional[str] = os.getenv("SARANSH_INGEST_API_KEY")
+
     # ChromaDB
     CHROMA_DB_PATH: str = os.getenv("CHROMA_DB_PATH", "./chroma_db")
     CHROMA_COLLECTION_NAME: str = os.getenv("CHROMA_COLLECTION_NAME", "articles")
