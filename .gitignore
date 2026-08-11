@@ -43,3 +43,14 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Node.js / Turborepo
+node_modules/
+.turbo/
+.npm/
+package-lock.json
+
+# Frontend build outputs
+.next/
+out/
+coverage/
