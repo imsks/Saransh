@@ -1,0 +1,61 @@
+.section {
+  border-top: 1px solid var(--line);
+  padding: 80px 0;
+  text-align: center;
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 560px) {
+  .inner {
+    padding: 0 20px;
+  }
+}
+
+.headline {
+  font-family: var(--font-fraunces);
+  font-size: clamp(26px, 3.5vw, 42px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.headlineRed {
+  color: var(--red);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.body {
+  font-family: var(--font-inter);
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--muted);
+  max-width: 46ch;
+  margin: 0 auto 28px;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--card);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 13px 24px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.btn:hover {
+  background: var(--red);
+}

@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-fraunces: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --surface: #EEEDEA;
+  --card: #FFFFFF;
+  --ink: #0F1419;
+  --muted: #6B6862;
+  --line: #E2E0D8;
+  --line-heavy: #C0BDB4;
+  --red: #C41E2E;
+  --red-tint: #FDF0F1;
+  --blue: #1A4F8A;
+  --blue-tint: #EDF2F8;
+  --green: #1F6B3E;
+  --green-tint: #EAF3ED;
+  --amber: #B8691A;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-inter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

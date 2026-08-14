@@ -1,0 +1,110 @@
+.section {
+  border-top: 1px solid var(--line);
+  padding: 80px 0;
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .inner {
+    padding: 0 20px;
+  }
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: block;
+}
+
+.headline {
+  font-family: var(--font-fraunces);
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.headlineItalic {
+  font-style: italic;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.body {
+  font-family: var(--font-inter);
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pillarCard {
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  padding: 22px 22px 20px;
+}
+
+.pillarHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pillarHeading {
+  font-family: var(--font-fraunces);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.pillarBody {
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.pillarLink {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+}

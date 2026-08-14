@@ -1,0 +1,100 @@
+.container {
+  position: sticky;
+  top: 80px;
+}
+
+@media (max-width: 860px) {
+  .container {
+    position: static;
+  }
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.feedLabel {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line-heavy);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.dotActive {
+  background: var(--ink);
+}
+
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  padding: 20px 22px 18px;
+  border-radius: 2px;
+  box-shadow: 4px 4px 0 rgba(15, 20, 25, 0.07);
+  animation: cardIn 0.3s ease forwards;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.navBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-heavy);
+  background: var(--card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: border-color 0.15s;
+}
+
+.navBtn:hover {
+  border-color: var(--ink);
+}
+
+.hintText {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  flex: 1;
+}

@@ -1,0 +1,132 @@
+.section {
+  border-top: 1px solid var(--line);
+  padding: 80px 0;
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .inner {
+    padding: 0 20px;
+  }
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--blue);
+  display: block;
+  margin-bottom: 14px;
+}
+
+.headline {
+  font-family: var(--font-fraunces);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.body {
+  font-family: var(--font-inter);
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.chip {
+  border: 1.5px solid var(--blue);
+  background: var(--blue-tint);
+  border-radius: 3px;
+  padding: 18px 20px;
+}
+
+.chipHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.chipHeaderLabel {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.17em;
+  color: var(--blue);
+}
+
+.chipName {
+  font-family: var(--font-inter);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.chipPromise {
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.chipDelayed {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.chipLink {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.contextNote {
+  border-left: 2px solid var(--line-heavy);
+  background: var(--surface);
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
