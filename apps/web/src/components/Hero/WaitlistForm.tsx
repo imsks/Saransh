@@ -19,28 +19,51 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     e.preventDefault();
 
     const nameResult = validateName(name);
-    if (!nameResult.valid) { setError(nameResult.message); return; }
+    if (!nameResult.valid) {
+      setError(nameResult.message);
+      return;
+    }
 
     const emailResult = validateEmail(email);
-    if (!emailResult.valid) { setError(emailResult.message); return; }
+    if (!emailResult.valid) {
+      setError(emailResult.message);
+      return;
+    }
 
     const langResult = validateLanguage(language);
-    if (!langResult.valid) { setError(langResult.message); return; }
+    if (!langResult.valid) {
+      setError(langResult.message);
+      return;
+    }
 
     setError("");
     setLoading(true);
 
     try {
-      await fetch("/api/waitlist", {
+      const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, language, source }),
       });
+
+      const payload = (await response.json().catch(() => ({}))) as { ok?: boolean; message?: string; duplicate?: boolean };
+
+      if (!response.ok) {
+        setError(payload.message || "Something went wrong. Please try again.");
+        return;
+      }
+
+      if (payload.ok || payload.duplicate) {
+        onSuccess(language);
+        return;
+      }
+
+      setError("Something went wrong. Please try again.");
     } catch (err) {
       console.error("[waitlist] submission error:", err);
+      setError("Unable to reach the server right now. Please try again.");
     } finally {
       setLoading(false);
-      onSuccess(language);
     }
   }
 
