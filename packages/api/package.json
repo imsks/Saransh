@@ -1,0 +1,13 @@
+{
+  "name": "@saransh/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Saransh API - FastAPI backend for AI-powered news aggregation",
+  "scripts": {
+    "build": "echo 'API build complete'",
+    "dev": "uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "lint": "python -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true",
+    "test": "python -m pytest tests/ -v",
+    "clean": "find . -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true"
+  }
+}
