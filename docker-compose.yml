@@ -1,24 +1,62 @@
+# Saransh local development infrastructure.
+# Start with: pnpm dev (or docker compose up -d)
+#
+# Services:
+#   - postgres: Primary database (port 5433)
+#   - redis: Caching and job queues (port 6379)
+#   - chroma: Vector database for embeddings (port 8001)
+
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: saransh-postgres
-
     environment:
       POSTGRES_DB: saransh_db
       POSTGRES_USER: saransh
       POSTGRES_PASSWORD: saransh_dev
-
     ports:
-      - "5433:5432"
-
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - saransh_postgres_data:/var/lib/postgresql/data
-
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U saransh -d saransh_db"]
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: saransh-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - saransh_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  chroma:
+    image: chromadb/chroma:0.5.23
+    container_name: saransh-chroma
+    ports:
+      - "${CHROMA_PORT:-8001}:8000"
+    volumes:
+      - saransh_chroma_data:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
 volumes:
   saransh_postgres_data:
+  saransh_redis_data:
+  saransh_chroma_data:

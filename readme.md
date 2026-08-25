@@ -1,53 +1,119 @@
-# 📰 Saransh - AI News App
+# 📰 Saransh — AI-Powered News Aggregation
 
-An AI-powered news aggregation app inspired by InShorts, built with FastAPI and modern AI technologies.
+India's news. Sourced, summarised, accountable.
 
-## 🎯 What is Saransh?
-
-Saransh is an open-source alternative to InShorts that uses AI to:
-
--   Scrape and process Indian news articles
--   Categorize and summarize news content
--   Provide intelligent news recommendations
--   Create 60-word summaries using AI
+Saransh pulls directly from verified sources and gives you a concise, attributed summary of each story. No opinion. No algorithm. No forwarded videos.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
--   Python 3.8+
--   PostgreSQL (for production)
--   Redis (optional, for caching)
+- Node.js 20+
+- Python 3.11+
+- Docker (for local infra)
+- pnpm (`npm install -g pnpm`)
 
-### Installation
+### One-Command Setup
 
-1. **Clone the repository**
+```bash
+# Clone and install
+git clone https://github.com/imsks/Saransh.git
+cd Saransh
+pnpm install
 
-    ```bash
-    git clone <your-repo-url>
-    cd Saransh
-    ```
+# Start everything (infra + API + web)
+pnpm dev
+```
 
-2. **Create the Virtual Environment**
+This starts:
+- **Postgres** on `localhost:5433`
+- **Redis** on `localhost:6379`
+- **ChromaDB** on `localhost:8001`
+- **FastAPI backend** on `localhost:8000`
+- **Next.js frontend** on `localhost:3001`
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+### Manual Setup
 
-3. **Install dependencies**
+```bash
+# 1. Start infrastructure only
+pnpm infra:up
 
-    ```bash
-    CREATE requirements.in
-    pip-compile requirements.in
-    pip install -r requirements.txt
-    pip freeze > requirements.txt
-    ```
+# 2. Set up Python environment
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
-4. **Setup environment variables**
+# 3. Copy environment file
+cp .env.example .env
+# Edit .env with your API keys
 
-    ```bash
-    # Copy the example environment file
+# 4. Start backend
+pnpm dev:api
+
+# 5. Start frontend (in another terminal)
+pnpm dev:web
+```
+
+## 📁 Repository Structure
+
+```
+saransh/
+├── app/                  # FastAPI backend
+│   ├── agents/           # AI agents (summarization, curation)
+│   ├── ai/               # LLM and embedding services
+│   ├── api/              # API routes
+│   ├── db/               # Database models
+│   ├── processors/       # Content processing pipeline
+│   ├── scrapers/         # News source scrapers
+│   └── utils/            # Shared utilities
+├── apps/
+│   └── web/              # Next.js frontend (@saransh/web)
+├── packages/             # Shared packages
+├── docs/
+│   └── adr/              # Architecture Decision Records
+└── docker-compose.yml    # Local development infrastructure
+```
+
+## 🛠️ Development Commands
+
+```bash
+pnpm dev          # Start everything
+pnpm dev:api      # Start FastAPI backend only
+pnpm dev:web      # Start Next.js frontend only
+pnpm infra:up     # Start Docker infrastructure
+pnpm infra:down   # Stop Docker infrastructure
+pnpm infra:logs   # View infrastructure logs
+pnpm build        # Build all packages
+pnpm lint         # Lint all packages
+pnpm test         # Run all tests
+```
+
+## 🧪 Testing
+
+```bash
+# Python tests
+pytest tests/ -v
+
+# Frontend tests (when configured)
+pnpm --filter @saransh/web test
+```
+
+## 📚 Documentation
+
+- [CONTEXT.md](./CONTEXT.md) — Domain glossary
+- [docs/adr/](./docs/adr/) — Architecture Decision Records
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a PR
+
+## 📄 License
+
+MIT
     cp env.example .env
 
     # Edit .env with your configuration

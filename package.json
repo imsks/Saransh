@@ -3,21 +3,24 @@
   "version": "1.0.0",
   "private": true,
   "description": "An AI-powered news aggregation app inspired by InShorts",
-  "workspaces": [
-    "packages/*"
-  ],
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
+    "dev": "docker compose up -d && concurrently -n api,web -c blue,green \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "cd . && uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "dev:web": "pnpm --filter @saransh/web dev",
     "build": "turbo run build",
-    "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f"
   },
   "devDependencies": {
-    "turbo": "^2.0.0"
-  },
-  "packageManager": "npm@10.0.0",
-  "engines": {
-    "node": ">=18.0.0"
+    "concurrently": "^8.2.0",
+    "turbo": "^2.3.3"
   }
 }
