@@ -1,12 +1,16 @@
 "use client";
 import { useState } from "react";
-import styles from "@/styles/WaitlistForm.module.css";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { validateName, validateEmail, validateLanguage } from "@/lib/validate";
 
 interface WaitlistFormProps {
   onSuccess: (language: string) => void;
 }
+
+const fieldLabelClass =
+  "font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-muted";
+const inputClass =
+  "w-full rounded-sm border-[1.5px] border-line-heavy bg-surface px-3 py-2.5 font-sans text-sm text-ink outline-none transition-[border-color,background] focus:border-ink focus:bg-card";
 
 export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   const [name, setName] = useState("");
@@ -47,7 +51,11 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         body: JSON.stringify({ name, email, language, source }),
       });
 
-      const payload = (await response.json().catch(() => ({}))) as { ok?: boolean; message?: string; duplicate?: boolean };
+      const payload = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        message?: string;
+        duplicate?: boolean;
+      };
 
       if (!response.ok) {
         setError(payload.message || "Something went wrong. Please try again.");
@@ -69,65 +77,82 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   }
 
   return (
-    <form className={styles.container} onSubmit={handleSubmit} id="waitlist" noValidate>
-      <span className={styles.formLabel}>Join the waitlist</span>
-      <div className={styles.grid}>
-        <div className={styles.field}>
-          <label htmlFor="wl-name" className={styles.fieldLabel}>Name</label>
+    <form
+      className="rounded-sm border-[1.5px] border-ink bg-card p-7"
+      onSubmit={handleSubmit}
+      id="waitlist"
+      noValidate
+    >
+      <span className="mb-4 block font-mono text-[9.5px] font-semibold uppercase tracking-[0.18em] text-muted">
+        Join the waitlist
+      </span>
+      <div className="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="relative flex flex-col gap-1.5">
+          <label htmlFor="wl-name" className={fieldLabelClass}>
+            Name
+          </label>
           <input
             id="wl-name"
             type="text"
             required
-            className={styles.input}
+            className={inputClass}
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             disabled={loading}
             autoComplete="name"
           />
         </div>
-        <div className={styles.field}>
-          <label htmlFor="wl-email" className={styles.fieldLabel}>Email address</label>
+        <div className="relative flex flex-col gap-1.5">
+          <label htmlFor="wl-email" className={fieldLabelClass}>
+            Email address
+          </label>
           <input
             id="wl-email"
             type="email"
             required
-            className={styles.input}
+            className={inputClass}
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             autoComplete="email"
           />
         </div>
       </div>
-      <div className={styles.grid}>
-        <div className={styles.field}>
-          <label htmlFor="wl-language" className={styles.fieldLabel}>Preferred language</label>
-          <div className={styles.selectWrapper}>
+      <div className="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="relative flex flex-col gap-1.5">
+          <label htmlFor="wl-language" className={fieldLabelClass}>
+            Preferred language
+          </label>
+          <div className="relative after:pointer-events-none after:absolute after:right-2.5 after:top-1/2 after:-translate-y-1/2 after:text-xs after:text-muted after:content-['↓']">
             <select
               id="wl-language"
               required
-              className={styles.select}
+              className={`${inputClass} cursor-pointer appearance-none pr-8`}
               value={language}
-              onChange={e => setLanguage(e.target.value)}
+              onChange={(e) => setLanguage(e.target.value)}
               disabled={loading}
             >
-              <option value="" disabled>Select language</option>
+              <option value="" disabled>
+                Select language
+              </option>
               <option value="Hindi">Hindi</option>
               <option value="English">English</option>
             </select>
           </div>
         </div>
-        <div className={styles.field}>
-          <label htmlFor="wl-source" className={styles.fieldLabel}>
+        <div className="relative flex flex-col gap-1.5">
+          <label htmlFor="wl-source" className={fieldLabelClass}>
             How did you find us?
-            <span className={styles.fieldLabelOptional}>(optional)</span>
+            <span className="ml-1 font-normal normal-case tracking-normal text-line-heavy">
+              (optional)
+            </span>
           </label>
-          <div className={styles.selectWrapper}>
+          <div className="relative after:pointer-events-none after:absolute after:right-2.5 after:top-1/2 after:-translate-y-1/2 after:text-xs after:text-muted after:content-['↓']">
             <select
               id="wl-source"
-              className={styles.select}
+              className={`${inputClass} cursor-pointer appearance-none pr-8`}
               value={source}
-              onChange={e => setSource(e.target.value)}
+              onChange={(e) => setSource(e.target.value)}
               disabled={loading}
             >
               <option value="">Select</option>
@@ -141,11 +166,28 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
           </div>
         </div>
       </div>
-      {error && <p className={styles.error} role="alert">{error}</p>}
-      <button type="submit" className={styles.submitBtn} disabled={loading}>
-        {loading ? <span className={styles.spinner} aria-hidden="true" /> : "Join the waitlist →"}
+      {error && (
+        <p className="mb-2 font-mono text-[10px] text-red" role="alert">
+          {error}
+        </p>
+      )}
+      <button
+        type="submit"
+        className="mb-2.5 flex w-full items-center justify-center gap-2 rounded-sm border-none bg-ink px-0 py-3.5 font-mono text-xs font-semibold uppercase tracking-wider text-card transition-colors hover:bg-red disabled:cursor-not-allowed disabled:bg-line-heavy"
+        disabled={loading}
+      >
+        {loading ? (
+          <span
+            className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-transparent border-t-white"
+            aria-hidden="true"
+          />
+        ) : (
+          "Join the waitlist →"
+        )}
       </button>
-      <p className={styles.microcopy}>One email when we&apos;re ready — no newsletters, no spam.</p>
+      <p className="font-mono text-[9.5px] leading-[1.65] tracking-wide text-muted">
+        One email when we&apos;re ready — no newsletters, no spam.
+      </p>
     </form>
   );
 }

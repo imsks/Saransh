@@ -1,24 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --font-fraunces: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  --font-inter: "Inter", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "Courier New", monospace;
-  --surface: #EEEDEA;
-  --card: #FFFFFF;
-  --ink: #0F1419;
-  --muted: #6B6862;
-  --line: #E2E0D8;
-  --line-heavy: #C0BDB4;
-  --red: #C41E2E;
-  --red-tint: #FDF0F1;
-  --blue: #1A4F8A;
-  --blue-tint: #EDF2F8;
-  --green: #1F6B3E;
-  --green-tint: #EAF3ED;
-  --amber: #B8691A;
+  --background: #eeedea;
+  --foreground: #0f1419;
 }
 
 html {
@@ -26,15 +12,89 @@ html {
 }
 
 body {
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--font-inter);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif), Georgia, serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-card-in {
+  animation: card-in 0.3s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease forwards;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: #eeedea;
+  --color-card: #ffffff;
+  --color-ink: #0f1419;
+  --color-muted: #6b6862;
+  --color-line: #e2e0d8;
+  --color-line-heavy: #c0bdb4;
+
+  --color-red: #c41e2e;
+  --color-red-tint: #fdf0f1;
+  --color-blue: #1a4f8a;
+  --color-blue-tint: #edf2f8;
+  --color-green: #1f6b3e;
+  --color-green-tint: #eaf3ed;
+  --color-amber: #b8691a;
 }

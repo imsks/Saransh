@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import styles from "@/styles/StoryCarousel.module.css";
 import StoryCard from "./StoryCard";
 import type { Story } from "@/constants/stories";
 
@@ -61,16 +60,18 @@ export default function StoryCarouselClient({
   if (stories.length === 0) return null;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.topRow}>
-        <span className={styles.feedLabel}>
+    <div className="sticky top-20 max-[860px]:static">
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-muted">
           {isLive ? "Live feed" : "Live feed preview"}
         </span>
-        <div className={styles.dots}>
+        <div className="flex items-center gap-1.5">
           {stories.map((_, i) => (
             <button
               key={i}
-              className={`${styles.dot} ${i === index ? styles.dotActive : ""}`}
+              className={`h-1.5 w-1.5 cursor-pointer rounded-full border-none p-0 transition-colors ${
+                i === index ? "bg-ink" : "bg-line-heavy"
+              }`}
               onClick={() => goTo(i)}
               aria-label={`Story ${i + 1}`}
             />
@@ -79,18 +80,28 @@ export default function StoryCarouselClient({
       </div>
       <div
         key={key}
-        className={styles.card}
+        className="animate-card-in rounded-sm border-[1.5px] border-ink bg-card px-[22px] pb-[18px] pt-5 shadow-[4px_4px_0_rgba(15,20,25,0.07)]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <StoryCard story={stories[index]} />
       </div>
-      <div className={styles.bottomRow}>
-        <button className={styles.navBtn} onClick={prev} aria-label="Previous story">
+      <div className="mt-3 flex items-center justify-between">
+        <button
+          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-line-heavy bg-card text-xs transition-colors hover:border-ink"
+          onClick={prev}
+          aria-label="Previous story"
+        >
           ←
         </button>
-        <span className={styles.hintText}>Swipe through stories — takes under 5 minutes</span>
-        <button className={styles.navBtn} onClick={next} aria-label="Next story">
+        <span className="flex-1 text-center font-mono text-[10px] text-muted">
+          Swipe through stories — takes under 5 minutes
+        </span>
+        <button
+          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-line-heavy bg-card text-xs transition-colors hover:border-ink"
+          onClick={next}
+          aria-label="Next story"
+        >
           →
         </button>
       </div>
