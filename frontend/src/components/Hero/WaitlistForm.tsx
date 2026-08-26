@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import styles from "@/styles/WaitlistForm.module.css";
+import { getApiBaseUrl } from "@/lib/api-base";
 import { validateName, validateEmail, validateLanguage } from "@/lib/validate";
 
 interface WaitlistFormProps {
@@ -20,19 +21,19 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
     const nameResult = validateName(name);
     if (!nameResult.valid) {
-      setError(nameResult.message);
+      setError(nameResult.message ?? "Name is required.");
       return;
     }
 
     const emailResult = validateEmail(email);
     if (!emailResult.valid) {
-      setError(emailResult.message);
+      setError(emailResult.message ?? "Email is required.");
       return;
     }
 
     const langResult = validateLanguage(language);
     if (!langResult.valid) {
-      setError(langResult.message);
+      setError(langResult.message ?? "Please select a language.");
       return;
     }
 
@@ -40,7 +41,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/waitlist", {
+      const response = await fetch(`${getApiBaseUrl()}/waitlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, language, source }),

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import logging
 from datetime import datetime
@@ -6,6 +7,7 @@ from app.config import settings
 from app.utils import setup_logging
 from app.api import router as api_router
 from app.api.stories import router as stories_router
+from app.db.bootstrap import init_database
 
 # Setup logging
 setup_logging()
@@ -19,6 +21,16 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 # Include versioned API router
 app.include_router(api_router, prefix="/api/v1")
 # Story ingestion endpoint at /api/stories (used by AI agents)
@@ -30,6 +42,7 @@ async def startup_event():
     logger.info(f"Environment: {settings.APP_ENV}")
     logger.info(f"Debug mode: {settings.DEBUG}")
     logger.info(f"Startup time: {datetime.now()}")
+    init_database()
 
 @app.on_event("shutdown")
 async def shutdown_event():
