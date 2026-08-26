@@ -20,35 +20,40 @@ git clone https://github.com/imsks/Saransh.git
 cd Saransh
 
 # Start Rajniti Postgres (separate terminal)
-cd ../Rajniti && make dev-api BUILD=0
+cd ../Rajniti && make up
 
-# Bootstrap Saransh
+# Start Saransh
 cd ../Saransh
-make bootstrap
-make dev
+make setup
+make up
 ```
 
 This starts:
 - **Redis** on `localhost:6379`
 - **ChromaDB** on `localhost:8002`
 - **FastAPI backend** on `localhost:8001`
-- **Next.js frontend** on `localhost:3001`
 
-Postgres is shared with Rajniti (`rajniti` database on port `5432`).
+Postgres is shared with Rajniti (`rajniti` database on port `5432`). Frontend: `cd frontend && npm ci && npm run dev` (http://localhost:3001).
+
+```bash
+make stop    # when you're done
+```
 
 ### Manual Setup
 
 ```bash
 make setup
-make install
-make frontend-install
-make db-init
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+pip install psycopg2-binary email-validator
+cd frontend && npm ci
+PYTHONPATH=. python scripts/init_db.py
 
 # Terminal 1 — API
-make run
+source venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 
 # Terminal 2 — frontend
-make frontend-dev
+cd frontend && npm run dev
 ```
 
 ## 📁 Repository Structure
@@ -67,30 +72,22 @@ saransh/
 ├── scripts/              # DB init and utilities
 ├── tests/                # Python API tests
 ├── docs/adr/             # Architecture Decision Records
-├── Makefile              # Dev orchestration (like Rajniti)
-├── docker-compose.yml    # Redis + Chroma (no local Postgres)
+├── Makefile              # setup / up / stop
+├── docker-compose.yml    # API + Redis + Chroma (no local Postgres)
 └── main.py               # FastAPI entrypoint
 ```
 
-## 🛠️ Development Commands
+## 🛠️ Makefile
 
 ```bash
-make help           # Show all commands
-make dev            # Full local stack (infra + API + frontend)
-make run            # FastAPI only (:8001)
-make frontend-dev   # Next.js only (:3001)
-make infra-up       # Redis + Chroma
-make infra-down     # Stop Docker infra
-make db-init        # Create Saransh tables in shared Postgres
-make test           # Python + frontend tests
-make lint           # Frontend eslint + typecheck
-make build          # Production Next.js build
+make setup   # Copy .env templates
+make up      # Start API + Redis + Chroma
+make stop    # Stop Docker containers
 ```
 
 ## 🧪 Testing
 
 ```bash
-make test           # All tests
-make test COV=1     # Python tests with coverage
+source venv/bin/activate && pytest tests/ -v
 cd frontend && npm test
 ```

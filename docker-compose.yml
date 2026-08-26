@@ -1,6 +1,6 @@
 # Saransh local development infrastructure.
 # Postgres is shared with Rajniti — start it from the Rajniti repo:
-#   cd ../Rajniti && make dev-api
+#   cd ../Rajniti && make up
 #
 # Services:
 #   - saransh-api: FastAPI backend (port 8001)
