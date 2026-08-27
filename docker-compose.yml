@@ -1,24 +1,64 @@
+# Saransh local development infrastructure.
+# Postgres is shared with Rajniti — start it from the Rajniti repo:
+#   cd ../Rajniti && make up
+#
+# Services:
+#   - saransh-api: FastAPI backend (port 8001)
+#   - redis: Caching and job queues (port 6379)
+#   - chroma: Vector database for embeddings (port 8001 host maps to 8000 in container — use 8002)
+
 services:
-  postgres:
-    image: postgres:16
-    container_name: saransh-postgres
-
+  saransh-api:
+    image: python:3.11-slim
+    container_name: saransh-api
+    working_dir: /app
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: saransh_db
-      POSTGRES_USER: saransh
-      POSTGRES_PASSWORD: saransh_dev
-
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@host.docker.internal:5432/rajniti}
+      PORT: "8001"
     ports:
-      - "5433:5432"
-
+      - "${SARANSH_API_PORT:-8001}:8001"
     volumes:
-      - saransh_postgres_data:/var/lib/postgresql/data
+      - .:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    container_name: saransh-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - saransh_redis_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U saransh -d saransh_db"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  chroma:
+    image: chromadb/chroma:0.5.23
+    container_name: saransh-chroma
+    ports:
+      - "${CHROMA_PORT:-8002}:8000"
+    volumes:
+      - saransh_chroma_data:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
-  saransh_postgres_data:
+  saransh_redis_data:
+  saransh_chroma_data:

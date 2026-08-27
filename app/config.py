@@ -8,8 +8,11 @@ load_dotenv()
 class Settings:
     """Application settings loaded from environment variables"""
     
-    # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://localhost:5432/saransh_db")
+    # Database — shared Rajniti Postgres by default
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "postgresql://postgres:postgres@127.0.0.1:5432/rajniti",
+    )
     
     # OpenAI Configuration
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
@@ -29,7 +32,7 @@ class Settings:
     
     # Server
     HOST: str = os.getenv("HOST", "0.0.0.0")
-    PORT: int = int(os.getenv("PORT", "8000"))
+    PORT: int = int(os.getenv("PORT", "8001"))
     
     # Redis
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")

@@ -25,7 +25,7 @@ os.environ.setdefault("SARANSH_INGEST_API_KEY", "test-api-key")
 import pytest  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, event  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
@@ -64,13 +64,17 @@ PG_UUID.process_result_value = _pg_uuid_process_result_value
 # 3. Import only the stories module (avoids running agents/scrapers __init__)
 # ---------------------------------------------------------------------------
 from app.db.database import Base, get_db  # noqa: E402
-from app.api.stories import router as stories_router  # noqa: E402
+from tests.router_loader import _load_router  # noqa: E402
+
+stories_router = _load_router("app/api/stories.py", "saransh_test_stories")
+waitlist_router = _load_router("app/api/waitlist.py", "saransh_test_waitlist")
 
 # ---------------------------------------------------------------------------
 # 4. Build a minimal test FastAPI app with only the stories router
 # ---------------------------------------------------------------------------
 test_app = FastAPI()
 test_app.include_router(stories_router, prefix="/api")
+test_app.include_router(waitlist_router, prefix="/api/v1")
 
 # ---------------------------------------------------------------------------
 # 5. Create a single in-memory SQLite engine for the whole test session
@@ -100,6 +104,13 @@ def db_session():
     connection = engine.connect()
     transaction = connection.begin()
     session = TestingSessionLocal(bind=connection)
+    connection.begin_nested()
+
+    @event.listens_for(session, "after_transaction_end")
+    def restart_savepoint(sess, trans):  # noqa: ANN001
+        if trans.nested and not trans._parent.nested:  # type: ignore[attr-defined]
+            connection.begin_nested()
+
     yield session
     session.close()
     transaction.rollback()
