@@ -1,0 +1,39 @@
+# Install hooks: `pre-commit install`
+# https://pre-commit.com
+default_language_version:
+  python: python3
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        types: [python]
+        files: ^(app|tests|scripts)/
+      - id: end-of-file-fixer
+        types: [python]
+        files: ^(app|tests|scripts)/
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        language_version: python3
+        files: ^(app|tests|scripts)/
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        files: ^(app|tests|scripts)/
+
+  # Flake8 + mypy run in CI. Omit here so local commits are not blocked by
+  # legacy imports; run flake8/mypy before pushing.
+  - repo: local
+    hooks:
+      - id: react-doctor
+        name: react-doctor
+        entry: sh -c 'react_doctor_output=$(mktemp "${TMPDIR:-/tmp}/react-doctor-hook.XXXXXX"); if (cd frontend && npx --no-install react-doctor --staged --blocking warning) > "$react_doctor_output" 2>&1; then rm -f "$react_doctor_output"; else cat "$react_doctor_output" >&2; rm -f "$react_doctor_output"; printf "%s\n" "React Doctor found staged regressions." "Run (cd frontend && npx react-doctor --staged --blocking warning) to inspect." "Want them fixed? Ask your agent to run that command and resolve the findings." >&2; fi'
+        language: system
+        files: ^frontend/
+        pass_filenames: false

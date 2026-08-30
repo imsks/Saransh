@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title="Saransh - AI News App",
-    description="An AI-powered news aggregation app inspired by InShorts",
+    description="Story ingestion and waitlist API for Saransh",
     version="1.0.0",
     debug=settings.DEBUG
 )
@@ -33,7 +33,7 @@ app.add_middleware(
 
 # Include versioned API router
 app.include_router(api_router, prefix="/api/v1")
-# Story ingestion endpoint at /api/stories (used by AI agents)
+# Story ingestion endpoint at /api/stories
 app.include_router(stories_router, prefix="/api")
 
 @app.on_event("startup")

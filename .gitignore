@@ -5,9 +5,6 @@
 venv
 .venv/
 
-# Vector Database
-chroma_db/
-
 # Python
 __pycache__/
 *.py[cod]

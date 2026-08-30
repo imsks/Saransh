@@ -9,8 +9,9 @@ UUID dialect type, we:
    so that the SQLAlchemy engine created in ``app.db.database`` points at SQLite.
 2. Patch the PostgreSQL UUID column type to be transparent on SQLite.
 3. Build a minimal FastAPI application that registers only the stories router
-   to avoid any startup side-effects from agents or scrapers.
+   to avoid loading optional modules at import time.
 """
+
 import os
 import uuid
 from typing import Generator
@@ -26,13 +27,13 @@ import pytest  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, event  # noqa: E402
-from sqlalchemy.orm import sessionmaker  # noqa: E402
-from sqlalchemy.pool import StaticPool  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 2. Patch the PostgreSQL UUID type to work transparently with SQLite
 # ---------------------------------------------------------------------------
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID  # noqa: E402
+from sqlalchemy.orm import sessionmaker  # noqa: E402
+from sqlalchemy.pool import StaticPool  # noqa: E402
 from sqlalchemy.types import CHAR  # noqa: E402
 
 
@@ -61,7 +62,7 @@ PG_UUID.process_bind_param = _pg_uuid_process_bind_param
 PG_UUID.process_result_value = _pg_uuid_process_result_value
 
 # ---------------------------------------------------------------------------
-# 3. Import only the stories module (avoids running agents/scrapers __init__)
+# 3. Import only the API modules needed for tests
 # ---------------------------------------------------------------------------
 from app.db.database import Base, get_db  # noqa: E402
 from tests.router_loader import _load_router  # noqa: E402

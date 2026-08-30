@@ -31,3 +31,10 @@ def test_makefile_target_dry_runs(target: str):
         check=False,
     )
     assert result.returncode == 0, result.stderr or result.stdout
+
+
+def test_makefile_up_advertises_api_frontend_and_postgres():
+    text = MAKEFILE.read_text()
+    assert ":8001" in text
+    assert ":3001" in text
+    assert "5433" in text

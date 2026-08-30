@@ -1,21 +1,22 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import WhatSection from "@/components/WhatSection";
-import RajnitiSection from "@/components/RajnitiSection";
-import BottomCTA from "@/components/BottomCTA";
-import Footer from "@/components/Footer";
+import { Footer, Navbar } from "@/components/layout";
+import {
+  BottomCTA,
+  HeroSection,
+  RajnitiSection,
+  WhatSection,
+} from "@/components/marketing";
 
 export default function Home() {
   return (
-    <>
+    <div className="min-h-screen overflow-x-hidden bg-paper">
       <Navbar />
       <main>
-        <Hero />
+        <HeroSection />
         <WhatSection />
         <RajnitiSection />
         <BottomCTA />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

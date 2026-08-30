@@ -4,85 +4,113 @@ India's news. Sourced, summarised, accountable.
 
 Saransh pulls directly from verified sources and gives you a concise, attributed summary of each story. No opinion. No algorithm. No forwarded videos.
 
-## 🚀 Quick Start
+## Pick a setup path
 
-### Prerequisites
+| Goal | Command | What you get |
+|------|---------|--------------|
+| **First time** | `make setup` | Copies `.env` templates |
+| **Start** | `make up` | API `:8001` + Next.js `:3001` + Postgres `:5433` |
+| **Stop** | `make stop` | Stops Docker containers |
 
-- Node.js 20+
-- Python 3.11+
-- Docker (for Redis + Chroma)
-- Shared Postgres from [Rajniti](../Rajniti) on `localhost:5432`
+> **Port note:** API defaults to `:8001` (Rajniti uses `:8000`). Postgres publishes on `:5433` so it can run beside Rajniti on `:5432`.
 
-### One-Command Setup
+---
+
+## Quick Start — Docker (recommended)
+
+**Prerequisites:** Docker Desktop (or Docker Engine + Compose v2).
 
 ```bash
-git clone https://github.com/imsks/Saransh.git
-cd Saransh
-
-# Start Rajniti Postgres (separate terminal)
-cd ../Rajniti && make up
-
-# Start Saransh
-cd ../Saransh
-make setup
-make up
+git clone https://github.com/imsks/Saransh.git && cd Saransh
+make setup   # copies .env.example → .env, frontend/.env.example → frontend/.env
+make up      # API + Next.js + Postgres
 ```
 
-This starts:
-- **Redis** on `localhost:6379`
-- **ChromaDB** on `localhost:8002`
-- **FastAPI backend** on `localhost:8001`
+**Verify**
 
-Postgres is shared with Rajniti (`rajniti` database on port `5432`). Frontend: `cd frontend && npm ci && npm run dev` (http://localhost:3001).
+```bash
+curl http://localhost:8001/api/v1/health          # API
+open http://localhost:3001                         # frontend
+```
+
+**First `make up` note:** Frontend dependencies install during `docker compose build` (you may see npm output in the build log). After you change `package.json` / `package-lock.json`, rebuild the web image: `docker compose build saransh-web`.
 
 ```bash
 make stop    # when you're done
 ```
 
-### Manual Setup
+---
+
+## Quick Start — Local (no Docker)
+
+**Prerequisites:** Python 3.11+, Node 20+, PostgreSQL.
 
 ```bash
+git clone https://github.com/imsks/Saransh.git && cd Saransh
 make setup
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-pip install psycopg2-binary email-validator
-cd frontend && npm ci
+# Set DATABASE_URL in .env
 PYTHONPATH=. python scripts/init_db.py
-
-# Terminal 1 — API
-source venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-
-# Terminal 2 — frontend
-cd frontend && npm run dev
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload   # API on :8001
 ```
+
+**Frontend (separate terminal):**
+
+```bash
+cd frontend && npm ci && npm run dev   # http://localhost:3001
+```
+
+---
+
+## Makefile
+
+| Command | Description |
+|---------|-------------|
+| `make setup` | Copy `.env` templates (safe to re-run) |
+| `make up` | Start API + frontend + Postgres |
+| `make stop` | Stop Docker containers |
+
+---
+
+## Environment variables
+
+See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.example).
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `SARANSH_INGEST_API_KEY` | Yes* | Protects `POST /api/stories` |
+
+\* Required in production; set any secret for local ingest testing.
+
+**API surface**
+
+| Endpoint | Auth | Purpose |
+|----------|------|---------|
+| `POST /api/stories` | `X-API-Key` | Ingest a structured story |
+| `GET /api/stories` | Public | List stories |
+| `GET /api/stories/{id}` | Public | Story detail |
+| `POST /api/v1/waitlist` | Public | Join launch waitlist |
+| `GET /api/v1/health` | Public | Health check |
+
+---
 
 ## 📁 Repository Structure
 
 ```
 saransh/
-├── app/                  # FastAPI backend
-│   ├── agents/           # AI agents (summarization, curation)
-│   ├── ai/               # LLM and embedding services
-│   ├── api/              # API routes
-│   ├── db/               # Database models
-│   ├── processors/       # Content processing pipeline
-│   ├── scrapers/         # News source scrapers
-│   └── utils/            # Shared utilities
+├── app/
+│   ├── api/              # stories, waitlist, health
+│   ├── db/               # SQLAlchemy models + bootstrap
+│   └── utils/            # logging
 ├── frontend/             # Next.js frontend
-├── scripts/              # DB init and utilities
-├── tests/                # Python API tests
-├── docs/adr/             # Architecture Decision Records
-├── Makefile              # setup / up / stop
-├── docker-compose.yml    # API + Redis + Chroma (no local Postgres)
-└── main.py               # FastAPI entrypoint
-```
-
-## 🛠️ Makefile
-
-```bash
-make setup   # Copy .env templates
-make up      # Start API + Redis + Chroma
-make stop    # Stop Docker containers
+├── scripts/              # DB init
+├── tests/
+├── Dockerfile
+├── docker-compose.yml
+├── Makefile
+└── main.py
 ```
 
 ## 🧪 Testing
@@ -91,3 +119,51 @@ make stop    # Stop Docker containers
 source venv/bin/activate && pytest tests/ -v
 cd frontend && npm test
 ```
+
+### Code quality
+
+```bash
+pip install -r requirements-test.txt
+pre-commit install                       # once
+
+black app tests scripts && isort app tests scripts
+flake8 app tests scripts && mypy app
+
+cd frontend && npm run lint && npm run typecheck
+```
+
+CI runs all of the above plus a production frontend build — see
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+---
+
+## 🎨 Design system — Sutra
+
+Saransh's UI primitives come from [Sutra](https://github.com/imsks/sutra-ui), the shared
+open-source design system it uses alongside Rajniti.
+
+```tsx
+import { Button, Card, Input, Badge, ThemeToggle } from "@sutra_ui/ui";
+```
+
+`frontend/src/app/globals.css` imports `@sutra_ui/tokens/css` and then re-skins the
+`--sutra-*` variables to Saransh's newsprint palette — warm paper, near-black ink,
+masthead red as the accent. Sutra components inherit that look with **no forking**, and the
+whole palette flips under `.dark`, so light and dark come from one source of truth.
+
+If a component is generic enough for Rajniti to want it too, it belongs in Sutra, not here.
+
+---
+
+## 🤝 Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) first — it covers branching, house rules, the PR
+template, and the one rule that matters most: **never publish an unsourced Summary.**
+
+- [Good first issues](https://github.com/imsks/Saransh/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+- Agent briefs for AI-assisted work: [`.github/agents/`](.github/agents/)
+- Domain glossary: [CONTEXT.md](CONTEXT.md)
+
+## 📄 License
+
+[MIT](LICENSE)

@@ -1,64 +1,70 @@
-# Saransh local development infrastructure.
-# Postgres is shared with Rajniti — start it from the Rajniti repo:
-#   cd ../Rajniti && make up
-#
-# Services:
-#   - saransh-api: FastAPI backend (port 8001)
-#   - redis: Caching and job queues (port 6379)
-#   - chroma: Vector database for embeddings (port 8001 host maps to 8000 in container — use 8002)
+# Saransh local development — API + web + Postgres
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: saransh-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rajniti}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rajniti}
+      POSTGRES_DB: ${POSTGRES_DB:-rajniti}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
   saransh-api:
-    image: python:3.11-slim
+    build:
+      context: .
+      target: development
     container_name: saransh-api
-    working_dir: /app
-    command: >
-      sh -c "pip install -r requirements.txt &&
-             uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
     env_file:
       - .env
-    environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@host.docker.internal:5432/rajniti}
-      PORT: "8001"
     ports:
       - "${SARANSH_API_PORT:-8001}:8001"
     volumes:
-      - .:/app
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - ./app:/app/app
+      - ./main.py:/app/main.py
+      - ./scripts:/app/scripts
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: saransh-redis
+  saransh-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: saransh-web
+    depends_on:
+      saransh-api:
+        condition: service_started
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${FRONTEND_PORT:-3001}:3001"
     volumes:
-      - saransh_redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-    restart: unless-stopped
-
-  chroma:
-    image: chromadb/chroma:0.5.23
-    container_name: saransh-chroma
-    ports:
-      - "${CHROMA_PORT:-8002}:8000"
-    volumes:
-      - saransh_chroma_data:/chroma/chroma
+      - ./frontend/src:/app/src
+      - ./frontend/next.config.mjs:/app/next.config.mjs
+      - ./frontend/postcss.config.mjs:/app/postcss.config.mjs
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/vitest.config.ts:/app/vitest.config.ts
+      - ./frontend/.eslintrc.json:/app/.eslintrc.json
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/package-lock.json:/app/package-lock.json
     environment:
-      IS_PERSISTENT: "TRUE"
-      ANONYMIZED_TELEMETRY: "FALSE"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      NEXT_PUBLIC_API_URL: http://localhost:8001/api/v1
+      NEXT_PUBLIC_API_ORIGIN: http://localhost:8001
+      API_REWRITE_TARGET: http://saransh-api:8001
+      WATCHPACK_POLLING: "true"
+    env_file:
+      - path: frontend/.env
+        required: false
     restart: unless-stopped
 
 volumes:
-  saransh_redis_data:
-  saransh_chroma_data:
+  postgres_data:

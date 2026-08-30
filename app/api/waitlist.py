@@ -58,7 +58,9 @@ def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
     normalized_email = payload.email.strip().lower()
 
     if not EMAIL_PATTERN.match(normalized_email):
-        raise HTTPException(status_code=400, detail="Please enter a valid email address.")
+        raise HTTPException(
+            status_code=400, detail="Please enter a valid email address."
+        )
 
     entry = Waitlist(
         name=payload.name.strip(),

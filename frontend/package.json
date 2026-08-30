@@ -12,16 +12,18 @@
     "clean": "rm -rf .next node_modules"
   },
   "dependencies": {
+    "@sutra_ui/tokens": "^0.0.1",
+    "@sutra_ui/ui": "^0.0.1",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "@tailwindcss/postcss": "^4",
     "eslint-config-next": "14.2.35",
     "tailwindcss": "^4",
     "typescript": "^5",
