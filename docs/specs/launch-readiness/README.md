@@ -117,7 +117,7 @@ Five slices have no blockers and can run in parallel: **01, 02, 03, 06** and Raj
 | 08 Deploy tooling | [08-deploy-tooling.md](08-deploy-tooling.md) | [#38](https://github.com/imsks/Saransh/issues/38) | AFK | 01 |
 | 09 First production deploy | [09-first-deploy.md](09-first-deploy.md) | [#39](https://github.com/imsks/Saransh/issues/39) | HITL | 07, 08 |
 | 10 Frontend to Vercel | [10-frontend-vercel.md](10-frontend-vercel.md) | [#40](https://github.com/imsks/Saransh/issues/40) | HITL | 09 |
-| 11 Rajniti cross-promo | `docs/specs/saransh-cross-promo.md` in imsks/Rajniti | [imsks/Rajniti#261](https://github.com/imsks/Rajniti/issues/261) | AFK | — |
+| 11 Rajniti cross-promo | [`docs/specs/saransh-cross-promo.md`](https://github.com/imsks/Rajniti/blob/development/docs/specs/saransh-cross-promo.md) in imsks/Rajniti | [imsks/Rajniti#261](https://github.com/imsks/Rajniti/issues/261) | AFK | — |
 
 **AFK** slices can be implemented and merged by an agent with no human in the loop. **HITL** slices
 need credentials or a judgement call a human has to make — Supabase, GCP and Vercel access.
