@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 import os
 
-from app.db.database import Base, engine
 from app.db import models  # noqa: F401
+from app.db.database import Base, engine
 
 logger = logging.getLogger(__name__)
 

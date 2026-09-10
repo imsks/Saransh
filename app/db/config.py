@@ -27,7 +27,11 @@ def get_database_url(raw_url: str | None = None) -> str:
     )
     parsed = urlparse(url)
 
-    if parsed.hostname == "postgres" and not _in_docker() and not _resolve_hostname("postgres"):
+    if (
+        parsed.hostname == "postgres"
+        and not _in_docker()
+        and not _resolve_hostname("postgres")
+    ):
         netloc = parsed.netloc.replace("postgres", "localhost", 1)
         parsed = parsed._replace(netloc=netloc)
         url = urlunparse(parsed)

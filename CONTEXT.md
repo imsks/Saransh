@@ -22,6 +22,18 @@ _Avoid_: Publisher, outlet, feed
 An AI-generated concise version of a Story, attributed to its source Articles.
 _Avoid_: Excerpt, blurb, digest
 
+**Ingest**:
+The act of accepting a structured Story, with its Sources, from an Agent over the API. An ingested Story enters as a Draft.
+_Avoid_: Upload, submit, push, create
+
+**Publication Status**:
+Where a Story sits in its lifecycle. A **Draft** is ingested but not publicly readable. A **Published** Story is visible to readers.
+_Avoid_: State (reserved for geography), stage, visibility
+
+**Waitlist Signup**:
+A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two.
+_Avoid_: Subscriber, lead, user, waitlister
+
 ### Processing Terms
 
 **Chunk**:

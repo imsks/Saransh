@@ -1,8 +1,11 @@
-from fastapi import APIRouter
 from datetime import datetime
+
+from fastapi import APIRouter
+
 from app.config import settings
 
 router = APIRouter()
+
 
 @router.get("/")
 async def root():
@@ -11,8 +14,9 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "environment": settings.APP_ENV,
-        "api_version": "v1"
+        "api_version": "v1",
     }
+
 
 @router.get("/health")
 async def health_check():
@@ -21,5 +25,5 @@ async def health_check():
         "timestamp": datetime.now().isoformat(),
         "service": "saransh-news-app",
         "environment": settings.APP_ENV,
-        "api_version": "v1"
-    } 
+        "api_version": "v1",
+    }

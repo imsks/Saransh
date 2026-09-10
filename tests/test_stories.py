@@ -1,7 +1,6 @@
 """Tests for the story ingestion (POST), list (GET), and detail (GET) endpoints."""
-import uuid
 
-import pytest
+import uuid
 
 STORIES_URL = "/api/stories"
 
@@ -94,8 +93,16 @@ def test_ingest_story_multiple_sources(client):
     payload = {
         **VALID_PAYLOAD,
         "sources": [
-            {"outlet": "Source A", "url": "https://source-a.com/1", "source_type": "news"},
-            {"outlet": "Source B", "url": "https://source-b.com/2", "source_type": "blog"},
+            {
+                "outlet": "Source A",
+                "url": "https://source-a.com/1",
+                "source_type": "news",
+            },
+            {
+                "outlet": "Source B",
+                "url": "https://source-b.com/2",
+                "source_type": "blog",
+            },
         ],
     }
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
@@ -156,7 +163,9 @@ def test_invalid_source_url_returns_422(client):
     """A source with an invalid URL must be rejected."""
     payload = {
         **VALID_PAYLOAD,
-        "sources": [{"outlet": "Bad Source", "url": "not-a-valid-url", "source_type": "news"}],
+        "sources": [
+            {"outlet": "Bad Source", "url": "not-a-valid-url", "source_type": "news"}
+        ],
     }
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
     assert response.status_code == 422
@@ -209,13 +218,17 @@ def test_post_without_api_key_returns_401(client):
 
 def test_post_with_invalid_api_key_returns_401(client):
     """POST with a wrong X-API-Key should return 401."""
-    response = client.post(STORIES_URL, json=VALID_PAYLOAD, headers={"X-API-Key": "wrong-key"})
+    response = client.post(
+        STORIES_URL, json=VALID_PAYLOAD, headers={"X-API-Key": "wrong-key"}
+    )
     assert response.status_code == 401
 
 
 def test_post_with_valid_api_key_returns_201(client):
     """POST with the correct X-API-Key should return 201."""
-    response = client.post(STORIES_URL, json=VALID_PAYLOAD, headers={"X-API-Key": VALID_API_KEY})
+    response = client.post(
+        STORIES_URL, json=VALID_PAYLOAD, headers={"X-API-Key": VALID_API_KEY}
+    )
     assert response.status_code == 201
 
 
@@ -249,8 +262,17 @@ def test_list_stories_response_fields(client):
     client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
     data = client.get(STORIES_URL).json()
     story = data[0]
-    for field in ("id", "title_en", "title_hi", "summary_en", "summary_hi",
-                  "category", "status", "sources", "created_at"):
+    for field in (
+        "id",
+        "title_en",
+        "title_hi",
+        "summary_en",
+        "summary_hi",
+        "category",
+        "status",
+        "sources",
+        "created_at",
+    ):
         assert field in story
 
 

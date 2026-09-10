@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci \
+    && sha256sum package-lock.json | awk '{print $1}' > node_modules/.saransh-lock-hash
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+COPY next.config.mjs postcss.config.mjs tsconfig.json vitest.config.ts .eslintrc.json ./
+COPY src ./src
+
+EXPOSE 3001
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3001"]

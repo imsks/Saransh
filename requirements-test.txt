@@ -1,0 +1,39 @@
+# Test dependencies for Saransh
+# Install with: pip install -r requirements-test.txt
+
+# Testing framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-xdist>=3.5.0  # Parallel test execution
+pytest-mock>=3.12.0
+pytest-asyncio>=0.23.0
+pytest-timeout>=2.2.0
+pytest-env>=1.1.0  # Environment variables for tests
+
+# Coverage
+coverage[toml]>=7.3.0
+
+# Mocking
+responses>=0.24.0  # HTTP request mocking
+freezegun>=1.2.0  # Time mocking
+factory-boy>=3.3.0  # Test fixtures
+
+# Git hooks
+pre-commit>=3.7.0
+
+# Code quality
+flake8>=6.1.0
+black>=23.11.0
+isort>=5.12.0
+mypy>=1.7.0
+python-dotenv>=1.0.0
+
+# Security testing
+bandit>=1.7.0
+
+# Type stubs
+types-requests>=2.31.0
+
+# Additional utilities
+faker>=22.0.0  # Fake data generation
+PyYAML>=6.0.0  # docker-compose contract tests

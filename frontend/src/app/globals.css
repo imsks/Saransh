@@ -1,10 +1,111 @@
 @import "tailwindcss";
+@import "@sutra_ui/tokens/css";
+
+/*
+ * Sutra ships pre-composed Tailwind class strings inside its bundle. Tailwind
+ * only generates the utilities it can see, so its dist must be a scan source.
+ */
+@source "../../node_modules/@sutra_ui/ui/dist";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ---------------------------------------------------------------------------
+ * Saransh newsprint palette — light
+ *
+ * Saransh reads like a broadsheet: warm paper ground, near-black ink, one
+ * accent per meaning. Sutra's semantic tokens are re-skinned here so its
+ * primitives inherit the same look without forking a single component.
+ * ------------------------------------------------------------------------ */
 :root {
   --background: #eeedea;
   --foreground: #0f1419;
+
+  --paper: #eeedea;
+  --card: #ffffff;
+  --ink: #0f1419;
+  --muted: #6b6862;
+  --line: #e2e0d8;
+  --line-heavy: #c0bdb4;
+
+  --red: #c41e2e;
+  --red-tint: #fdf0f1;
+  --blue: #1a4f8a;
+  --blue-tint: #edf2f8;
+  --green: #1f6b3e;
+  --green-tint: #eaf3ed;
+  --amber: #b8691a;
+
+  /* Sutra override — masthead red is Saransh's accent. */
+  --sutra-color-surface: var(--card);
+  --sutra-color-surface-subtle: var(--paper);
+  --sutra-color-surface-muted: #e5e3dd;
+  --sutra-color-content: var(--ink);
+  --sutra-color-content-muted: var(--muted);
+  --sutra-color-content-subtle: #8b877f;
+  --sutra-color-border: var(--line);
+  --sutra-color-border-strong: var(--line-heavy);
+  --sutra-color-ring: var(--red);
+  --sutra-color-accent: var(--red);
+  --sutra-color-accent-hover: #a41724;
+  --sutra-color-accent-contrast: #ffffff;
+  --sutra-color-accent-subtle: var(--red-tint);
+  --sutra-color-accent-subtle-content: #8f1622;
+  --sutra-color-success: var(--green);
+  --sutra-color-success-subtle: var(--green-tint);
+  --sutra-color-success-subtle-content: #14522e;
+  --sutra-color-info: var(--blue);
+  --sutra-color-info-subtle: var(--blue-tint);
+  --sutra-color-info-subtle-content: #143d6b;
+  --sutra-color-warning: var(--amber);
+
+  --sutra-font-display: var(--font-fraunces), Georgia, serif;
+  --sutra-font-body: var(--font-inter), system-ui, sans-serif;
+  --sutra-font-mono: var(--font-plex-mono), "Courier New", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+ * Newsprint palette — dark (night edition)
+ * ------------------------------------------------------------------------ */
+.dark {
+  --background: #12130f;
+  --foreground: #eceae4;
+
+  --paper: #12130f;
+  --card: #1a1b17;
+  --ink: #eceae4;
+  --muted: #9d9a91;
+  --line: #2c2d27;
+  --line-heavy: #43443c;
+
+  --red: #f0616f;
+  --red-tint: #2a1417;
+  --blue: #7fa9dd;
+  --blue-tint: #131c28;
+  --green: #63b385;
+  --green-tint: #12241a;
+  --amber: #d99a4e;
+
+  --sutra-color-surface: var(--card);
+  --sutra-color-surface-subtle: var(--paper);
+  --sutra-color-surface-muted: #232420;
+  --sutra-color-content: var(--ink);
+  --sutra-color-content-muted: var(--muted);
+  --sutra-color-content-subtle: #78756d;
+  --sutra-color-border: var(--line);
+  --sutra-color-border-strong: var(--line-heavy);
+  --sutra-color-ring: var(--red);
+  --sutra-color-accent: var(--red);
+  --sutra-color-accent-hover: #f5808b;
+  --sutra-color-accent-contrast: #12130f;
+  --sutra-color-accent-subtle: var(--red-tint);
+  --sutra-color-accent-subtle-content: #f6a3ac;
+  --sutra-color-success: var(--green);
+  --sutra-color-success-subtle: var(--green-tint);
+  --sutra-color-success-subtle-content: #a8dcc0;
+  --sutra-color-info: var(--blue);
+  --sutra-color-info-subtle: var(--blue-tint);
+  --sutra-color-info-subtle-content: #b3cdec;
+  --sutra-color-warning: var(--amber);
 }
 
 html {
@@ -12,7 +113,7 @@ html {
 }
 
 body {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--background);
@@ -23,7 +124,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,18 +184,58 @@ h4 {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-surface: #eeedea;
-  --color-card: #ffffff;
-  --color-ink: #0f1419;
-  --color-muted: #6b6862;
-  --color-line: #e2e0d8;
-  --color-line-heavy: #c0bdb4;
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-heavy: var(--line-heavy);
 
-  --color-red: #c41e2e;
-  --color-red-tint: #fdf0f1;
-  --color-blue: #1a4f8a;
-  --color-blue-tint: #edf2f8;
-  --color-green: #1f6b3e;
-  --color-green-tint: #eaf3ed;
-  --color-amber: #b8691a;
+  --color-red: var(--red);
+  --color-red-tint: var(--red-tint);
+  --color-blue: var(--blue);
+  --color-blue-tint: var(--blue-tint);
+  --color-green: var(--green);
+  --color-green-tint: var(--green-tint);
+  --color-amber: var(--amber);
+
+  /* Sutra semantic utilities — the class names `@sutra_ui/ui` ships with. */
+  --color-surface: var(--sutra-color-surface);
+  --color-surface-subtle: var(--sutra-color-surface-subtle);
+  --color-surface-muted: var(--sutra-color-surface-muted);
+  --color-content: var(--sutra-color-content);
+  --color-content-muted: var(--sutra-color-content-muted);
+  --color-content-subtle: var(--sutra-color-content-subtle);
+  --color-border: var(--sutra-color-border);
+  --color-border-strong: var(--sutra-color-border-strong);
+  --color-ring: var(--sutra-color-ring);
+  --color-accent: var(--sutra-color-accent);
+  --color-accent-hover: var(--sutra-color-accent-hover);
+  --color-accent-contrast: var(--sutra-color-accent-contrast);
+  --color-accent-subtle: var(--sutra-color-accent-subtle);
+  --color-accent-subtle-content: var(--sutra-color-accent-subtle-content);
+  --color-success: var(--sutra-color-success);
+  --color-success-contrast: var(--sutra-color-success-contrast);
+  --color-success-subtle: var(--sutra-color-success-subtle);
+  --color-success-subtle-content: var(--sutra-color-success-subtle-content);
+  --color-warning: var(--sutra-color-warning);
+  --color-warning-contrast: var(--sutra-color-warning-contrast);
+  --color-warning-subtle: var(--sutra-color-warning-subtle);
+  --color-warning-subtle-content: var(--sutra-color-warning-subtle-content);
+  --color-danger: var(--sutra-color-danger);
+  --color-danger-contrast: var(--sutra-color-danger-contrast);
+  --color-danger-subtle: var(--sutra-color-danger-subtle);
+  --color-danger-subtle-content: var(--sutra-color-danger-subtle-content);
+  --color-info: var(--sutra-color-info);
+  --color-info-contrast: var(--sutra-color-info-contrast);
+  --color-info-subtle: var(--sutra-color-info-subtle);
+  --color-info-subtle-content: var(--sutra-color-info-subtle-content);
+
+  --shadow-md: var(--sutra-shadow-md);
+  --shadow-lg: var(--sutra-shadow-lg);
+  --shadow-xl: var(--sutra-shadow-xl);
+
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "Courier New", monospace;
 }
