@@ -1,0 +1,907 @@
+[
+  {
+    "title_en": "Nagpur Metro Phase 2 Construction to Begin Next Month",
+    "title_hi": "नागपुर मेट्रो चरण 2 का निर्माण अगले महीने शुरू होगा",
+    "summary_en": "Nagpur Metro Rail Corporation announced that construction of Phase 2 extension will commence next month, connecting outer suburbs to the city center. The project is expected to reduce traffic congestion significantly along the Wardha Road corridor. Officials said the extension will be completed within three years.",
+    "summary_hi": "नागपुर मेट्रो रेल कॉर्पोरेशन ने घोषणा की कि चरण 2 विस्तार का निर्माण अगले महीने शुरू होगा, जो बाहरी उपनगरों को शहर के केंद्र से जोड़ेगा। इस परियोजना से वर्धा रोड गलियारे पर यातायात जाम में काफी कमी आने की उम्मीद है। अधिकारियों ने कहा कि विस्तार तीन साल में पूरा हो जाएगा।",
+    "category": "transport",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/nagpur-metro-phase2-construction",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/nagpur-metro-vistar-2024",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Pune Municipal Corporation Launches New Waste Segregation Drive",
+    "title_hi": "पुणे नगर निगम ने नई कचरा पृथक्करण मुहिम शुरू की",
+    "summary_en": "The Pune Municipal Corporation has launched a citywide campaign to enforce door-to-door waste segregation into wet and dry categories. Fines will be imposed on households and commercial establishments that fail to comply after a two-month grace period. Civic officials say the initiative aims to improve the city's waste management infrastructure.",
+    "summary_hi": "पुणे नगर निगम ने घर-घर कचरे को गीले और सूखे में अलग करने के लिए शहरव्यापी अभियान शुरू किया है। दो महीने की छूट अवधि के बाद पालन न करने वाले घरों और व्यावसायिक प्रतिष्ठानों पर जुर्माना लगाया जाएगा। नागरिक अधिकारियों का कहना है कि इस पहल का उद्देश्य शहर के कचरा प्रबंधन ढांचे में सुधार करना है।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/pune-waste-segregation-drive",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Mumbai Local Trains to Get New AC Rakes on Harbour Line",
+    "title_hi": "मुंबई लोकल ट्रेनों को हार्बर लाइन पर नए एसी रेक मिलेंगे",
+    "summary_en": "Central Railway has confirmed that six new air-conditioned local train rakes will be deployed on the Harbour Line starting next quarter. The move aims to ease overcrowding during peak commuting hours. Commuter groups have welcomed the decision but urged authorities to maintain affordable fares.",
+    "summary_hi": "सेंट्रल रेलवे ने पुष्टि की है कि अगली तिमाही से हार्बर लाइन पर छह नए वातानुकूलित लोकल ट्रेन रेक तैनात किए जाएंगे। इस कदम का उद्देश्य व्यस्त समय के दौरान भीड़भाड़ को कम करना है। यात्री समूहों ने इस फैसले का स्वागत किया लेकिन अधिकारियों से किराया किफायती रखने का आग्रह किया।",
+    "category": "transport",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/mumbai-harbour-line-ac-rakes",
+        "source_type": "news"
+      },
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/central-railway-new-trains",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nashik Farmers Protest Over Delayed Onion Procurement",
+    "title_hi": "नासिक के किसानों का विलंबित प्याज खरीद पर विरोध प्रदर्शन",
+    "summary_en": "Hundreds of onion farmers in Nashik district staged a protest outside the district collector's office demanding faster procurement and better pricing. Farmers said trucks have been waiting for days at mandis without being unloaded. The state agriculture department has promised to review the procurement process this week.",
+    "summary_hi": "नासिक जिले में सैकड़ों प्याज किसानों ने जिला कलेक्टर कार्यालय के बाहर तेज खरीद और बेहतर मूल्य की मांग को लेकर विरोध प्रदर्शन किया। किसानों ने कहा कि ट्रक कई दिनों से मंडियों में उतारे बिना खड़े हैं। राज्य कृषि विभाग ने इस सप्ताह खरीद प्रक्रिया की समीक्षा करने का वादा किया है।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/nashik-onion-farmers-protest",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/nashik-kisan-andolan",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Wardha District Hospital Inaugurates New Dialysis Unit",
+    "title_hi": "वर्धा जिला अस्पताल में नई डायलिसिस इकाई का उद्घाटन",
+    "summary_en": "The Wardha district government hospital opened a new dialysis unit with ten machines, aimed at reducing the burden on patients who previously had to travel to Nagpur for treatment. The unit was inaugurated by the district health officer in the presence of local representatives. Officials said the facility will offer free dialysis to below-poverty-line patients.",
+    "summary_hi": "वर्धा जिला सरकारी अस्पताल में दस मशीनों के साथ नई डायलिसिस इकाई खोली गई, जिसका उद्देश्य उन मरीजों का बोझ कम करना है जिन्हें पहले इलाज के लिए नागपुर जाना पड़ता था। इस इकाई का उद्घाटन जिला स्वास्थ्य अधिकारी ने स्थानीय प्रतिनिधियों की उपस्थिति में किया। अधिकारियों ने कहा कि यह सुविधा गरीबी रेखा से नीचे के मरीजों को मुफ्त डायलिसिस प्रदान करेगी।",
+    "category": "health",
+    "state": "Maharashtra",
+    "district": "Wardha",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/wardha-dialysis-unit-launch",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Amravati School Introduces Digital Classrooms in Rural Areas",
+    "title_hi": "अमरावती स्कूल ने ग्रामीण क्षेत्रों में डिजिटल कक्षाएं शुरू कीं",
+    "summary_en": "The Amravati zilla parishad has rolled out digital classrooms equipped with smart boards in fifteen rural schools. The initiative is part of a broader push to improve learning outcomes in remote villages with limited access to trained teachers. Education officials said more schools will be covered in the next phase.",
+    "summary_hi": "अमरावती जिला परिषद ने पंद्रह ग्रामीण स्कूलों में स्मार्ट बोर्ड से सुसज्जित डिजिटल कक्षाएं शुरू की हैं। यह पहल दूरदराज के गांवों में प्रशिक्षित शिक्षकों की सीमित पहुंच के बीच सीखने के परिणामों को बेहतर बनाने की व्यापक कोशिश का हिस्सा है। शिक्षा अधिकारियों ने कहा कि अगले चरण में और स्कूलों को शामिल किया जाएगा।",
+    "category": "education",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/amravati-digital-classrooms",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/amravati-rural-education-push",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Chandrapur Coal Mine Workers Demand Better Safety Equipment",
+    "title_hi": "चंद्रपुर कोयला खदान श्रमिकों ने बेहतर सुरक्षा उपकरणों की मांग की",
+    "summary_en": "Workers at a coal mine in Chandrapur district held a demonstration demanding upgraded safety gear following a minor accident last week. Union representatives said several complaints about faulty equipment had gone unaddressed for months. Mine management has agreed to a meeting with worker representatives later this week.",
+    "summary_hi": "चंद्रपुर जिले की एक कोयला खदान में श्रमिकों ने पिछले सप्ताह हुई एक छोटी दुर्घटना के बाद उन्नत सुरक्षा उपकरणों की मांग को लेकर प्रदर्शन किया। यूनियन प्रतिनिधियों ने कहा कि खराब उपकरणों की कई शिकायतें महीनों से अनसुनी थीं। खदान प्रबंधन इस सप्ताह श्रमिक प्रतिनिधियों के साथ बैठक के लिए सहमत हुआ है।",
+    "category": "crime",
+    "state": "Maharashtra",
+    "district": "Chandrapur",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/chandrapur-mine-safety-protest",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Akola Startup Develops App for Real-Time Crop Disease Detection",
+    "title_hi": "अकोला के स्टार्टअप ने फसल रोग की वास्तविक समय पहचान के लिए ऐप विकसित किया",
+    "summary_en": "A tech startup based in Akola has launched a mobile app that uses image recognition to detect crop diseases in real time. Farmers can photograph affected leaves and receive suggested treatments within seconds. The state agriculture department has expressed interest in piloting the app across several talukas.",
+    "summary_hi": "अकोला स्थित एक तकनीकी स्टार्टअप ने एक मोबाइल ऐप लॉन्च किया है जो छवि पहचान का उपयोग करके वास्तविक समय में फसल रोगों का पता लगाता है। किसान प्रभावित पत्तियों की तस्वीर लेकर सेकंडों में उपचार सुझाव प्राप्त कर सकते हैं। राज्य कृषि विभाग ने कई तालुकाओं में इस ऐप का पायलट परीक्षण करने में रुचि व्यक्त की है।",
+    "category": "technology",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/akola-crop-disease-app",
+        "source_type": "news"
+      },
+      {
+        "outlet": "ANI",
+        "url": "https://example.com/news/akola-agritech-startup",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Yavatmal District Records Above Normal Monsoon Rainfall",
+    "title_hi": "यवतमाल जिले में सामान्य से अधिक मानसून वर्षा दर्ज",
+    "summary_en": "The Yavatmal district weather office reported that rainfall this monsoon season is running fifteen percent above the long-term average. Officials cautioned that low-lying areas near the Painganga river could face waterlogging in the coming weeks. Farmers have welcomed the rains after two years of deficit monsoons.",
+    "summary_hi": "यवतमाल जिला मौसम कार्यालय ने बताया कि इस मानसून सीजन में वर्षा दीर्घकालिक औसत से पंद्रह प्रतिशत अधिक है। अधिकारियों ने चेतावनी दी कि पैनगंगा नदी के निकट निचले इलाकों में आने वाले हफ्तों में जलभराव हो सकता है। दो वर्षों की कमी वाले मानसून के बाद किसानों ने बारिश का स्वागत किया है।",
+    "category": "weather",
+    "state": "Maharashtra",
+    "district": "Yavatmal",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/yavatmal-monsoon-rainfall-report",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Gadchiroli Tribal Youth Win State-Level Archery Championship",
+    "title_hi": "गडचिरोली के आदिवासी युवाओं ने राज्य स्तरीय तीरंदाजी चैंपियनशिप जीती",
+    "summary_en": "A team of tribal youth from Gadchiroli district won gold medals at the state-level archery championship held in Pune. Coaches said the athletes trained using traditional bows before transitioning to modern equipment. The state sports department has announced scholarships for the winning team members.",
+    "summary_hi": "गडचिरोली जिले के आदिवासी युवाओं की एक टीम ने पुणे में आयोजित राज्य स्तरीय तीरंदाजी चैंपियनशिप में स्वर्ण पदक जीते। कोचों ने बताया कि खिलाड़ियों ने आधुनिक उपकरणों में बदलाव से पहले पारंपरिक धनुष से प्रशिक्षण लिया था। राज्य खेल विभाग ने विजेता टीम के सदस्यों के लिए छात्रवृत्ति की घोषणा की है।",
+    "category": "sports",
+    "state": "Maharashtra",
+    "district": "Gadchiroli",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/gadchiroli-archery-championship",
+        "source_type": "news"
+      },
+      {
+        "outlet": "BBC Hindi",
+        "url": "https://example.com/news/gadchiroli-tribal-archers-gold",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Maharashtra Assembly Passes Bill on Urban Land Use Reform",
+    "title_hi": "महाराष्ट्र विधानसभा ने शहरी भूमि उपयोग सुधार विधेयक पारित किया",
+    "summary_en": "The Maharashtra state assembly passed a bill aimed at streamlining land use conversion processes for urban development projects. Opposition members raised concerns about potential misuse by builders, but the bill passed with a majority vote. The government said the reform would speed up housing project approvals across the state.",
+    "summary_hi": "महाराष्ट्र राज्य विधानसभा ने शहरी विकास परियोजनाओं के लिए भूमि उपयोग परिवर्तन प्रक्रियाओं को सुव्यवस्थित करने के उद्देश्य से एक विधेयक पारित किया। विपक्षी सदस्यों ने बिल्डरों द्वारा संभावित दुरुपयोग को लेकर चिंता जताई, लेकिन विधेयक बहुमत से पारित हो गया। सरकार ने कहा कि इस सुधार से राज्य भर में आवासीय परियोजना अनुमोदन में तेजी आएगी।",
+    "category": "politics",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/maharashtra-land-use-bill",
+        "source_type": "news"
+      },
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/assembly-passes-land-reform",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nagpur Traffic Police Deploy AI Cameras at Major Intersections",
+    "title_hi": "नागपुर यातायात पुलिस ने प्रमुख चौराहों पर एआई कैमरे लगाए",
+    "summary_en": "Nagpur traffic police have installed AI-powered surveillance cameras at twenty major intersections to automatically detect signal violations and illegal parking. Officials said the system will issue e-challans within minutes of a violation being recorded. The initiative is part of a broader smart city traffic management plan.",
+    "summary_hi": "नागपुर यातायात पुलिस ने बीस प्रमुख चौराहों पर सिग्नल उल्लंघन और अवैध पार्किंग का स्वतः पता लगाने के लिए एआई-संचालित निगरानी कैमरे लगाए हैं। अधिकारियों ने कहा कि यह प्रणाली उल्लंघन दर्ज होने के मिनटों के भीतर ई-चालान जारी करेगी। यह पहल एक व्यापक स्मार्ट सिटी यातायात प्रबंधन योजना का हिस्सा है।",
+    "category": "technology",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "sources": [
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/nagpur-ai-traffic-cameras",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Pune IT Firm Announces 2000 New Jobs in Expansion Plan",
+    "title_hi": "पुणे की आईटी कंपनी ने विस्तार योजना में 2000 नई नौकरियों की घोषणा की",
+    "summary_en": "A leading IT services company headquartered in Pune announced plans to hire 2,000 new employees over the next year as part of its expansion into cloud computing services. The company will open a new campus in Hinjewadi to accommodate the growth. Local officials welcomed the investment, citing its potential impact on the regional job market.",
+    "summary_hi": "पुणे में मुख्यालय वाली एक प्रमुख आईटी सेवा कंपनी ने क्लाउड कंप्यूटिंग सेवाओं में विस्तार के तहत अगले वर्ष 2,000 नए कर्मचारियों की भर्ती की योजना की घोषणा की। कंपनी इस वृद्धि को समायोजित करने के लिए हिंजेवाड़ी में एक नया परिसर खोलेगी। स्थानीय अधिकारियों ने इस निवेश का स्वागत किया और क्षेत्रीय नौकरी बाजार पर इसके संभावित प्रभाव का उल्लेख किया।",
+    "category": "business",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/pune-it-firm-2000-jobs",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/pune-hinjewadi-expansion",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Mumbai Coastal Road Project Nears Completion Ahead of Deadline",
+    "title_hi": "मुंबई तटीय सड़क परियोजना समय से पहले पूरी होने के करीब",
+    "summary_en": "The Brihanmumbai Municipal Corporation confirmed that the coastal road project connecting Marine Drive to the western suburbs is nearing completion, ahead of its original deadline. Officials said the road is expected to significantly cut travel time between south and north Mumbai once opened. Final testing of tunnel ventilation systems is currently underway.",
+    "summary_hi": "बृहन्मुंबई महानगरपालिका ने पुष्टि की कि मरीन ड्राइव को पश्चिमी उपनगरों से जोड़ने वाली तटीय सड़क परियोजना अपनी मूल समय सीमा से पहले पूरी होने के करीब है। अधिकारियों ने कहा कि खुलने के बाद इस सड़क से दक्षिण और उत्तर मुंबई के बीच यात्रा समय में काफी कमी आने की उम्मीद है। सुरंग वेंटिलेशन प्रणालियों का अंतिम परीक्षण वर्तमान में चल रहा है।",
+    "category": "transport",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/mumbai-coastal-road-nearing-completion",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nashik Civic Body Cracks Down on Illegal Hoardings",
+    "title_hi": "नासिक नागरिक निकाय ने अवैध होर्डिंग्स पर कार्रवाई की",
+    "summary_en": "The Nashik Municipal Corporation launched a drive to remove illegal advertising hoardings across the city following safety concerns raised after recent storms. Over 200 unauthorized structures have been taken down so far. Officials warned of strict penalties for advertisers who fail to obtain proper permits.",
+    "summary_hi": "नासिक नगर निगम ने हाल के तूफानों के बाद उठाई गई सुरक्षा चिंताओं के मद्देनजर शहर भर में अवैध विज्ञापन होर्डिंग्स हटाने का अभियान शुरू किया। अब तक 200 से अधिक अनधिकृत संरचनाएं हटाई जा चुकी हैं। अधिकारियों ने उचित परमिट प्राप्त न करने वाले विज्ञापनदाताओं के लिए कड़े दंड की चेतावनी दी है।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/nashik-illegal-hoardings-drive",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/nashik-hoarding-removal",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Wardha Police Bust Interstate Vehicle Theft Ring",
+    "title_hi": "वर्धा पुलिस ने अंतरराज्यीय वाहन चोरी गिरोह का भंडाफोड़ किया",
+    "summary_en": "Wardha police arrested five members of an interstate vehicle theft ring operating across Maharashtra and Madhya Pradesh. Officers recovered twelve stolen motorcycles and two cars during raids conducted over the weekend. Investigators believe the gang had been active for over a year before being caught.",
+    "summary_hi": "वर्धा पुलिस ने महाराष्ट्र और मध्य प्रदेश में सक्रिय एक अंतरराज्यीय वाहन चोरी गिरोह के पांच सदस्यों को गिरफ्तार किया। सप्ताहांत में की गई छापेमारी के दौरान अधिकारियों ने बारह चोरी की मोटरसाइकिलें और दो कारें बरामद कीं। जांचकर्ताओं का मानना है कि यह गिरोह पकड़े जाने से पहले एक साल से अधिक समय से सक्रिय था।",
+    "category": "crime",
+    "state": "Maharashtra",
+    "district": "Wardha",
+    "sources": [
+      {
+        "outlet": "ANI",
+        "url": "https://example.com/news/wardha-vehicle-theft-ring-busted",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Amravati Cotton Farmers Get Boost from New MSP Announcement",
+    "title_hi": "नई एमएसपी घोषणा से अमरावती के कपास किसानों को मिला बढ़ावा",
+    "summary_en": "The state government announced an increased minimum support price for cotton, benefiting thousands of farmers in Amravati district. Farmer associations said the hike, though welcome, still falls short of covering rising input costs. Local mandis are expected to see increased arrivals in the coming weeks.",
+    "summary_hi": "राज्य सरकार ने कपास के लिए न्यूनतम समर्थन मूल्य में वृद्धि की घोषणा की, जिससे अमरावती जिले के हजारों किसानों को लाभ होगा। किसान संगठनों ने कहा कि यह वृद्धि स्वागत योग्य होने के बावजूद बढ़ती इनपुट लागत को कवर करने में अपर्याप्त है। आने वाले हफ्तों में स्थानीय मंडियों में आवक बढ़ने की उम्मीद है।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/amravati-cotton-msp-hike",
+        "source_type": "news"
+      },
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/maharashtra-cotton-msp-announcement",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Chandrapur District Hospital Reports Rise in Dengue Cases",
+    "title_hi": "चंद्रपुर जिला अस्पताल में डेंगू के मामलों में वृद्धि दर्ज",
+    "summary_en": "Health officials in Chandrapur district reported a 30 percent rise in dengue cases compared to the same period last year. The district health department has intensified fogging operations in affected wards. Residents are being urged to eliminate stagnant water sources around homes.",
+    "summary_hi": "चंद्रपुर जिले में स्वास्थ्य अधिकारियों ने पिछले वर्ष की समान अवधि की तुलना में डेंगू मामलों में 30 प्रतिशत की वृद्धि दर्ज की। जिला स्वास्थ्य विभाग ने प्रभावित वार्डों में फॉगिंग अभियान तेज कर दिया है। निवासियों से घरों के आसपास रुके हुए पानी के स्रोतों को खत्म करने का आग्रह किया जा रहा है।",
+    "category": "health",
+    "state": "Maharashtra",
+    "district": "Chandrapur",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/chandrapur-dengue-cases-rise",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Akola University Launches New AI and Data Science Program",
+    "title_hi": "अकोला विश्वविद्यालय ने नया एआई और डेटा साइंस कार्यक्रम शुरू किया",
+    "summary_en": "A university in Akola has introduced a new undergraduate program in artificial intelligence and data science, responding to growing industry demand. The program includes partnerships with local tech companies for internship placements. University officials expect the first batch of 60 students to begin classes next semester.",
+    "summary_hi": "अकोला के एक विश्वविद्यालय ने बढ़ती उद्योग मांग के जवाब में कृत्रिम बुद्धिमत्ता और डेटा साइंस में नया स्नातक कार्यक्रम शुरू किया है। इस कार्यक्रम में इंटर्नशिप प्लेसमेंट के लिए स्थानीय तकनीकी कंपनियों के साथ साझेदारी शामिल है। विश्वविद्यालय अधिकारियों को उम्मीद है कि 60 छात्रों का पहला बैच अगले सेमेस्टर में कक्षाएं शुरू करेगा।",
+    "category": "education",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/akola-university-ai-program",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Yavatmal Farmers Adopt Drip Irrigation Under State Subsidy Scheme",
+    "title_hi": "यवतमाल किसानों ने राज्य सब्सिडी योजना के तहत ड्रिप सिंचाई अपनाई",
+    "summary_en": "Over 500 farmers in Yavatmal district have adopted drip irrigation systems this year under a state subsidy scheme aimed at water conservation. Agriculture officials said the shift has helped reduce water usage by up to 40 percent for participating farms. The scheme covers up to 60 percent of installation costs for small and marginal farmers.",
+    "summary_hi": "यवतमाल जिले में 500 से अधिक किसानों ने जल संरक्षण के उद्देश्य से राज्य सब्सिडी योजना के तहत इस वर्ष ड्रिप सिंचाई प्रणाली अपनाई है। कृषि अधिकारियों ने कहा कि इस बदलाव से भाग लेने वाले खेतों में पानी के उपयोग में 40 प्रतिशत तक की कमी आई है। यह योजना छोटे और सीमांत किसानों के लिए स्थापना लागत का 60 प्रतिशत तक कवर करती है।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Yavatmal",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/yavatmal-drip-irrigation-subsidy",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/yavatmal-water-conservation",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Gadchiroli Forest Department Reports Increase in Tiger Sightings",
+    "title_hi": "गडचिरोली वन विभाग ने बाघों के दिखने में वृद्धि दर्ज की",
+    "summary_en": "The Gadchiroli forest department reported a noticeable increase in tiger sightings in buffer zones this year, attributing it to improved conservation efforts. Officials cautioned nearby villages to remain alert and avoid venturing into forest fringes alone. Camera trap data will be reviewed to update the district's tiger population estimate.",
+    "summary_hi": "गडचिरोली वन विभाग ने इस वर्ष बफर जोन में बाघों के दिखने में उल्लेखनीय वृद्धि दर्ज की, जिसका श्रेय बेहतर संरक्षण प्रयासों को दिया गया। अधिकारियों ने आसपास के गांवों को सतर्क रहने और अकेले वन सीमाओं में न जाने की चेतावनी दी। कैमरा ट्रैप डेटा की समीक्षा जिले के बाघ जनसंख्या अनुमान को अपडेट करने के लिए की जाएगी।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Gadchiroli",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/gadchiroli-tiger-sightings-increase",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nagpur Zilla Parishad School Wins National Science Fair",
+    "title_hi": "नागपुर जिला परिषद स्कूल ने राष्ट्रीय विज्ञान मेला जीता",
+    "summary_en": "Students from a Nagpur zilla parishad school won first place at the national science fair for a project on low-cost water purification. The team developed a filtration model using locally available materials. The school principal said the win has inspired more students to pursue science projects.",
+    "summary_hi": "नागपुर जिला परिषद स्कूल के छात्रों ने कम लागत वाले जल शुद्धिकरण पर एक परियोजना के लिए राष्ट्रीय विज्ञान मेले में प्रथम स्थान प्राप्त किया। टीम ने स्थानीय रूप से उपलब्ध सामग्री का उपयोग करके एक फिल्ट्रेशन मॉडल विकसित किया। स्कूल प्रिंसिपल ने कहा कि इस जीत ने अधिक छात्रों को विज्ञान परियोजनाओं को आगे बढ़ाने के लिए प्रेरित किया है।",
+    "category": "education",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/nagpur-zp-school-science-fair-win",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Pune Traffic Congestion Worsens Amid Metro Construction",
+    "title_hi": "मेट्रो निर्माण के बीच पुणे में यातायात जाम बढ़ा",
+    "summary_en": "Commuters in Pune have reported worsening traffic congestion along key routes due to ongoing metro construction work. Traffic police have introduced temporary diversions to ease the situation during peak hours. City officials said the disruption is expected to continue for another six months until the current phase is completed.",
+    "summary_hi": "पुणे में यात्रियों ने चल रहे मेट्रो निर्माण कार्य के कारण प्रमुख मार्गों पर बढ़ते यातायात जाम की शिकायत की है। यातायात पुलिस ने व्यस्त समय के दौरान स्थिति को कम करने के लिए अस्थायी मार्ग परिवर्तन शुरू किए हैं। शहर के अधिकारियों ने कहा कि वर्तमान चरण पूरा होने तक यह व्यवधान अगले छह महीनों तक जारी रहने की उम्मीद है।",
+    "category": "transport",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/pune-traffic-metro-construction",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Mumbai Civic Body Announces Pothole Repair Drive Before Monsoon",
+    "title_hi": "मुंबई नागरिक निकाय ने मानसून से पहले गड्ढा मरम्मत अभियान की घोषणा की",
+    "summary_en": "The Brihanmumbai Municipal Corporation has announced a citywide pothole repair drive to be completed before the onset of monsoon rains. Officials said over 5,000 potholes have been identified across various wards. Residents can report new potholes through a dedicated mobile app launched last year.",
+    "summary_hi": "बृहन्मुंबई महानगरपालिका ने मानसून की बारिश शुरू होने से पहले पूरा किया जाने वाला शहरव्यापी गड्ढा मरम्मत अभियान की घोषणा की है। अधिकारियों ने कहा कि विभिन्न वार्डों में 5,000 से अधिक गड्ढों की पहचान की गई है। निवासी पिछले साल शुरू किए गए एक समर्पित मोबाइल ऐप के माध्यम से नए गड्ढों की सूचना दे सकते हैं।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/mumbai-pothole-repair-drive",
+        "source_type": "news"
+      },
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/bmc-pothole-app-launch",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nashik Wine Industry Sees Record Export Growth",
+    "title_hi": "नासिक वाइन उद्योग में रिकॉर्ड निर्यात वृद्धि",
+    "summary_en": "Nashik's wine industry recorded a 25 percent increase in exports this year, driven by growing demand from European and Southeast Asian markets. Local vineyard owners credited improved quality control and branding efforts for the growth. Industry associations are now pushing for better cold-chain logistics support from the state government.",
+    "summary_hi": "नासिक के वाइन उद्योग में इस वर्ष यूरोपीय और दक्षिण पूर्व एशियाई बाजारों से बढ़ती मांग के कारण निर्यात में 25 प्रतिशत की वृद्धि दर्ज की गई। स्थानीय अंगूर के बागों के मालिकों ने इस वृद्धि का श्रेय बेहतर गुणवत्ता नियंत्रण और ब्रांडिंग प्रयासों को दिया। उद्योग संघ अब राज्य सरकार से बेहतर कोल्ड-चेन लॉजिस्टिक्स सहायता की मांग कर रहे हैं।",
+    "category": "business",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/nashik-wine-export-growth",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Wardha Health Camp Screens 3000 Residents for Diabetes",
+    "title_hi": "वर्धा स्वास्थ्य शिविर में 3000 निवासियों की मधुमेह जांच",
+    "summary_en": "A free health camp organized in Wardha district screened over 3,000 residents for diabetes and hypertension over the weekend. Doctors from a local medical college volunteered their services alongside district health staff. Organizers said nearly 15 percent of those screened were referred for further testing.",
+    "summary_hi": "वर्धा जिले में आयोजित एक निःशुल्क स्वास्थ्य शिविर में सप्ताहांत के दौरान 3,000 से अधिक निवासियों की मधुमेह और उच्च रक्तचाप की जांच की गई। स्थानीय मेडिकल कॉलेज के डॉक्टरों ने जिला स्वास्थ्य कर्मचारियों के साथ स्वेच्छा से सेवाएं दीं। आयोजकों ने कहा कि जांचे गए लगभग 15 प्रतिशत लोगों को आगे की जांच के लिए भेजा गया।",
+    "category": "health",
+    "state": "Maharashtra",
+    "district": "Wardha",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/wardha-diabetes-health-camp",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Amravati Police Crack Down on Illegal Sand Mining",
+    "title_hi": "अमरावती पुलिस ने अवैध रेत खनन पर शिकंजा कसा",
+    "summary_en": "Amravati district police seized several trucks involved in illegal sand mining along the Purna river during a nighttime operation. Officials said the crackdown follows repeated complaints from local villagers about environmental damage. Six people have been detained for questioning.",
+    "summary_hi": "अमरावती जिला पुलिस ने रात के ऑपरेशन के दौरान पूर्णा नदी के किनारे अवैध रेत खनन में शामिल कई ट्रक जब्त किए। अधिकारियों ने कहा कि यह कार्रवाई पर्यावरणीय क्षति को लेकर स्थानीय ग्रामीणों की बार-बार की गई शिकायतों के बाद की गई है। पूछताछ के लिए छह लोगों को हिरासत में लिया गया है।",
+    "category": "crime",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "sources": [
+      {
+        "outlet": "ANI",
+        "url": "https://example.com/news/amravati-sand-mining-crackdown",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/amravati-illegal-mining-raid",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Chandrapur District Cricket Team Advances to State Finals",
+    "title_hi": "चंद्रपुर जिला क्रिकेट टीम राज्य फाइनल में पहुंची",
+    "summary_en": "The Chandrapur district cricket team defeated Bhandara in a closely fought semi-final to advance to the state-level finals. The match was decided in the final over, with the team chasing down a target of 210 runs. Local cricket enthusiasts have organized a celebration ahead of the final match next week.",
+    "summary_hi": "चंद्रपुर जिला क्रिकेट टीम ने कड़े मुकाबले में भंडारा को हराकर राज्य स्तरीय फाइनल में जगह बनाई। यह मैच अंतिम ओवर में तय हुआ, जिसमें टीम ने 210 रन के लक्ष्य का पीछा किया। स्थानीय क्रिकेट प्रेमियों ने अगले सप्ताह होने वाले फाइनल मैच से पहले एक उत्सव आयोजित किया है।",
+    "category": "sports",
+    "state": "Maharashtra",
+    "district": "Chandrapur",
+    "sources": [
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/chandrapur-cricket-semifinal-win",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Akola Municipal Corporation Elections Scheduled for Next Quarter",
+    "title_hi": "अकोला नगर निगम चुनाव अगली तिमाही के लिए निर्धारित",
+    "summary_en": "The state election commission announced that Akola Municipal Corporation elections will be held next quarter after a delay of over a year. Political parties have already begun candidate selection and campaign preparations. Officials said voter list revisions will be completed within the next month.",
+    "summary_hi": "राज्य चुनाव आयोग ने घोषणा की कि अकोला नगर निगम चुनाव एक वर्ष से अधिक की देरी के बाद अगली तिमाही में होंगे। राजनीतिक दलों ने पहले ही उम्मीदवार चयन और अभियान की तैयारी शुरू कर दी है। अधिकारियों ने कहा कि मतदाता सूची संशोधन अगले महीने के भीतर पूरा हो जाएगा।",
+    "category": "politics",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "sources": [
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/akola-municipal-elections-scheduled",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Yavatmal Weather Office Issues Heatwave Warning",
+    "title_hi": "यवतमाल मौसम कार्यालय ने लू की चेतावनी जारी की",
+    "summary_en": "The Yavatmal weather office issued a heatwave warning for the next four days, with temperatures expected to cross 43 degrees Celsius. District authorities have advised residents to avoid outdoor activity during peak afternoon hours. Schools have been asked to adjust timings temporarily to protect students.",
+    "summary_hi": "यवतमाल मौसम कार्यालय ने अगले चार दिनों के लिए लू की चेतावनी जारी की, जिसमें तापमान 43 डिग्री सेल्सियस को पार करने की उम्मीद है। जिला अधिकारियों ने निवासियों को दोपहर के व्यस्त समय के दौरान बाहरी गतिविधियों से बचने की सलाह दी है। छात्रों की सुरक्षा के लिए स्कूलों से अस्थायी रूप से समय समायोजित करने को कहा गया है।",
+    "category": "weather",
+    "state": "Maharashtra",
+    "district": "Yavatmal",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/yavatmal-heatwave-warning",
+        "source_type": "news"
+      },
+      {
+        "outlet": "BBC Hindi",
+        "url": "https://example.com/news/yavatmal-lu-chetavani",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Gadchiroli Launches Mobile Health Vans for Remote Villages",
+    "title_hi": "गडचिरोली ने दूरदराज गांवों के लिए मोबाइल स्वास्थ्य वैन शुरू की",
+    "summary_en": "The Gadchiroli district health department launched five mobile health vans to serve remote tribal villages with limited access to healthcare facilities. Each van is equipped with basic diagnostic equipment and staffed by a doctor and nurse. Officials said the vans will follow a fixed weekly schedule across different villages.",
+    "summary_hi": "गडचिरोली जिला स्वास्थ्य विभाग ने सीमित स्वास्थ्य सुविधाओं वाले दूरदराज आदिवासी गांवों की सेवा के लिए पांच मोबाइल स्वास्थ्य वैन शुरू कीं। प्रत्येक वैन बुनियादी नैदानिक उपकरणों से सुसज्जित है और इसमें एक डॉक्टर व नर्स तैनात हैं। अधिकारियों ने कहा कि ये वैन विभिन्न गांवों में एक निश्चित साप्ताहिक कार्यक्रम का पालन करेंगी।",
+    "category": "health",
+    "state": "Maharashtra",
+    "district": "Gadchiroli",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/gadchiroli-mobile-health-vans",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nagpur Orange Growers Seek GI Tag Protection Enforcement",
+    "title_hi": "नागपुर संतरा उत्पादकों ने जीआई टैग सुरक्षा प्रवर्तन की मांग की",
+    "summary_en": "Orange growers in Nagpur district have urged the state government to strictly enforce the Geographical Indication tag for Nagpur oranges to prevent mislabeling in other markets. Farmer representatives said counterfeit labeling has hurt prices for genuine producers. The agriculture ministry has assured a review of enforcement mechanisms.",
+    "summary_hi": "नागपुर जिले के संतरा उत्पादकों ने अन्य बाजारों में गलत लेबलिंग रोकने के लिए नागपुर संतरे के भौगोलिक संकेत टैग को सख्ती से लागू करने का राज्य सरकार से आग्रह किया है। किसान प्रतिनिधियों ने कहा कि नकली लेबलिंग ने असली उत्पादकों की कीमतों को नुकसान पहुंचाया है। कृषि मंत्रालय ने प्रवर्तन तंत्र की समीक्षा का आश्वासन दिया है।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/nagpur-orange-gi-tag-enforcement",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/nagpur-santra-utpadak-mang",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Pune Startup Incubator Reports Record Funding Year",
+    "title_hi": "पुणे स्टार्टअप इनक्यूबेटर ने रिकॉर्ड फंडिंग वर्ष दर्ज किया",
+    "summary_en": "A prominent startup incubator based in Pune reported that portfolio companies raised a record amount of funding this year, led by fintech and healthtech ventures. Incubator officials attributed the growth to increased investor confidence in Tier-2 innovation hubs. Several startups are now planning to expand operations beyond Maharashtra.",
+    "summary_hi": "पुणे स्थित एक प्रमुख स्टार्टअप इनक्यूबेटर ने बताया कि इस वर्ष पोर्टफोलियो कंपनियों ने फिनटेक और हेल्थटेक उद्यमों के नेतृत्व में रिकॉर्ड फंडिंग जुटाई। इनक्यूबेटर अधिकारियों ने इस वृद्धि का श्रेय टियर-2 नवाचार केंद्रों में बढ़ते निवेशक विश्वास को दिया। कई स्टार्टअप अब महाराष्ट्र से बाहर अपना परिचालन विस्तार करने की योजना बना रहे हैं।",
+    "category": "business",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/pune-startup-incubator-funding-record",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Mumbai Police Arrest Gang Behind ATM Skimming Fraud",
+    "title_hi": "मुंबई पुलिस ने एटीएम स्किमिंग धोखाधड़ी गिरोह को गिरफ्तार किया",
+    "summary_en": "Mumbai police arrested four members of a gang responsible for installing skimming devices at multiple ATMs across the city. Investigators recovered cloned cards and cash amounting to several lakhs of rupees during the raid. Police have urged citizens to report any suspicious devices found at ATM kiosks.",
+    "summary_hi": "मुंबई पुलिस ने शहर भर के कई एटीएम में स्किमिंग डिवाइस लगाने के जिम्मेदार गिरोह के चार सदस्यों को गिरफ्तार किया। छापेमारी के दौरान जांचकर्ताओं ने क्लोन किए गए कार्ड और कई लाख रुपये नकद बरामद किए। पुलिस ने नागरिकों से एटीएम कियोस्क पर मिलने वाले किसी भी संदिग्ध उपकरण की सूचना देने का आग्रह किया है।",
+    "category": "crime",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/mumbai-atm-skimming-gang-arrested",
+        "source_type": "news"
+      },
+      {
+        "outlet": "ANI",
+        "url": "https://example.com/news/mumbai-police-atm-fraud-bust",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nashik District Council Approves New Bus Terminal Project",
+    "title_hi": "नासिक जिला परिषद ने नए बस टर्मिनल परियोजना को मंजूरी दी",
+    "summary_en": "The Nashik district council approved construction of a new inter-city bus terminal aimed at decongesting the old central bus stand. The project will include modern passenger amenities and dedicated parking for private vehicles. Construction is expected to begin within six months following final environmental clearances.",
+    "summary_hi": "नासिक जिला परिषद ने पुराने केंद्रीय बस स्टैंड की भीड़ कम करने के उद्देश्य से एक नए अंतर-शहर बस टर्मिनल के निर्माण को मंजूरी दी। इस परियोजना में आधुनिक यात्री सुविधाएं और निजी वाहनों के लिए समर्पित पार्किंग शामिल होगी। अंतिम पर्यावरण मंजूरी के बाद निर्माण छह महीने के भीतर शुरू होने की उम्मीद है।",
+    "category": "transport",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "sources": [
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/nashik-bus-terminal-approval",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Wardha Farmers Trial New Drought-Resistant Soybean Variety",
+    "title_hi": "वर्धा किसानों ने नई सूखा प्रतिरोधी सोयाबीन किस्म का परीक्षण किया",
+    "summary_en": "Agricultural scientists in Wardha district began field trials of a new drought-resistant soybean variety developed for low-rainfall regions. Early results show promising yield stability compared to traditional varieties. If successful, the variety could be rolled out to farmers across Vidarbha within two years.",
+    "summary_hi": "वर्धा जिले में कृषि वैज्ञानिकों ने कम वर्षा वाले क्षेत्रों के लिए विकसित नई सूखा प्रतिरोधी सोयाबीन किस्म का क्षेत्र परीक्षण शुरू किया। प्रारंभिक परिणाम पारंपरिक किस्मों की तुलना में आशाजनक उपज स्थिरता दिखाते हैं। सफल होने पर, यह किस्म दो वर्षों के भीतर विदर्भ के किसानों के लिए उपलब्ध कराई जा सकती है।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Wardha",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/wardha-drought-resistant-soybean-trial",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Amravati Sees Surge in Solar Rooftop Installations",
+    "title_hi": "अमरावती में सोलर रूफटॉप स्थापना में उछाल",
+    "summary_en": "Amravati district has recorded a sharp rise in rooftop solar installations following an increase in state subsidies for residential users. Local electricity officials said over 1,200 new connections were added in the past six months alone. The trend is expected to continue as awareness campaigns expand to rural areas.",
+    "summary_hi": "आवासीय उपयोगकर्ताओं के लिए राज्य सब्सिडी बढ़ने के बाद अमरावती जिले में रूफटॉप सोलर स्थापना में तेज वृद्धि दर्ज की गई है। स्थानीय बिजली अधिकारियों ने कहा कि पिछले छह महीनों में अकेले 1,200 से अधिक नए कनेक्शन जोड़े गए। जागरूकता अभियानों के ग्रामीण क्षेत्रों तक विस्तार के साथ यह प्रवृत्ति जारी रहने की उम्मीद है।",
+    "category": "technology",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "sources": [
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/amravati-solar-rooftop-surge",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/amravati-solar-subsidy-connections",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Chandrapur Forest Fire Contained After Two-Day Effort",
+    "title_hi": "चंद्रपुर में जंगल की आग दो दिन के प्रयास के बाद नियंत्रित",
+    "summary_en": "Forest department teams in Chandrapur successfully contained a wildfire that had spread across nearly 50 hectares of dry forest land. Firefighters worked for two days with support from local volunteers to control the blaze. Officials said the cause of the fire is still under investigation but suspect human negligence.",
+    "summary_hi": "चंद्रपुर में वन विभाग की टीमों ने लगभग 50 हेक्टेयर सूखी वन भूमि में फैली जंगल की आग को सफलतापूर्वक नियंत्रित किया। दमकलकर्मियों ने आग पर काबू पाने के लिए स्थानीय स्वयंसेवकों की मदद से दो दिनों तक काम किया। अधिकारियों ने कहा कि आग का कारण अभी जांच के दायरे में है लेकिन मानवीय लापरवाही का संदेह है।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Chandrapur",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/chandrapur-forest-fire-contained",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Akola District Cricket Association Opens New Training Academy",
+    "title_hi": "अकोला जिला क्रिकेट संघ ने नई प्रशिक्षण अकादमी खोली",
+    "summary_en": "The Akola District Cricket Association inaugurated a new training academy aimed at nurturing young cricketing talent from rural areas. The facility includes indoor nets, a gymnasium, and scholarships for promising players from low-income families. Former state-level players have been brought in as coaches for the academy.",
+    "summary_hi": "अकोला जिला क्रिकेट संघ ने ग्रामीण क्षेत्रों की युवा क्रिकेट प्रतिभा को निखारने के उद्देश्य से एक नई प्रशिक्षण अकादमी का उद्घाटन किया। इस सुविधा में इनडोर नेट्स, जिम्नेजियम और कम आय वाले परिवारों के होनहार खिलाड़ियों के लिए छात्रवृत्ति शामिल है। अकादमी के लिए पूर्व राज्य स्तरीय खिलाड़ियों को कोच के रूप में लाया गया है।",
+    "category": "sports",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/akola-cricket-academy-launch",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Yavatmal District Collector Reviews Flood Preparedness Plan",
+    "title_hi": "यवतमाल जिला कलेक्टर ने बाढ़ तैयारी योजना की समीक्षा की",
+    "summary_en": "The Yavatmal district collector held a review meeting with disaster management officials to assess flood preparedness ahead of the peak monsoon period. Rescue boats and emergency shelters have been positioned in vulnerable riverside villages. Officials said an early warning system will alert residents via SMS in case of heavy rainfall.",
+    "summary_hi": "यवतमाल जिला कलेक्टर ने चरम मानसून अवधि से पहले बाढ़ तैयारियों का आकलन करने के लिए आपदा प्रबंधन अधिकारियों के साथ समीक्षा बैठक की। संवेदनशील नदी किनारे के गांवों में बचाव नौकाएं और आपातकालीन आश्रय स्थल तैनात किए गए हैं। अधिकारियों ने कहा कि भारी बारिश की स्थिति में एक पूर्व चेतावनी प्रणाली एसएमएस के माध्यम से निवासियों को सतर्क करेगी।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Yavatmal",
+    "sources": [
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/yavatmal-flood-preparedness-review",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Gadchiroli Bamboo Cooperative Reports Strong Export Demand",
+    "title_hi": "गडचिरोली बांस सहकारी समिति ने मजबूत निर्यात मांग दर्ज की",
+    "summary_en": "A tribal-run bamboo cooperative in Gadchiroli reported strong demand from furniture manufacturers in southern states, boosting local incomes significantly. The cooperative has expanded its processing unit to handle increased orders. Officials from the state's tribal development department visited the facility to explore scaling up support.",
+    "summary_hi": "गडचिरोली में आदिवासी-संचालित बांस सहकारी समिति ने दक्षिणी राज्यों के फर्नीचर निर्माताओं से मजबूत मांग दर्ज की, जिससे स्थानीय आय में उल्लेखनीय वृद्धि हुई। सहकारी समिति ने बढ़ते ऑर्डर को संभालने के लिए अपनी प्रसंस्करण इकाई का विस्तार किया है। राज्य के आदिवासी विकास विभाग के अधिकारियों ने समर्थन बढ़ाने की संभावना तलाशने के लिए सुविधा का दौरा किया।",
+    "category": "business",
+    "state": "Maharashtra",
+    "district": "Gadchiroli",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/gadchiroli-bamboo-cooperative-exports",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/gadchiroli-tribal-bamboo-demand",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nagpur Court Sentences Three in Bank Fraud Case",
+    "title_hi": "नागपुर अदालत ने बैंक धोखाधड़ी मामले में तीन को सजा सुनाई",
+    "summary_en": "A Nagpur district court sentenced three individuals to seven years in prison for their role in a multi-crore bank loan fraud case. The scheme involved submitting forged documents to secure large business loans. The court also ordered the recovery of assets from the convicted individuals to compensate the bank.",
+    "summary_hi": "नागपुर जिला अदालत ने एक बहु-करोड़ बैंक ऋण धोखाधड़ी मामले में तीन व्यक्तियों को सात साल की कैद की सजा सुनाई। इस योजना में बड़े व्यावसायिक ऋण प्राप्त करने के लिए जाली दस्तावेज जमा करना शामिल था। अदालत ने बैंक को मुआवजा देने के लिए दोषियों से संपत्ति की वसूली का भी आदेश दिया।",
+    "category": "crime",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "sources": [
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/nagpur-bank-fraud-sentencing",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Pune Weather Bureau Predicts Early Onset of Monsoon",
+    "title_hi": "पुणे मौसम ब्यूरो ने मानसून के जल्दी आगमन की भविष्यवाणी की",
+    "summary_en": "The Pune weather bureau predicted an early onset of monsoon this year, with rains expected to arrive nearly a week ahead of the usual schedule. Farmers across the region have been advised to prepare fields for early sowing. Meteorologists cautioned that rainfall distribution could still vary across districts.",
+    "summary_hi": "पुणे मौसम ब्यूरो ने इस वर्ष मानसून के जल्दी आगमन की भविष्यवाणी की, जिसमें बारिश सामान्य समय से लगभग एक सप्ताह पहले आने की उम्मीद है। क्षेत्र भर के किसानों को जल्दी बुवाई के लिए खेत तैयार करने की सलाह दी गई है। मौसम वैज्ञानिकों ने चेतावनी दी कि जिलों में वर्षा वितरण अभी भी भिन्न हो सकता है।",
+    "category": "weather",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "sources": [
+      {
+        "outlet": "BBC Hindi",
+        "url": "https://example.com/news/pune-early-monsoon-prediction",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Times of India",
+        "url": "https://example.com/news/pune-monsoon-forecast-early",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Mumbai University Introduces New Scholarship for First-Generation Learners",
+    "title_hi": "मुंबई विश्वविद्यालय ने प्रथम पीढ़ी के शिक्षार्थियों के लिए नई छात्रवृत्ति शुरू की",
+    "summary_en": "Mumbai University announced a new scholarship program specifically targeting first-generation college students from economically weaker backgrounds. The scholarship will cover full tuition fees and provide a monthly stipend for study materials. University officials said applications will open next month for the upcoming academic year.",
+    "summary_hi": "मुंबई विश्वविद्यालय ने आर्थिक रूप से कमजोर पृष्ठभूमि से प्रथम पीढ़ी के कॉलेज छात्रों को लक्षित करते हुए एक नई छात्रवृत्ति कार्यक्रम की घोषणा की। यह छात्रवृत्ति पूरी ट्यूशन फीस को कवर करेगी और अध्ययन सामग्री के लिए मासिक वृत्ति प्रदान करेगी। विश्वविद्यालय अधिकारियों ने कहा कि आगामी शैक्षणिक वर्ष के लिए आवेदन अगले महीने खुलेंगे।",
+    "category": "education",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "sources": [
+      {
+        "outlet": "Hindustan Times",
+        "url": "https://example.com/news/mumbai-university-first-gen-scholarship",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Nashik Grape Growers Face Losses Due to Unseasonal Rain",
+    "title_hi": "बेमौसम बारिश से नासिक अंगूर उत्पादकों को नुकसान",
+    "summary_en": "Grape growers in Nashik district reported significant crop damage following unseasonal rainfall that hit the region earlier this week. Farmers estimate losses of up to 30 percent in affected vineyards. The state agriculture department has been asked to conduct a survey for compensation eligibility.",
+    "summary_hi": "नासिक जिले में अंगूर उत्पादकों ने इस सप्ताह क्षेत्र में हुई बेमौसम बारिश के बाद फसल को महत्वपूर्ण नुकसान की सूचना दी। किसानों का अनुमान है कि प्रभावित अंगूर के बागों में 30 प्रतिशत तक का नुकसान हुआ है। राज्य कृषि विभाग से मुआवजा पात्रता के लिए सर्वेक्षण करने को कहा गया है।",
+    "category": "weather",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/nashik-grape-growers-rain-losses",
+        "source_type": "news"
+      },
+      {
+        "outlet": "Sakal",
+        "url": "https://example.com/news/nashik-draksh-nuksan",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Wardha Civic Body Launches Smart Streetlight Project",
+    "title_hi": "वर्धा नागरिक निकाय ने स्मार्ट स्ट्रीटलाइट परियोजना शुरू की",
+    "summary_en": "The Wardha municipal council launched a project to replace conventional streetlights with energy-efficient smart LED lights across the city. Officials estimate the switch will reduce municipal electricity costs by nearly 40 percent. The first phase covering the main market area is expected to be completed within two months.",
+    "summary_hi": "वर्धा नगर परिषद ने शहर भर में पारंपरिक स्ट्रीटलाइट को ऊर्जा-कुशल स्मार्ट एलईडी लाइट से बदलने की परियोजना शुरू की। अधिकारियों का अनुमान है कि इस बदलाव से नगरपालिका बिजली लागत में लगभग 40 प्रतिशत की कमी आएगी। मुख्य बाजार क्षेत्र को कवर करने वाला पहला चरण दो महीने के भीतर पूरा होने की उम्मीद है।",
+    "category": "civic",
+    "state": "Maharashtra",
+    "district": "Wardha",
+    "sources": [
+      {
+        "outlet": "Maharashtra Times",
+        "url": "https://example.com/news/wardha-smart-streetlight-project",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Amravati Local Politician Announces Rural Road Development Fund",
+    "title_hi": "अमरावती स्थानीय नेता ने ग्रामीण सड़क विकास कोष की घोषणा की",
+    "summary_en": "A local legislator from Amravati announced a new fund dedicated to improving rural road connectivity across the district. The initiative will prioritize villages that currently lack all-weather road access. Opposition leaders welcomed the move but called for transparent monitoring of fund utilization.",
+    "summary_hi": "अमरावती के एक स्थानीय विधायक ने जिले भर में ग्रामीण सड़क संपर्क को बेहतर बनाने के लिए समर्पित एक नए कोष की घोषणा की। यह पहल उन गांवों को प्राथमिकता देगी जिनके पास वर्तमान में सभी मौसम में उपयोग योग्य सड़क पहुंच नहीं है। विपक्षी नेताओं ने इस कदम का स्वागत किया लेकिन कोष उपयोग की पारदर्शी निगरानी की मांग की।",
+    "category": "politics",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "sources": [
+      {
+        "outlet": "NDTV",
+        "url": "https://example.com/news/amravati-rural-road-fund-announcement",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Chandrapur Textile Unit Inaugurated to Boost Local Employment",
+    "title_hi": "चंद्रपुर में स्थानीय रोजगार बढ़ाने के लिए वस्त्र इकाई का उद्घाटन",
+    "summary_en": "A new textile manufacturing unit was inaugurated in Chandrapur, expected to generate over 800 direct jobs for local residents. The unit will focus on producing cotton fabric for domestic and export markets. State industry officials said the investment reflects growing interest in Vidarbha's manufacturing potential.",
+    "summary_hi": "चंद्रपुर में एक नई वस्त्र निर्माण इकाई का उद्घाटन किया गया, जिससे स्थानीय निवासियों के लिए 800 से अधिक प्रत्यक्ष नौकरियां उत्पन्न होने की उम्मीद है। यह इकाई घरेलू और निर्यात बाजारों के लिए कपास कपड़ा उत्पादन पर ध्यान केंद्रित करेगी। राज्य उद्योग अधिकारियों ने कहा कि यह निवेश विदर्भ की विनिर्माण क्षमता में बढ़ती रुचि को दर्शाता है।",
+    "category": "business",
+    "state": "Maharashtra",
+    "district": "Chandrapur",
+    "sources": [
+      {
+        "outlet": "Indian Express",
+        "url": "https://example.com/news/chandrapur-textile-unit-inauguration",
+        "source_type": "news"
+      },
+      {
+        "outlet": "ANI",
+        "url": "https://example.com/news/chandrapur-textile-jobs",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Akola District Reports Improved Groundwater Levels After Watershed Project",
+    "title_hi": "वाटरशेड परियोजना के बाद अकोला जिले में भूजल स्तर में सुधार",
+    "summary_en": "A watershed management project implemented in Akola district over the past three years has led to a measurable rise in groundwater levels, according to a recent survey. Villages that previously relied on tanker water supply have reported improved well yields. Officials plan to replicate the model in neighboring districts.",
+    "summary_hi": "हाल के एक सर्वेक्षण के अनुसार, पिछले तीन वर्षों में अकोला जिले में लागू की गई वाटरशेड प्रबंधन परियोजना से भूजल स्तर में उल्लेखनीय वृद्धि हुई है। पहले टैंकर जल आपूर्ति पर निर्भर रहने वाले गांवों में कुओं की पैदावार में सुधार की सूचना मिली है। अधिकारी इस मॉडल को पड़ोसी जिलों में दोहराने की योजना बना रहे हैं।",
+    "category": "agriculture",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "sources": [
+      {
+        "outlet": "The Hindu",
+        "url": "https://example.com/news/akola-watershed-groundwater-improvement",
+        "source_type": "news"
+      }
+    ]
+  },
+  {
+    "title_en": "Yavatmal Kabaddi Team Wins Regional Youth Tournament",
+    "title_hi": "यवतमाल कबड्डी टीम ने क्षेत्रीय युवा टूर्नामेंट जीता",
+    "summary_en": "The Yavatmal district kabaddi team clinched the title at a regional youth tournament held in Amravati, defeating hosts in a tightly contested final. Coaches praised the team's defensive strategy as the key to their success this season. Several players have been shortlisted for state-level trials.",
+    "summary_hi": "यवतमाल जिला कबड्डी टीम ने अमरावती में आयोजित क्षेत्रीय युवा टूर्नामेंट में कड़े मुकाबले वाले फाइनल में मेजबान टीम को हराकर खिताब जीता। कोचों ने इस सीजन में टीम की सफलता की कुंजी के रूप में उनकी रक्षात्मक रणनीति की सराहना की। कई खिलाड़ियों को राज्य स्तरीय ट्रायल के लिए शॉर्टलिस्ट किया गया है।",
+    "category": "sports",
+    "state": "Maharashtra",
+    "district": "Yavatmal",
+    "sources": [
+      {
+        "outlet": "Lokmat",
+        "url": "https://example.com/news/yavatmal-kabaddi-regional-win",
+        "source_type": "news"
+      }
+    ]
+  }
+]

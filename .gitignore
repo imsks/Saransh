@@ -56,3 +56,8 @@ frontend/.next/
 frontend/out/
 frontend/coverage/
 frontend/tsconfig.tsbuildinfo
+
+node_modules/
+.env
+.env.local
+.next/
