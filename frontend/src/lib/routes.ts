@@ -3,7 +3,6 @@
  */
 export const ROUTES = {
   home: "/",
-  contributors: "/contributors",
 } as const;
 
 export const EXTERNAL = {

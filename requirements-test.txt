@@ -9,6 +9,7 @@ pytest-mock>=3.12.0
 pytest-asyncio>=0.23.0
 pytest-timeout>=2.2.0
 pytest-env>=1.1.0  # Environment variables for tests
+httpx>=0.28.1  # Required by FastAPI/Starlette TestClient
 
 # Coverage
 coverage[toml]>=7.3.0

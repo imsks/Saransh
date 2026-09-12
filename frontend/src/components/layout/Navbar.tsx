@@ -10,25 +10,19 @@ export default function Navbar() {
       <div className="mx-auto flex h-full max-w-[1120px] items-center justify-between px-8 max-[560px]:px-5">
         <Link
           href={ROUTES.home}
-          className="font-serif text-lg font-semibold tracking-tight text-ink no-underline"
+          className="font-serif text-xl font-semibold tracking-tight text-ink no-underline"
         >
           Saransh
         </Link>
 
         <div className="flex items-center gap-5">
-          <Link
-            href={ROUTES.contributors}
-            className="font-mono text-[11.5px] font-normal uppercase tracking-wider text-muted no-underline transition-colors hover:text-ink max-[560px]:hidden"
-          >
-            Contributors
-          </Link>
           <a
             href={EXTERNAL.repo}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-[11.5px] font-normal uppercase tracking-wider text-muted transition-colors hover:text-ink"
           >
-            GitHub ↗
+            GitHub
           </a>
           <ThemeToggle className="size-8 rounded-sm border-line bg-transparent text-muted hover:bg-card hover:text-ink" />
         </div>

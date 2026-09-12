@@ -14,7 +14,7 @@ export default function BottomCTA() {
           href="#waitlist"
           className="inline-block rounded-sm bg-ink px-6 py-3.5 font-mono text-xs font-semibold uppercase tracking-wider text-card no-underline transition-colors hover:bg-red"
         >
-          Join the waitlist ↗
+          Join the waitlist
         </a>
       </div>
     </section>

@@ -78,7 +78,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
   return (
     <form
-      className="rounded-sm border-[1.5px] border-ink bg-card p-7"
+      className="scroll-mt-24 rounded-sm border-[1.5px] border-ink bg-card p-7"
       onSubmit={handleSubmit}
       id="waitlist"
       noValidate

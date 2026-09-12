@@ -94,7 +94,7 @@ export default function WhatSection() {
               human editor. Every story you read has been reviewed by a person before it went live.
             </p>
           </div>
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-2">
             <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-[22px]">
               <div className="mb-2.5 flex items-center gap-2.5">
                 <DocIcon />
@@ -108,17 +108,9 @@ export default function WhatSection() {
                 <strong>No social media. No anonymous forwards.</strong> Every source in the registry is
                 public.
               </p>
-              <a
-                href="https://github.com/imsks/Saransh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-[10px] font-semibold uppercase text-blue no-underline"
-              >
-                View source registry ↗
-              </a>
             </div>
-            <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-[22px]">
-              <div className="mb-2.5 flex items-center gap-2.5">
+            <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-5.5">
+              <div className="mb-2.5 flex items-center gap-2.5 ">
                 <CodeIcon />
                 <h3 className="font-serif text-lg font-semibold leading-tight tracking-tight text-ink">
                   Open-source pipeline
@@ -129,14 +121,6 @@ export default function WhatSection() {
                 GitHub. <strong>No hidden editorial layer.</strong> If a prompt introduces bias, open
                 an issue — we&apos;ll show our work or fix it.
               </p>
-              <a
-                href="https://github.com/imsks/Saransh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-[10px] font-semibold uppercase text-blue no-underline"
-              >
-                Read the prompts ↗
-              </a>
             </div>
             <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-[22px]">
               <div className="mb-2.5 flex items-center gap-2.5">

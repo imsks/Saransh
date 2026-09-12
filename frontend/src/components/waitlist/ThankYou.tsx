@@ -48,7 +48,7 @@ export default function ThankYou({ language }: { language: string }) {
           rel="noopener noreferrer"
           className="rounded-sm bg-ink px-[18px] py-2.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-card no-underline transition-colors hover:bg-red"
         >
-          Follow the build on GitHub ↗
+          Follow the build on GitHub
         </a>
         <a
           href="https://rajniti-app.vercel.app"
@@ -56,7 +56,7 @@ export default function ThankYou({ language }: { language: string }) {
           rel="noopener noreferrer"
           className="rounded-sm border-[1.5px] border-line-heavy px-[18px] py-2.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted no-underline transition-[border-color,color] hover:border-ink hover:text-ink"
         >
-          Explore Rajniti ↗
+          Explore Rajniti
         </a>
       </div>
       <p className="absolute bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] text-line-heavy">

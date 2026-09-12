@@ -26,7 +26,7 @@ export default function RajnitiSection() {
               rel="noopener noreferrer"
               className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-blue no-underline"
             >
-              Explore Rajniti ↗
+              Explore Rajniti
             </a>
           </div>
           <div>
@@ -51,7 +51,7 @@ export default function RajnitiSection() {
                 rel="noopener noreferrer"
                 className="font-mono text-[10.5px] font-semibold text-blue no-underline"
               >
-                View profile on Rajniti ↗
+                View profile on Rajniti
               </a>
             </div>
             <div className="mt-3.5 border-l-2 border-line-heavy bg-paper px-3.5 py-3 font-mono text-[10.5px] leading-[1.6] text-muted">

@@ -15,7 +15,7 @@ import { ThemeProvider as SutraThemeProvider } from "@sutra_ui/ui";
  */
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   return (
-    <SutraThemeProvider defaultTheme="system" storageKey="saransh-theme">
+    <SutraThemeProvider defaultTheme="light" storageKey="saransh-theme">
       {children}
     </SutraThemeProvider>
   );
