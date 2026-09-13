@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Mono, Inter } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, Inter, Noto_Sans_Devanagari } from "next/font/google";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { ThemeProvider } from "@/components/providers";
@@ -33,6 +33,13 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-plex-mono",
+  display: "swap",
+});
+
+const notoSansDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "500"],
+  variable: "--font-devanagari",
   display: "swap",
 });
 
@@ -75,7 +82,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable}`}
+      className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} ${notoSansDevanagari.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -89,8 +96,11 @@ export default function RootLayout({
               (function() {
                 try {
                   var theme = localStorage.getItem('saransh-theme');
-                  if (theme === 'dark' || ((!theme || theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  var useDark = theme === 'dark' || ((!theme || theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (useDark) {
                     document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
                   }
                 } catch(e) {}
               })();

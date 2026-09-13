@@ -67,23 +67,23 @@
  * Newsprint palette — dark (night edition)
  * ------------------------------------------------------------------------ */
 .dark {
-  --background: #12130f;
-  --foreground: #eceae4;
+  --background: #111417;
+  --foreground: #e6e4df;
 
-  --paper: #12130f;
-  --card: #1a1b17;
-  --ink: #eceae4;
-  --muted: #9d9a91;
-  --line: #2c2d27;
-  --line-heavy: #43443c;
+  --paper: #111417;
+  --card: #1c2028;
+  --ink: #e6e4df;
+  --muted: #8e8b85;
+  --line: #2a2e36;
+  --line-heavy: #3a3e48;
 
-  --red: #f0616f;
-  --red-tint: #2a1417;
-  --blue: #7fa9dd;
-  --blue-tint: #131c28;
-  --green: #63b385;
-  --green-tint: #12241a;
-  --amber: #d99a4e;
+  --red: #c41e2e;
+  --red-tint: #2a0d10;
+  --blue: #1a4f8a;
+  --blue-tint: #0e1f35;
+  --green: #1f6b3e;
+  --green-tint: #eaf3ed;
+  --amber: #b8691a;
 
   --sutra-color-surface: var(--card);
   --sutra-color-surface-subtle: var(--paper);
@@ -110,6 +110,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 72px;
 }
 
 body {
@@ -125,6 +126,7 @@ h2,
 h3,
 h4 {
   font-family: var(--font-fraunces), Georgia, serif;
+  font-optical-sizing: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -238,4 +240,5 @@ h4 {
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), "Courier New", monospace;
+  --font-hindi: var(--font-devanagari), system-ui, sans-serif;
 }

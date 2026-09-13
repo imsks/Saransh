@@ -5,9 +5,9 @@ export default function Footer() {
         <div>
           <div className="mb-1.5 flex items-baseline gap-[7px]">
             <span className="font-serif text-[16px] font-semibold text-ink">Saransh</span>
-            <span className="font-serif text-sm italic text-red">सारांश</span>
+            <span className="font-hindi text-sm text-red">सारांश</span>
           </div>
-          <p className="font-mono text-[11px] text-muted">
+          <p className="font-hindi text-[11px] text-muted">
             आपके ज़िले की खबर, 60 शब्दों में, सबूत के साथ।
           </p>
         </div>
