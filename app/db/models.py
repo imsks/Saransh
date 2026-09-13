@@ -145,8 +145,6 @@ class Waitlist(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
-    language = Column(Text, nullable=False)
-    source = Column(Text, nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         nullable=False,
