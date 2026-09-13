@@ -3,8 +3,8 @@ import StoryCarousel from "@/components/stories/StoryCarousel";
 function DocIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="22"
+      height="22"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
@@ -25,8 +25,8 @@ function DocIcon() {
 function CodeIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="22"
+      height="22"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
@@ -46,8 +46,8 @@ function CodeIcon() {
 function PersonIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="22"
+      height="22"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
@@ -57,7 +57,7 @@ function PersonIcon() {
       className="shrink-0 text-red"
       aria-hidden="true"
     >
-      <circle cx="11" cy="7" r="3.2" fill="currentColor" />
+      <circle cx="11" cy="7" r="3.2"/>
       <path d="M4 19c0-3.5 3.2-6 7-6s7 2.5 7 6" />
     </svg>
   );
@@ -74,7 +74,7 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 pb-5 pt-0 pl-[18px]">
               <DocIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   VERIFIED SOURCES
                 </h3>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
@@ -85,7 +85,7 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
               <CodeIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   OPEN-SOURCE PIPELINE
                 </h3>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
@@ -96,7 +96,7 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
               <PersonIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   HUMAN REVIEWED
                 </h3>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">

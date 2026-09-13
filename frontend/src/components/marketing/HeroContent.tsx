@@ -8,10 +8,12 @@ export default function HeroContent() {
         <br />
         <em className="font-medium italic text-red">accountable.</em>
       </h1>
-      <p className="max-w-[48ch] border-l-2 border-red pl-4 font-sans text-base leading-[1.72] text-muted">
-        You follow national news, but local stories don&apos;t travel the same way. Saransh pulls from
-        verified sources and gives you a concise, attributed summary of what actually happened in your
-        district. Every claim traces back to an official source you can check.
+      <p className="max-w-[44ch] border-l-2 border-red pl-4 font-sans text-base leading-[1.72] text-muted">
+        Whether you are tracking national headlines or regional updates, Saransh
+        filters out the sensationalism, pulling directly from verified
+        publishers to give you a concise, attributed summary of what actually
+        happened. Every single claim traces back to a trusted, official source
+        you can verify yourself.
       </p>
     </div>
   );
