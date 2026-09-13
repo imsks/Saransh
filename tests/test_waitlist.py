@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import uuid
 
+import sqlalchemy as sa
+
+from app.db.models import Waitlist
+
 WAITLIST_URL = "/api/v1/waitlist"
 
 
@@ -46,14 +50,25 @@ def test_join_waitlist_rejects_invalid_email(client):
     assert response.status_code == 422
 
 
-def test_join_waitlist_ignores_legacy_extra_fields(client):
+def test_join_waitlist_ignores_legacy_extra_fields(client, db_session):
+    payload = {
+        **_payload(),
+        "language": "Hindi",
+        "source": "GitHub",
+    }
     response = client.post(
         WAITLIST_URL,
-        json={
-            **_payload(),
-            "language": "Hindi",
-            "source": "GitHub",
-        },
+        json=payload,
     )
     assert response.status_code == 201
     assert response.json() == {"ok": True}
+
+    row = db_session.query(Waitlist).filter_by(email=payload["email"]).one()
+    assert row.name == payload["name"]
+    assert row.email == payload["email"]
+
+    column_names = {
+        column["name"] for column in sa.inspect(db_session.bind).get_columns("waitlist")
+    }
+    assert "language" not in column_names
+    assert "source" not in column_names

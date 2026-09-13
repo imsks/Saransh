@@ -1,7 +1,7 @@
 """drop waitlist language and source
 
 Revision ID: 92bc25c70312
-Revises: 
+Revises: 000000000000
 Create Date: 2026-09-13 05:36:51.831050
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '92bc25c70312'
-down_revision: Union[str, Sequence[str], None] = None
+down_revision: Union[str, Sequence[str], None] = "000000000000"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
