@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
@@ -20,10 +19,8 @@ EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 class WaitlistIn(BaseModel):
     name: str
     email: EmailStr
-    language: str
-    source: Optional[str] = None
 
-    @field_validator("name", "language")
+    @field_validator("name")
     @classmethod
     def not_blank(cls, value: str) -> str:
         trimmed = value.strip()
@@ -37,14 +34,6 @@ class WaitlistIn(BaseModel):
         if len(value) < 2:
             raise ValueError("name must be at least 2 characters")
         return value
-
-    @field_validator("source")
-    @classmethod
-    def normalize_source(cls, value: Optional[str]) -> Optional[str]:
-        if value is None:
-            return None
-        trimmed = value.strip()
-        return trimmed or None
 
 
 class WaitlistOut(BaseModel):
@@ -65,8 +54,6 @@ def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
     entry = Waitlist(
         name=payload.name.strip(),
         email=normalized_email,
-        language=payload.language.strip(),
-        source=payload.source,
     )
 
     try:

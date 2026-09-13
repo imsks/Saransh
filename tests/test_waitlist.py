@@ -11,8 +11,6 @@ def _payload(email: str | None = None) -> dict:
     return {
         "name": "Priya Sharma",
         "email": email or f"priya-{uuid.uuid4()}@example.com",
-        "language": "Hindi",
-        "source": "GitHub",
     }
 
 
@@ -46,3 +44,16 @@ def test_join_waitlist_rejects_invalid_email(client):
         json={**_payload(), "email": "not-an-email"},
     )
     assert response.status_code == 422
+
+
+def test_join_waitlist_ignores_legacy_extra_fields(client):
+    response = client.post(
+        WAITLIST_URL,
+        json={
+            **_payload(),
+            "language": "Hindi",
+            "source": "GitHub",
+        },
+    )
+    assert response.status_code == 201
+    assert response.json() == {"ok": True}
