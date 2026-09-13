@@ -22,19 +22,14 @@ export default function StoryCard({ story }: { story: Story }) {
           {story.credit}
         </span>
       </div>
-      <p className="mb-2 font-serif text-[18.5px] font-semibold leading-tight tracking-tight text-ink">
+      <p className="mb-2 font-serif text-[18.5px] font-semibold leading-[1.25] tracking-tight text-ink">
         {story.headline}
       </p>
-      <p className="mb-3 font-sans text-[13.5px] leading-[1.6] text-[#2D3139]">{story.body}</p>
+      <p className="mb-3 font-sans text-[13.5px] leading-[1.6] text-muted">{story.body}</p>
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 rounded-sm border-[1.5px] border-red bg-red-tint px-2 py-0.5">
           <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-red" />
-          <span className="font-mono text-[10px] text-red">{story.source} ↗</span>
-        </div>
-        <div className="flex flex-col items-center gap-[2.5px]" aria-hidden="true">
-          <span className="h-[3.5px] w-[3.5px] rounded-full bg-muted" />
-          <span className="h-[3.5px] w-[3.5px] rounded-full bg-muted" />
-          <span className="h-[3.5px] w-[3.5px] rounded-full bg-muted" />
+          <span className="font-mono text-[10px] text-red">{story.source}</span>
         </div>
       </div>
     </div>

@@ -1,15 +1,17 @@
+import StoryCarousel from "@/components/stories/StoryCarousel";
+
 function DocIcon() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="18"
+      height="18"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-red"
+      className="shrink-0 text-red"
       aria-hidden="true"
     >
       <rect x="4" y="2" width="14" height="18" rx="1" />
@@ -23,19 +25,20 @@ function DocIcon() {
 function CodeIcon() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="18"
+      height="18"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-red"
+      className="shrink-0 text-red"
       aria-hidden="true"
     >
       <polyline points="8 6 2 11 8 16" />
       <polyline points="14 6 20 11 14 16" />
+      <line x1="12.7" y1="6" x2="9.3" y2="16" />
     </svg>
   );
 }
@@ -43,97 +46,63 @@ function CodeIcon() {
 function PersonIcon() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="18"
+      height="18"
       viewBox="0 0 22 22"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-red"
+      className="shrink-0 text-red"
       aria-hidden="true"
     >
-      <circle cx="11" cy="7" r="4" />
-      <path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" />
+      <circle cx="11" cy="7" r="3.2" fill="currentColor" />
+      <path d="M4 19c0-3.5 3.2-6 7-6s7 2.5 7 6" />
     </svg>
   );
 }
 
 export default function WhatSection() {
   return (
-    <section className="border-t border-line py-20">
+    <section className="border-t border-line py-16">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
-        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-2 md:gap-16">
+        <div className="grid grid-cols-1 gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-[72px]">
+          <StoryCarousel />
+
           <div>
-            <span className="mb-3.5 block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
-              What Saransh is
-            </span>
-            <h2 className="mb-6 font-serif text-[clamp(26px,3vw,36px)] font-semibold leading-[1.12] tracking-tight text-ink">
-              A structured feed of things that{" "}
-              <span className="font-medium italic text-muted">actually happened,</span> attributed to
-              the people who said them.
-            </h2>
-            <p className="mb-4 font-sans text-[15.5px] leading-[1.72] text-muted">
-              Every story in Saransh starts with a source — a government press release, an official
-              police bulletin, an administrative order, a registered news outlet. Our pipeline fetches
-              these, strips the copy to its factual core, and writes a summary that attributes every
-              claim:{" "}
-              <strong>
-                &apos;According to the district magistrate… the PWD stated… police confirmed…&apos;
-              </strong>
-            </p>
-            <p className="mb-4 font-sans text-[15.5px] leading-[1.72] text-muted">
-              There are no columnists, no unnamed sources, no &apos;experts say.&apos; If a claim cannot
-              be attributed to a named institution or official, it doesn&apos;t appear in the feed.{" "}
-              <strong>You can tap through to the original source on every single card.</strong>
-            </p>
-            <p className="mb-4 font-sans text-[15.5px] leading-[1.72] text-muted">
-              The short format is a constraint, not a gimmick. A story that cannot be summarised
-              accurately within it is not ready to publish — the pipeline rejects it and queues it for a
-              human editor. Every story you read has been reviewed by a person before it went live.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-[22px]">
-              <div className="mb-2.5 flex items-center gap-2.5">
-                <DocIcon />
-                <h3 className="font-serif text-lg font-semibold leading-tight tracking-tight text-ink">
-                  Verified sources only
+            <div className="flex items-start gap-3.5 pb-5 pt-0 pl-[18px]">
+              <DocIcon />
+              <div>
+                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                  VERIFIED SOURCES
                 </h3>
+                <p className="font-sans text-[13px] leading-[1.6] text-muted">
+                  Government portals, PIB, registered outlets. Nothing unattributed.
+                </p>
               </div>
-              <p className="mb-2.5 font-sans text-[13.5px] leading-[1.6] text-muted">
-                We ingest from official government portals, PIB, state information departments,
-                registered news outlets, and court order databases.{" "}
-                <strong>No social media. No anonymous forwards.</strong> Every source in the registry is
-                public.
-              </p>
             </div>
-            <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-5.5">
-              <div className="mb-2.5 flex items-center gap-2.5 ">
-                <CodeIcon />
-                <h3 className="font-serif text-lg font-semibold leading-tight tracking-tight text-ink">
-                  Open-source pipeline
+            <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
+              <CodeIcon />
+              <div>
+                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                  OPEN-SOURCE PIPELINE
                 </h3>
+                <p className="font-sans text-[13px] leading-[1.6] text-muted">
+                  Prompts, ranking logic, deduplication rules — all public on GitHub.
+                </p>
               </div>
-              <p className="mb-2.5 font-sans text-[13.5px] leading-[1.6] text-muted">
-                The summarisation prompts, ranking logic, and deduplication rules are all public on
-                GitHub. <strong>No hidden editorial layer.</strong> If a prompt introduces bias, open
-                an issue — we&apos;ll show our work or fix it.
-              </p>
             </div>
-            <div className="border-[1.5px] border-ink bg-card px-[22px] pb-5 pt-[22px]">
-              <div className="mb-2.5 flex items-center gap-2.5">
-                <PersonIcon />
-                <h3 className="font-serif text-lg font-semibold leading-tight tracking-tight text-ink">
-                  Human review before publish
+            <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
+              <PersonIcon />
+              <div>
+                <h3 className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink">
+                  HUMAN REVIEWED
                 </h3>
+                <p className="font-sans text-[13px] leading-[1.6] text-muted">
+                  Every AI-drafted story is reviewed by a person before it goes live.
+                </p>
               </div>
-              <p className="mb-2.5 font-sans text-[13.5px] leading-[1.6] text-muted">
-                Every AI-drafted story passes a human editor before going live. The reviewer can
-                approve, edit, or kill. <strong>The editing record is logged</strong> — model used,
-                prompt version, reviewer action, timestamp. Corrections are public.
-              </p>
             </div>
           </div>
         </div>
