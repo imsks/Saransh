@@ -122,7 +122,9 @@ See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.e
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string. `postgres:5432` in Docker, `127.0.0.1:5433` from the host |
-| `SARANSH_INGEST_API_KEY` | Yes* | Protects `POST /api/stories` |
+| `SARANSH_INGEST_API_KEY` | Yes* | Protects `POST /api/v1/stories` |
+| `LOG_LEVEL` | No | Backend log level (default `INFO`). Console output locally, JSON when `APP_ENV=production` |
+| `NEXT_PUBLIC_LOG_LEVEL` | No | Frontend log level (default `debug` locally, `info` in production) |
 
 \* Required in production; set any secret for local ingest testing.
 
@@ -130,9 +132,9 @@ See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.e
 
 | Endpoint | Auth | Purpose |
 |----------|------|---------|
-| `POST /api/stories` | `X-API-Key` | Ingest a structured story |
-| `GET /api/stories` | Public | List stories |
-| `GET /api/stories/{id}` | Public | Story detail |
+| `POST /api/v1/stories` | `X-API-Key` | Ingest a structured story |
+| `GET /api/v1/stories` | Public | List stories |
+| `GET /api/v1/stories/{id}` | Public | Story detail |
 | `POST /api/v1/waitlist` | Public | Join launch waitlist |
 | `GET /api/v1/health` | Public | Health check |
 

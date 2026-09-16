@@ -1,5 +1,6 @@
 import type { Story, ImageVariant } from "@/constants/stories";
-import { getStoriesApiBaseUrl } from "@/lib/api-base";
+import { getApiBaseUrl } from "@/lib/api-base";
+import { logger } from "@/lib/logger";
 
 export interface ApiStorySource {
   outlet: string;
@@ -55,18 +56,22 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
 
 /** Fetch published stories for the landing-page carousel. Falls back to an empty list on error. */
 export async function fetchPublishedStories(limit = 3): Promise<Story[]> {
-  const base = getStoriesApiBaseUrl({ forServer: true });
-  const url = `${base}?status=published&limit=${limit}`;
+  const base = getApiBaseUrl({ forServer: true });
+  const url = `${base}/stories?status=published&limit=${limit}`;
 
   try {
     const response = await fetch(url, { next: { revalidate: 60 } });
-    if (!response.ok) return [];
+    if (!response.ok) {
+      logger.warn({ url, status: response.status }, "stories.fetch_failed");
+      return [];
+    }
 
     const payload = (await response.json()) as ApiStory[];
     if (!Array.isArray(payload) || payload.length === 0) return [];
 
     return payload.map(mapApiStoryToCarousel);
-  } catch {
+  } catch (err) {
+    logger.error({ err, url }, "stories.fetch_error");
     return [];
   }
 }

@@ -27,24 +27,6 @@ function getProxiedApiBaseUrl(): string {
   return `http://${host}:${port}/api/v1`;
 }
 
-/** SSR fetch base for unversioned story routes via Next rewrites. */
-export function getStoriesApiBaseUrl(options?: { forServer?: boolean }): string {
-  const useServerUrl =
-    options?.forServer === true ||
-    (options?.forServer !== false && typeof window === "undefined");
-
-  if (useServerUrl) {
-    const port = process.env.PORT || "3001";
-    const host = process.env.HOST || "127.0.0.1";
-    return `http://${host}:${port}/api/stories`;
-  }
-
-  const publicBase = trimTrailingSlash(
-    process.env.NEXT_PUBLIC_API_ORIGIN || "http://localhost:8001",
-  );
-  return `${publicBase}/api/stories`;
-}
-
 /**
  * Base URL for Saransh FastAPI requests.
  * Browser code uses NEXT_PUBLIC_API_URL. SSR loops back through Next rewrites

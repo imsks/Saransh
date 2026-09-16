@@ -2,7 +2,7 @@
 
 import uuid
 
-STORIES_URL = "/api/stories"
+STORIES_URL = "/api/v1/stories"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -30,7 +30,7 @@ VALID_PAYLOAD = {
 
 
 # ---------------------------------------------------------------------------
-# POST /api/stories – happy-path
+# POST /api/v1/stories – happy-path
 # ---------------------------------------------------------------------------
 
 
@@ -111,7 +111,7 @@ def test_ingest_story_multiple_sources(client):
 
 
 # ---------------------------------------------------------------------------
-# POST /api/stories – validation failures → 422
+# POST /api/v1/stories – validation failures → 422
 # ---------------------------------------------------------------------------
 
 
@@ -206,7 +206,7 @@ def test_missing_source_url_returns_422(client):
 
 
 # ---------------------------------------------------------------------------
-# POST /api/stories – API key authentication
+# POST /api/v1/stories – API key authentication
 # ---------------------------------------------------------------------------
 
 
@@ -233,18 +233,18 @@ def test_post_with_valid_api_key_returns_201(client):
 
 
 # ---------------------------------------------------------------------------
-# GET /api/stories – story list
+# GET /api/v1/stories – story list
 # ---------------------------------------------------------------------------
 
 
 def test_list_stories_returns_200(client):
-    """GET /api/stories should return HTTP 200."""
+    """GET /api/v1/stories should return HTTP 200."""
     response = client.get(STORIES_URL)
     assert response.status_code == 200
 
 
 def test_list_stories_returns_list(client):
-    """GET /api/stories should return a JSON array."""
+    """GET /api/v1/stories should return a JSON array."""
     response = client.get(STORIES_URL)
     assert isinstance(response.json(), list)
 
@@ -346,12 +346,12 @@ def test_list_stories_pagination_offset(client):
 
 
 # ---------------------------------------------------------------------------
-# GET /api/stories/{story_id} – story detail
+# GET /api/v1/stories/{story_id} – story detail
 # ---------------------------------------------------------------------------
 
 
 def test_get_story_returns_200(client):
-    """GET /api/stories/{id} should return HTTP 200 for an existing story."""
+    """GET /api/v1/stories/{id} should return HTTP 200 for an existing story."""
     post_resp = client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
     story_id = post_resp.json()["id"]
     response = client.get(f"{STORIES_URL}/{story_id}")
@@ -359,7 +359,7 @@ def test_get_story_returns_200(client):
 
 
 def test_get_story_response_fields(client):
-    """GET /api/stories/{id} should return the correct story with sources."""
+    """GET /api/v1/stories/{id} should return the correct story with sources."""
     post_resp = client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
     posted = post_resp.json()
     story_id = posted["id"]
@@ -375,14 +375,14 @@ def test_get_story_response_fields(client):
 
 
 def test_get_story_404_for_unknown_id(client):
-    """GET /api/stories/{id} should return 404 for a non-existent story."""
+    """GET /api/v1/stories/{id} should return 404 for a non-existent story."""
     fake_id = str(uuid.uuid4())
     response = client.get(f"{STORIES_URL}/{fake_id}")
     assert response.status_code == 404
 
 
 def test_get_story_is_public(client):
-    """GET /api/stories/{id} should be accessible without an API key."""
+    """GET /api/v1/stories/{id} should be accessible without an API key."""
     post_resp = client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
     story_id = post_resp.json()["id"]
     # Deliberately no X-API-Key header
@@ -391,6 +391,11 @@ def test_get_story_is_public(client):
 
 
 def test_list_stories_is_public(client):
-    """GET /api/stories should be accessible without an API key."""
+    """GET /api/v1/stories should be accessible without an API key."""
     response = client.get(STORIES_URL)
     assert response.status_code == 200
+
+
+def test_unversioned_path_is_not_served(client):
+    """There is exactly one surface: /api/v1."""
+    assert client.get("/api/stories").status_code == 404

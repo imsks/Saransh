@@ -24,14 +24,6 @@ const nextConfig = {
         source: "/api/v1/:path*",
         destination: `${apiRewriteOrigin}/api/v1/:path*`,
       },
-      {
-        source: "/api/stories/:path*",
-        destination: `${apiRewriteOrigin}/api/stories/:path*`,
-      },
-      {
-        source: "/api/stories",
-        destination: `${apiRewriteOrigin}/api/stories`,
-      },
     ];
   },
 };

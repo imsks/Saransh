@@ -1,17 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import logging
 from datetime import datetime
 from app.config import settings
-from app.utils import setup_logging
+from app.utils import get_logger, setup_logging
 from app.api import router as api_router
-from app.api.stories import router as stories_router
 from app.db.bootstrap import init_database
 
 # Setup logging
 setup_logging()
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 # Create FastAPI app
 app = FastAPI(
@@ -33,20 +31,22 @@ app.add_middleware(
 
 # Include versioned API router
 app.include_router(api_router, prefix="/api/v1")
-# Story ingestion endpoint at /api/stories
-app.include_router(stories_router, prefix="/api")
+
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("🚀 Saransh AI News App starting up...")
-    logger.info(f"Environment: {settings.APP_ENV}")
-    logger.info(f"Debug mode: {settings.DEBUG}")
-    logger.info(f"Startup time: {datetime.now()}")
+    logger.info(
+        "app.startup",
+        environment=settings.APP_ENV,
+        debug=settings.DEBUG,
+        started_at=datetime.now().isoformat(),
+    )
     init_database()
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    logger.info("🛑 Saransh AI News App shutting down...")
+    logger.info("app.shutdown")
 
 if __name__ == "__main__":
     # Development configuration with auto-reload

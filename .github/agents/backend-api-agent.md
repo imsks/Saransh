@@ -124,7 +124,7 @@ Then register it in `app/api/__init__.py` so it is picked up by the versioned ro
 
 ### 3. Protecting an ingest route
 
-`POST /api/stories` is protected by `SARANSH_INGEST_API_KEY`. Any new write endpoint must be behind the same dependency — reads stay public.
+`POST /api/v1/stories` is protected by `SARANSH_INGEST_API_KEY`. Any new write endpoint must be behind the same dependency — reads stay public.
 
 ### 4. Adding a setting
 
@@ -147,11 +147,10 @@ Document it in `.env.example` **and** the README's environment-variable table in
 /api/v1/stories                # collection
 /api/v1/stories/{story_id}     # single resource
 /api/v1/articles               # collection
-/api/stories                   # ingest (write, key-protected)
 ```
 
 - Plural nouns, lowercase, hyphen-separated.
-- Version everything read-facing under `/api/v1`.
+- Everything is served under `/api/v1`; there is no unversioned surface.
 - Never leak internal DB ids in place of stable public ids.
 
 ### HTTP methods
@@ -217,7 +216,7 @@ def test_health_ok():
 
 
 def test_ingest_requires_key():
-    resp = client.post("/api/stories", json={"headline": "x"})
+    resp = client.post("/api/v1/stories", json={"headline": "x"})
     assert resp.status_code == 401
 ```
 

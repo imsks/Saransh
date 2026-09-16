@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-base";
+import { logger } from "@/lib/logger";
 import { validateEmail, validateName } from "@/lib/validate";
 
 interface WaitlistFormProps {
@@ -61,7 +62,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
       setError("Something went wrong. Please try again.");
     } catch (err) {
-      console.error("[waitlist] submission error:", err);
+      logger.error({ err }, "waitlist.submit_failed");
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);

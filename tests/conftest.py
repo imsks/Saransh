@@ -8,8 +8,8 @@ UUID dialect type, we:
 1. Override environment variables *before* any application module is imported
    so that the SQLAlchemy engine created in ``app.db.database`` points at SQLite.
 2. Patch the PostgreSQL UUID column type to be transparent on SQLite.
-3. Build a minimal FastAPI application that registers only the stories router
-   to avoid loading optional modules at import time.
+3. Build a minimal FastAPI application that registers only the stories and
+   waitlist routers to avoid loading optional modules at import time.
 """
 
 import os
@@ -71,10 +71,10 @@ stories_router = _load_router("app/api/stories.py", "saransh_test_stories")
 waitlist_router = _load_router("app/api/waitlist.py", "saransh_test_waitlist")
 
 # ---------------------------------------------------------------------------
-# 4. Build a minimal test FastAPI app with only the stories router
+# 4. Build a minimal test FastAPI app mounted like main.py
 # ---------------------------------------------------------------------------
 test_app = FastAPI()
-test_app.include_router(stories_router, prefix="/api")
+test_app.include_router(stories_router, prefix="/api/v1")
 test_app.include_router(waitlist_router, prefix="/api/v1")
 
 # ---------------------------------------------------------------------------

@@ -15,54 +15,33 @@ from sqlalchemy.sql import func
 
 from app.db.database import Base
 
+# Publication Status values (see CONTEXT.md).
+STATUS_DRAFT = "draft"
+STATUS_PUBLISHED = "published"
 
-class Story(Base):
-    __tablename__ = "stories"
 
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
+class CreatedAtMixin:
+    created_at = Column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    # Bilingual content
+
+class Story(CreatedAtMixin, Base):
+    __tablename__ = "stories"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
     title_en = Column(Text, nullable=False)
     title_hi = Column(Text, nullable=False)
-
     summary_en = Column(Text, nullable=False)
     summary_hi = Column(Text, nullable=False)
 
-    # Classification
     category = Column(String(50), nullable=False)
-
-    # Geography
     state = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)
 
-    image_url = Column(Text, nullable=True)
-
-    # Publishing lifecycle
-    status = Column(
-        String(20),
-        nullable=False,
-        default="draft",
-    )
-
-    event_at = Column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-
-    published_at = Column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-
-    created_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    )
+    status = Column(String(20), nullable=False, default=STATUS_DRAFT)
+    published_at = Column(DateTime(timezone=True), nullable=True)
 
     updated_at = Column(
         DateTime(timezone=True),
@@ -78,14 +57,10 @@ class Story(Base):
     )
 
 
-class Source(Base):
+class Source(CreatedAtMixin, Base):
     __tablename__ = "sources"
 
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     story_id = Column(
         UUID(as_uuid=True),
@@ -94,59 +69,20 @@ class Source(Base):
         index=True,
     )
 
-    outlet = Column(
-        String(150),
-        nullable=False,
-    )
+    outlet = Column(String(150), nullable=False)
+    url = Column(Text, nullable=False)
+    source_type = Column(String(30), nullable=True)
 
-    url = Column(
-        Text,
-        nullable=False,
-    )
-
-    source_type = Column(
-        String(30),
-        nullable=True,
-    )
-
-    published_at = Column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-
-    fetched_at = Column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-
-    created_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    )
-
-    story = relationship(
-        "Story",
-        back_populates="sources",
-    )
+    story = relationship("Story", back_populates="sources")
 
     __table_args__ = (
-        UniqueConstraint(
-            "story_id",
-            "url",
-            name="uq_story_source_url",
-        ),
+        UniqueConstraint("story_id", "url", name="uq_story_source_url"),
     )
 
 
-class Waitlist(Base):
+class Waitlist(CreatedAtMixin, Base):
     __tablename__ = "waitlist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
-    created_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    )

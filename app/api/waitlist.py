@@ -1,4 +1,3 @@
-import logging
 import re
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,9 +8,10 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.db.models import Waitlist
+from app.utils import get_logger
 
 router = APIRouter(tags=["Waitlist"])
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
@@ -65,7 +65,7 @@ def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
         return JSONResponse(status_code=200, content={"ok": True, "duplicate": True})
     except Exception as exc:
         db.rollback()
-        logger.exception("Failed to save waitlist signup: %s", exc)
+        logger.exception("waitlist.signup_failed")
         raise HTTPException(
             status_code=500,
             detail="Unable to save your waitlist signup right now.",
