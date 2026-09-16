@@ -41,6 +41,48 @@ make stop    # when you're done
 
 ---
 
+## Database — local Postgres
+
+`make up` starts Saransh's **own** Postgres container (`saransh-postgres`). Nothing else is
+required — do not point `DATABASE_URL` at a Rajniti instance or at `host.docker.internal`.
+
+| Who connects | Host | Port |
+|--------------|------|------|
+| API container (inside Compose) | `postgres` | `5432` |
+| You, from your machine (`psql`, GUI) | `127.0.0.1` | `5433` |
+
+Default credentials: user `rajniti`, password `rajniti`, database `rajniti` (override with
+`POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` / `POSTGRES_PORT`).
+
+**Open a psql shell**
+
+```bash
+# via the container — no local psql install needed
+docker compose exec postgres psql -U rajniti -d rajniti
+
+# or from your machine, against the published port
+psql "postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti"
+```
+
+**Running the API on the host instead of in Docker?** Use the published port in `.env`:
+
+```bash
+DATABASE_URL=postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti
+```
+
+**Troubleshooting `connection to server at "host.docker.internal" … Connection refused`**
+Your `.env` is pointing outside the Compose network. Reset `DATABASE_URL` to
+`postgresql://rajniti:rajniti@postgres:5432/rajniti`, then `docker compose up -d --force-recreate saransh-api`.
+Check the DB is healthy with `docker compose ps postgres`.
+
+**Reset the database** (destroys all local data):
+
+```bash
+docker compose down -v && make up
+```
+
+---
+
 ## Quick Start — Local (no Docker)
 
 **Prerequisites:** Python 3.11+, Node 20+, PostgreSQL.
@@ -79,7 +121,7 @@ See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.e
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `DATABASE_URL` | Yes | PostgreSQL connection string. `postgres:5432` in Docker, `127.0.0.1:5433` from the host |
 | `SARANSH_INGEST_API_KEY` | Yes* | Protects `POST /api/stories` |
 
 \* Required in production; set any secret for local ingest testing.
