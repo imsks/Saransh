@@ -3,7 +3,7 @@
 **Status**: Approved, not started · **Parent issue**: [imsks/Saransh#41](https://github.com/imsks/Saransh/issues/41) · **Written**: 2026-09-02
 
 Everything needed to take the Saransh backend from "runs on a laptop" to "serving the public
-internet from Cloud Run", plus the cross-promo link from Rajniti. Ten slices in this repo, one
+internet from Cloud Run", plus the cross-promo link from Rajniti. Nine slices in this repo, one
 in Rajniti. Each slice is a separate spec file in this directory and a sub-issue of the parent.
 
 Read this file first. It carries the shared context every slice assumes; the slice specs do not
@@ -15,8 +15,8 @@ repeat it.
 
 This matters because the original framing of this work was wrong in ways worth recording.
 
-**The Story Ingest API exists.** `app/api/stories.py` serves `GET /api/stories`,
-`GET /api/stories/{id}` and `POST /api/stories`. The POST is guarded by an `X-API-Key` header
+**The Story Ingest API exists.** `app/api/stories.py` serves `GET /api/v1/stories`,
+`GET /api/v1/stories/{id}` and `POST /api/v1/stories`. The POST is guarded by an `X-API-Key` header
 checked against `SARANSH_INGEST_API_KEY`.
 
 **The Waitlist API exists, in FastAPI.** `app/api/waitlist.py` serves `POST /api/v1/waitlist`,
@@ -24,10 +24,15 @@ normalises the email, and treats a repeat signup as success (`{ok: true, duplica
 the unique constraint on `waitlist.email`. It is wired up in `app/api/__init__.py` and covered by
 `tests/test_waitlist.py`.
 
+**The API surface is already unified.** `main.py` mounts the whole `api_router` at `/api/v1`, so
+stories and waitlist share one prefix. Nothing was ever published on `/api/stories` —
+`tests/test_stories.py` asserts it returns 404 — so no deprecated alias is needed. This was
+originally slice 02; it was dropped on 2026-09-16 once the code turned out to already satisfy it.
+
 **There are no Next.js API routes to migrate.** `frontend/src/app` has no `api/` directory. The
 only server-side indirection is the rewrite block in `frontend/next.config.mjs`, which proxies
-`/api/v1/*` and `/api/stories*` through to FastAPI so that SSR can reach the API inside Docker.
-The "FastAPI only, no Next APIs" requirement is already satisfied — nothing to remove.
+`/api/v1/*` through to FastAPI so that SSR can reach the API inside Docker. The "FastAPI only, no
+Next APIs" requirement is already satisfied — nothing to remove.
 
 **Nothing is deployed.** There is no deploy workflow, no `cloudbuild.yaml`, and no gcloud script
 in this repo or in Rajniti. Rajniti's Dockerfile has a comment reading
@@ -63,7 +68,7 @@ turns out to be wrong, say so on the parent issue.
 | # | Decision | Why |
 |---|---|---|
 | D1 | This is a refactor and hardening pass, not net-new endpoints | Both APIs already exist and are tested |
-| D2 | One surface under `/api/v1`; `/api/stories` stays as a deprecated alias for one release | Two conventions for one service is a caller-facing wart; the alias avoids a flag-day break |
+| D2 | One surface under `/api/v1` | Two conventions for one service is a caller-facing wart. Already satisfied — see slice 02 in §1 |
 | D3 | Saransh gets its own database (Supabase), not Rajniti's | See [ADR 0003](../../adr/0003-separate-saransh-database.md) |
 | D4 | Secrets ride as plain Cloud Run env vars for now, not Secret Manager | Accepted trade-off: values visible in the console and in shell history. Moving to Secret Manager later is a service-config change, not a code change |
 | D5 | Alembic owns the schema; `create_all()` is demoted to dev and test | `create_all` cannot alter a column and races across instances |
@@ -94,24 +99,24 @@ From `CONTEXT.md`. Use these words in code, commits, issue comments and PR title
 ```
         ┌── 01 runtime contract ──┐
         │                          └── 08 deploy tooling ──┐
-        ├── 02 /api/v1 surface ─── 05 publication status    ├── 09 first deploy ── 10 frontend
-        │                                                   │
-        ├── 03 alembic ──┬── 04 ingest dedupe               │
-        │                └── 07 separate database ──────────┘
+        ├── 05 publication status                          ├── 09 first deploy ── 10 frontend
+        │                                                  │
+        ├── 03 alembic ──┬── 04 ingest dedupe              │
+        │                └── 07 separate database ─────────┘
         └── 06 waitlist guard
 
   (Rajniti) 11 cross-promo — independent, but its link only resolves once 10 lands
 ```
 
-Five slices have no blockers and can run in parallel: **01, 02, 03, 06** and Rajniti **11**.
+Five slices have no blockers and can run in parallel: **01, 03, 05, 06** and Rajniti **11**.
 
 | Slice | Spec | Issue | Type | Blocked by |
 |---|---|---|---|---|
 | 01 Cloud Run runtime contract | [01-cloud-run-runtime.md](01-cloud-run-runtime.md) | [#31](https://github.com/imsks/Saransh/issues/31) | AFK | — |
-| 02 Unify on `/api/v1` | [02-api-v1-surface.md](02-api-v1-surface.md) | [#32](https://github.com/imsks/Saransh/issues/32) | AFK | — |
+| ~~02 Unify on `/api/v1`~~ | — | — | — | Dropped 2026-09-16 — already shipped, see §1 |
 | 03 Alembic migrations | [03-alembic-migrations.md](03-alembic-migrations.md) | [#33](https://github.com/imsks/Saransh/issues/33) | AFK | — |
 | 04 Ingest dedupe | [04-ingest-dedupe.md](04-ingest-dedupe.md) | [#35](https://github.com/imsks/Saransh/issues/35) | AFK | 03 |
-| 05 Publication Status | [05-publication-status.md](05-publication-status.md) | [#36](https://github.com/imsks/Saransh/issues/36) | AFK | 02 |
+| 05 Publication Status | [05-publication-status.md](05-publication-status.md) | [#36](https://github.com/imsks/Saransh/issues/36) | AFK | — |
 | 06 Waitlist abuse guard | [06-waitlist-abuse-guard.md](06-waitlist-abuse-guard.md) | [#34](https://github.com/imsks/Saransh/issues/34) | AFK | — |
 | 07 Separate database | [07-separate-database.md](07-separate-database.md) | [#37](https://github.com/imsks/Saransh/issues/37) | HITL | 03 |
 | 08 Deploy tooling | [08-deploy-tooling.md](08-deploy-tooling.md) | [#38](https://github.com/imsks/Saransh/issues/38) | AFK | 01 |

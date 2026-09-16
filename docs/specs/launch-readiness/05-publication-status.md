@@ -1,6 +1,6 @@
 # 05 — Publication Status: public reads see Published only
 
-**Issue**: [#36](https://github.com/imsks/Saransh/issues/36) · **Type**: AFK · **Blocked by**: 02
+**Issue**: [#36](https://github.com/imsks/Saransh/issues/36) · **Type**: AFK · **Blocked by**: none
 
 Read [README.md](README.md) first.
 
