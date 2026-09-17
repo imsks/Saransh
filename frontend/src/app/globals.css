@@ -70,20 +70,21 @@
   --background: #111417;
   --foreground: #e6e4df;
 
-  --paper: #111417;
-  --card: #1c2028;
+  --paper: #191816;
+  --card: #211f1c;
   --ink: #e6e4df;
-  --muted: #8e8b85;
-  --line: #2a2e36;
-  --line-heavy: #3a3e48;
+  --muted: #8e8a82;
+  --line: #2c2a25;
+  --line-heavy: #3a3730;
 
-  --red: #c41e2e;
-  --red-tint: #2a0d10;
-  --blue: #1a4f8a;
-  --blue-tint: #0e1f35;
-  --green: #1f6b3e;
-  --green-tint: #eaf3ed;
-  --amber: #b8691a;
+  --red: #d95550;
+  --red-tint: #2e1618;
+  --blue: #5a8ebe;
+  --blue-tint: #141e2a;
+  --green: #4a9b6a;
+  --green-tint: #152518;
+  --amber: #d4944a;
+  --amber-tint: #352310;
 
   --sutra-color-surface: var(--card);
   --sutra-color-surface-subtle: var(--paper);
