@@ -61,7 +61,7 @@ Passed to the service as plain Cloud Run environment variables.
 |---|---|---|
 | `DATABASE_URL` | — **required** | Postgres connection string. For Supabase use the **session-mode pooler** (port `5432`), not the IPv6-only direct host |
 | `SARANSH_INGEST_API_KEY` | — **required** | Guards `POST /api/v1/stories`. Use a fresh secret, never the local dev one |
-| `CORS_ORIGINS` | — **required** | Comma-separated browser origins, e.g. `https://saransh.vercel.app` |
+| `CORS_ORIGINS` | — **required** | Comma-separated browser origins, e.g. `https://saransh-app.vercel.app` |
 | `LOG_LEVEL` | `INFO` | Backend log level; JSON output when `APP_ENV=production` |
 | `APP_ENV` / `DEBUG` | set by the script | Pinned to `production` / `False` |
 

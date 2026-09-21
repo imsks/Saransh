@@ -47,6 +47,12 @@ def test_preflight_from_unconfigured_origin_is_not_allowed():
     assert "access-control-allow-origin" not in response.headers
 
 
+def test_preflight_from_production_frontend_is_allowed():
+    origin = "https://saransh-app.vercel.app"
+    response = _preflight(origin)
+    assert response.headers.get("access-control-allow-origin") == origin
+
+
 def test_patch_preflight_is_allowed():
     response = _preflight(settings.CORS_ORIGINS[0], method="PATCH")
     allowed = response.headers.get("access-control-allow-methods", "")
