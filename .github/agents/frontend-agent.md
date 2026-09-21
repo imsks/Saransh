@@ -259,7 +259,6 @@ describe("StoryCard", () => {
 ```bash
 # frontend/.env
 NEXT_PUBLIC_API_URL=http://localhost:8001/api/v1
-NEXT_PUBLIC_API_ORIGIN=http://localhost:8001
 API_REWRITE_TARGET=http://saransh-api:8001   # Docker only
 ```
 

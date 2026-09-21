@@ -22,15 +22,14 @@ Vercel account access.
   falls through to the public URL when it does not. **That fall-through branch has only ever run
   locally.** It is the thing most likely to misbehave on the deployed build.
 - `frontend/next.config.mjs` — rewrites driven by `API_REWRITE_TARGET` / `API_URL` /
-  `NEXT_PUBLIC_API_ORIGIN`
+  `NEXT_PUBLIC_API_URL` (origin derived by stripping `/api/v1`, same as Rajniti)
 - Rajniti's frontend is on Vercel; this follows the same pattern
 
 ## Action plan
 
 1. Deploy `frontend/` to Vercel. Root directory is `frontend`, not the repo root — the repo root is
    the Python API.
-2. Set `NEXT_PUBLIC_API_URL` to the Cloud Run `/api/v1` base and `NEXT_PUBLIC_API_ORIGIN` to the
-   service origin.
+2. Set `NEXT_PUBLIC_API_URL` to the Cloud Run `/api/v1` base (rewrite origin is derived from it).
 3. Add the resulting Vercel origin to the backend's `CORS_ORIGINS` and redeploy the API. Include
    both the production domain and, if you want working previews, the preview pattern — Vercel gives
    every deployment its own hostname, and each one is a distinct origin as far as CORS is concerned.
