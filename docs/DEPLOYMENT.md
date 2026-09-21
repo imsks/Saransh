@@ -161,3 +161,10 @@ The frontend deploys to Vercel from the `frontend/` directory, via the Git integ
 `vercel --prod`. Set `NEXT_PUBLIC_API_URL` to the Cloud Run service URL in the Vercel project, and
 add that Vercel origin to `CORS_ORIGINS` on the API. `frontend/vercel.json` carries the security
 and cache headers.
+
+Environment ownership: local values live in `frontend/.env.example` (mirroring Rajniti's key
+names). Vercel should carry only the production `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_API_ORIGIN`.
+Do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` on Vercel — `getSiteUrl()`
+falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*`, `GOOGLE_CLIENT_*`, and
+`NEXT_PUBLIC_GA_MEASUREMENT_ID` keys are placeholders for parity with Rajniti and stay unused until
+sign-in or analytics ship.
