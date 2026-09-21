@@ -9,9 +9,10 @@ services:
     env_file:
       - .env
     ports:
-      - "${SARANSH_API_PORT:-8001}:8001"
+      - "${SARANSH_API_PORT:-8001}:${PORT:-8080}"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/api/v1/health"]
+      # $$ escapes Compose interpolation so the container shell expands PORT at runtime.
+      test: ["CMD-SHELL", "curl -f http://localhost:$${PORT:-8080}/api/v1/health"]
       interval: 30s
       timeout: 10s
       retries: 3

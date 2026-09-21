@@ -1,0 +1,30 @@
+# Uploaded to Cloud Build by `gcloud builds submit`.
+# Without this file gcloud falls back to .dockerignore, which excludes files the
+# repository genuinely needs (alembic/, for one).
+
+.git/
+.gitignore
+
+__pycache__/
+*.py[cod]
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+frontend/
+tests/
+docs/
+
+.vscode/
+.idea/
+.DS_Store
+
+.env
+.env.*
+!.env.example
+
+*.log

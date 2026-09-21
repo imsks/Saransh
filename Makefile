@@ -1,5 +1,5 @@
-# Saransh — setup, up, stop.
-.PHONY: setup up stop
+# Saransh — setup, up, stop, deploy.
+.PHONY: setup up stop deploy
 
 COMPOSE := docker compose
 
@@ -14,3 +14,6 @@ up: setup ## Start API :8001 + frontend :3001 + Postgres :5433
 
 stop: ## Stop containers
 	$(COMPOSE) down
+
+deploy: ## Build, push and deploy the API to Cloud Run (see docs/DEPLOYMENT.md)
+	./scripts/deploy_cloud_run.sh

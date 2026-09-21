@@ -11,6 +11,7 @@ Saransh pulls directly from verified sources and gives you a concise, attributed
 | **First time** | `make setup` | Copies `.env` templates |
 | **Start** | `make up` | API `:8001` + Next.js `:3001` + Postgres `:5433` |
 | **Stop** | `make stop` | Stops Docker containers |
+| **Ship** | `make deploy` | Builds, pushes and deploys the API to Cloud Run |
 
 > **Port note:** API defaults to `:8001` (Rajniti uses `:8000`). Postgres publishes on `:5433` so it can run beside Rajniti on `:5432`.
 
@@ -112,6 +113,23 @@ cd frontend && npm ci && npm run dev   # http://localhost:3001
 | `make setup` | Copy `.env` templates (safe to re-run) |
 | `make up` | Start API + frontend + Postgres |
 | `make stop` | Stop Docker containers |
+| `make deploy` | Deploy the API to Cloud Run — see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+
+---
+
+## 🚀 Deployment
+
+The API runs on **Cloud Run**, the frontend on **Vercel** — the same shape as Rajniti, with its own
+ports and service names. Deploys are human-triggered via a committed script, not CI.
+
+```bash
+DATABASE_URL=... SARANSH_INGEST_API_KEY=... CORS_ORIGINS=https://your-frontend \
+  GCP_PROJECT_ID=your-project make deploy
+```
+
+Images are tagged with the commit SHA (never `latest`) and the script refuses to deploy from a
+dirty working tree. Full reference — one-time GCP setup, runtime variables, migrations, rollback —
+is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ---
 
@@ -123,6 +141,7 @@ See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.e
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string. `postgres:5432` in Docker, `127.0.0.1:5433` from the host |
 | `SARANSH_INGEST_API_KEY` | Yes* | Protects `POST /api/v1/stories` |
+| `CORS_ORIGINS` | No | Comma-separated browser origins allowed to call the API. Defaults to the local frontend |
 | `LOG_LEVEL` | No | Backend log level (default `INFO`). Console output locally, JSON when `APP_ENV=production` |
 | `NEXT_PUBLIC_LOG_LEVEL` | No | Frontend log level (default `debug` locally, `info` in production) |
 
@@ -148,8 +167,9 @@ saransh/
 │   ├── api/              # stories, waitlist, health
 │   ├── db/               # SQLAlchemy models + bootstrap
 │   └── utils/            # logging
+├── docs/                 # DEPLOYMENT.md, ADRs, specs
 ├── frontend/             # Next.js frontend
-├── scripts/              # DB init
+├── scripts/              # DB init, Cloud Run deploy
 ├── tests/
 ├── Dockerfile
 ├── docker-compose.yml
