@@ -1,9 +1,16 @@
 import os
-from typing import Optional
+from typing import List, Optional
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+DEFAULT_CORS_ORIGINS = "http://localhost:3001,http://127.0.0.1:3001"
+
+
+def parse_origins(raw: str) -> List[str]:
+    """Split a comma-separated origin list, trimming whitespace and dropping empties."""
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
 class Settings:
@@ -20,6 +27,10 @@ class Settings:
 
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "8001"))
+
+    CORS_ORIGINS: List[str] = parse_origins(
+        os.getenv("CORS_ORIGINS", DEFAULT_CORS_ORIGINS)
+    )
 
     SARANSH_INGEST_API_KEY: Optional[str] = os.getenv("SARANSH_INGEST_API_KEY")
 

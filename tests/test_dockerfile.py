@@ -22,6 +22,20 @@ def test_dockerfile_uses_uvicorn_for_dev_and_gunicorn_for_prod():
     assert "UvicornWorker" in text
 
 
+def test_dockerfile_builds_without_buildkit():
+    # Cloud Build's docker step runs the legacy builder, which rejects RUN --mount.
+    text = DOCKERFILE.read_text()
+    assert "--mount" not in text
+    assert "# syntax=" not in text
+
+
+def test_production_stage_serves_the_cloud_run_port():
+    production = DOCKERFILE.read_text().split("FROM base AS production", 1)[1]
+    assert "PORT=8080" in production
+    assert "EXPOSE 8080" in production
+    assert "--bind 0.0.0.0:${PORT}" in production
+
+
 def test_dockerignore_excludes_frontend_and_env_files():
     text = DOCKERIGNORE.read_text()
     assert "frontend/" in text

@@ -29,9 +29,11 @@ def test_compose_api_waits_for_postgres():
     assert depends_on["postgres"]["condition"] == "service_healthy"
 
 
-def test_compose_api_does_not_override_database_url():
+def test_compose_api_pins_database_url_to_the_compose_postgres():
     data = yaml.safe_load(COMPOSE.read_text())
-    assert "environment" not in data["services"]["saransh-api"]
+    database_url = data["services"]["saransh-api"]["environment"]["DATABASE_URL"]
+    assert "@postgres:5432/" in database_url
+    assert "host.docker.internal" not in database_url
 
 
 def test_compose_frontend_uses_dockerfile_dev():
@@ -75,3 +77,12 @@ def test_prod_compose_builds_production_target():
     data = yaml.safe_load(COMPOSE_PROD.read_text())
     build = data["services"]["saransh-api"]["build"]
     assert build["target"] == "production"
+
+
+def test_prod_compose_follows_the_injected_port():
+    data = yaml.safe_load(COMPOSE_PROD.read_text())
+    service = data["services"]["saransh-api"]
+    assert service["ports"] == ["${SARANSH_API_PORT:-8001}:${PORT:-8080}"]
+    healthcheck = " ".join(service["healthcheck"]["test"])
+    assert "$${PORT:-8080}" in healthcheck
+    assert "8001" not in healthcheck
