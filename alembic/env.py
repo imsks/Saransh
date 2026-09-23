@@ -25,7 +25,9 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 database_url = _normalize_driver(get_database_url(settings.DATABASE_URL))
-config.set_main_option("sqlalchemy.url", database_url)
+# Escape '%' so ConfigParser does not treat an encoded password (e.g. '%40'
+# for '@') as interpolation syntax when the URL is stored on the ini config.
+config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

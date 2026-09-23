@@ -11,6 +11,7 @@ export interface ApiStory {
   id: string;
   title_en: string;
   summary_en: string;
+  image_url: string;
   category: string;
   state?: string | null;
   district?: string | null;
@@ -47,6 +48,7 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
     category: categoryLabel(story),
     time: relativeTime(story.created_at),
     imageVariant: imageVariantFor(story),
+    imageUrl: story.image_url || undefined,
     credit: primarySource?.outlet ?? "Saransh",
     headline: story.title_en,
     body: story.summary_en,
