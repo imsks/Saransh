@@ -18,6 +18,7 @@ class StoryIn(BaseModel):
     title_hi: str
     summary_en: str
     summary_hi: str
+    image_url: HttpUrl
     category: str
     state: Optional[str] = None
     district: Optional[str] = None
@@ -53,6 +54,7 @@ class StoryOut(BaseModel):
     title_hi: str
     summary_en: str
     summary_hi: str
+    image_url: str
     category: str
     state: Optional[str]
     district: Optional[str]
