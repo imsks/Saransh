@@ -5,7 +5,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.db.models import STATUS_DRAFT, Source, Story
+from app.db.models import STATUS_PUBLISHED, Source, Story
 from app.schemas.stories import StoryIn
 
 
@@ -49,7 +49,7 @@ def create_story(db: Session, payload: StoryIn) -> Story:
             category=payload.category,
             state=payload.state,
             district=payload.district,
-            status=STATUS_DRAFT,
+            status=STATUS_PUBLISHED,
         )
         db.add(story)
         db.flush()  # obtain story.id before inserting sources

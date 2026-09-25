@@ -15,8 +15,6 @@ from sqlalchemy.sql import func
 
 from app.db.database import Base
 
-# Publication Status values (see CONTEXT.md).
-STATUS_DRAFT = "draft"
 STATUS_PUBLISHED = "published"
 
 
@@ -43,7 +41,7 @@ class Story(CreatedAtMixin, Base):
     state = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)
 
-    status = Column(String(20), nullable=False, default=STATUS_DRAFT)
+    status = Column(String(20), nullable=False, default=STATUS_PUBLISHED)
     published_at = Column(DateTime(timezone=True), nullable=True)
 
     updated_at = Column(
