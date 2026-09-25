@@ -1,5 +1,11 @@
 # 05 — Publication Status: public reads see Published only
 
+> **Superseded 2026-09-25.** The Draft step was removed rather than implemented: `create_story`
+> now writes `status="published"` and migration `c3d4e5f6a7b8` promoted the Drafts already in the
+> database. Review moved ahead of ingest, so there is nothing to gate public reads on. The
+> `PATCH /stories/{id}/publish` endpoint and the auth split described below were never built and
+> are not planned. Kept for the reasoning, not as work to do.
+
 **Issue**: [#36](https://github.com/imsks/Saransh/issues/36) · **Type**: AFK · **Blocked by**: none
 
 Read [README.md](README.md) first.

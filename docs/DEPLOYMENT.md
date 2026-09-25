@@ -52,6 +52,17 @@ script lists *every* missing variable at once rather than failing on the first.
 | `MIN_INSTANCES` | `0` | Scale to zero between deploys; expect a cold start |
 | `MAX_INSTANCES` | `4` | Upper bound on concurrent instances |
 | `ALLOW_DIRTY` | `0` | Set to `1` to deploy from an uncommitted tree |
+| `SKIP_MIGRATIONS` | `0` | Set to `1` to ship code without running `alembic upgrade head` |
+
+## Migrations on deploy
+
+The script runs `alembic upgrade head` against `DATABASE_URL` after pushing the image and before
+the new revision goes live, so the code that starts serving always meets its schema. A failed
+migration aborts the deploy.
+
+Migrations run from your machine, not from the container — the image copies `app/` only, so
+`alembic/` and `alembic.ini` are not in it. You therefore need the venv active (or `alembic` on
+`PATH`) to deploy. `SKIP_MIGRATIONS=1` is the escape hatch for a code-only rollout.
 
 ## Runtime configuration
 

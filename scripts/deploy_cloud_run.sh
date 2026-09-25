@@ -24,6 +24,7 @@ IMAGE_NAME="${IMAGE_NAME:-saransh-api}"
 MIN_INSTANCES="${MIN_INSTANCES:-0}"
 MAX_INSTANCES="${MAX_INSTANCES:-4}"
 ALLOW_DIRTY="${ALLOW_DIRTY:-0}"
+SKIP_MIGRATIONS="${SKIP_MIGRATIONS:-0}"
 
 # Runtime environment for the service itself.
 DATABASE_URL="${DATABASE_URL:-}"
@@ -53,6 +54,17 @@ command -v docker >/dev/null 2>&1 || die "docker is not installed."
 
 cd "$(dirname "$0")/.."
 
+# The image ships app/ only, so migrations run from here, not from the container.
+if [[ "$SKIP_MIGRATIONS" != "1" ]]; then
+    if [[ -x venv/bin/alembic ]]; then
+        alembic_cmd=(venv/bin/alembic)
+    elif command -v alembic >/dev/null 2>&1; then
+        alembic_cmd=(alembic)
+    else
+        die "alembic is not installed. Activate the venv, or set SKIP_MIGRATIONS=1 to deploy code only."
+    fi
+fi
+
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "not inside a git repository."
 
 if [[ -n "$(git status --porcelain)" && "$ALLOW_DIRTY" != "1" ]]; then
@@ -76,6 +88,15 @@ docker build --target production --platform linux/amd64 -t "$IMAGE" .
 
 echo "==> Pushing image"
 docker push "$IMAGE"
+
+# Ahead of the new revision, so the code that goes live always meets its schema.
+# set -e aborts the deploy if this fails.
+if [[ "$SKIP_MIGRATIONS" == "1" ]]; then
+    echo "==> Skipping migrations (SKIP_MIGRATIONS=1)"
+else
+    echo "==> Applying database migrations"
+    DATABASE_URL="$DATABASE_URL" "${alembic_cmd[@]}" upgrade head
+fi
 
 echo "==> Deploying revision"
 # Cloud Run injects PORT itself, so it is deliberately absent from --set-env-vars.

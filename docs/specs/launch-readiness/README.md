@@ -51,7 +51,8 @@ the reason this is a hardening pass and not a feature build.
 
 1. **Drafts are public.** `POST /stories` writes `status="draft"`, and `list_stories` applies no
    status filter unless a caller passes one. Every unreviewed Story an ingestion Agent produces is
-   readable by anyone who can reach the API. → Slice 05.
+   readable by anyone who can reach the API. → Slice 05. *Resolved 2026-09-25 by removing the Draft
+   step instead — review now happens before ingest. See slice 05.*
 2. **Ingest is not idempotent.** An Agent that retries after a timeout creates a second Story. The
    only uniqueness in the schema is `uq_story_source_url` on `(story_id, url)`, which by
    construction cannot collide across two separate inserts. → Slice 04.
@@ -75,7 +76,7 @@ turns out to be wrong, say so on the parent issue.
 | D6 | Deploy via a committed script that a human triggers, not CI | Matches how Rajniti is deployed today. CI promotion is a later step, deliberately not in scope |
 | D7 | Frontend on Vercel, browser calls Cloud Run directly | Matches Rajniti's hosting; needs env-driven CORS rather than a proxy hop |
 | D8 | Waitlist guarded by IP rate limit + honeypot, not a captcha | No third-party dependency, no account, no UX cost |
-| D9 | Public reads return `published` Stories only; drafts need the API key | Closes the draft leak without inventing an admin auth system |
+| D9 | ~~Public reads return `published` Stories only; drafts need the API key~~ | Reversed 2026-09-25: the Draft step was removed, so every Story is Published and there is nothing to gate |
 | D10 | Ingest dedupes on source URL, replay returns the existing Story with 200 | A given article URL belongs to exactly one Story — a natural key needing no client change |
 | D11 | Rajniti links out to Saransh; no waitlist form embedded in Rajniti | Keeps the waitlist write path in one product |
 
@@ -86,11 +87,11 @@ From `CONTEXT.md`. Use these words in code, commits, issue comments and PR title
 - **Story** — a news event with headline, summary, Sources and metadata. Not "article", not "post".
 - **Source** — a verified outlet an Article came from. Not "publisher", not "feed".
 - **Ingest** — accepting a structured Story with its Sources from an Agent over the API. An
-  ingested Story enters as a Draft. Not "upload", not "submit".
-- **Publication Status** — where a Story sits in its lifecycle. A **Draft** is ingested but not
-  publicly readable; a **Published** Story is visible to readers. Note that `state` is already
-  taken: on the `Story` model it means the Indian state the Story is about. Never use "state" for
-  the lifecycle.
+  ingested Story enters as Published. Not "upload", not "submit".
+- **Publication Status** — where a Story sits in its lifecycle. Every Story is **Published** from
+  the moment it is ingested; the **Draft** step was removed on 2026-09-25. Note that `state` is
+  already taken: on the `Story` model it means the Indian state the Story is about. Never use
+  "state" for the lifecycle.
 - **Waitlist Signup** — a person who asked to be told when Saransh launches. Identified by email;
   signing up twice is the same Signup, not two. Not "subscriber", not "lead".
 
@@ -108,7 +109,8 @@ From `CONTEXT.md`. Use these words in code, commits, issue comments and PR title
   (Rajniti) 11 cross-promo — independent, but its link only resolves once 10 lands
 ```
 
-Five slices have no blockers and can run in parallel: **01, 03, 05, 06** and Rajniti **11**.
+Four slices have no blockers and can run in parallel: **01, 03, 06** and Rajniti **11**. (05 is
+superseded — see the table below.)
 
 | Slice | Spec | Issue | Type | Blocked by |
 |---|---|---|---|---|
@@ -116,7 +118,7 @@ Five slices have no blockers and can run in parallel: **01, 03, 05, 06** and Raj
 | ~~02 Unify on `/api/v1`~~ | — | — | — | Dropped 2026-09-16 — already shipped, see §1 |
 | 03 Alembic migrations | [03-alembic-migrations.md](03-alembic-migrations.md) | [#33](https://github.com/imsks/Saransh/issues/33) | AFK | — |
 | 04 Ingest dedupe | [04-ingest-dedupe.md](04-ingest-dedupe.md) | [#35](https://github.com/imsks/Saransh/issues/35) | AFK | 03 |
-| 05 Publication Status | [05-publication-status.md](05-publication-status.md) | [#36](https://github.com/imsks/Saransh/issues/36) | AFK | — |
+| ~~05 Publication Status~~ | [05-publication-status.md](05-publication-status.md) | [#36](https://github.com/imsks/Saransh/issues/36) | — | Superseded 2026-09-25 — Draft step removed, see D9 |
 | 06 Waitlist abuse guard | [06-waitlist-abuse-guard.md](06-waitlist-abuse-guard.md) | [#34](https://github.com/imsks/Saransh/issues/34) | AFK | — |
 | 07 Separate database | [07-separate-database.md](07-separate-database.md) | [#37](https://github.com/imsks/Saransh/issues/37) | HITL | 03 |
 | 08 Deploy tooling | [08-deploy-tooling.md](08-deploy-tooling.md) | [#38](https://github.com/imsks/Saransh/issues/38) | AFK | 01 |

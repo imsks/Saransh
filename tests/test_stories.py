@@ -55,10 +55,10 @@ def test_ingest_story_response_fields(client):
     assert data["district"] == VALID_PAYLOAD["district"]
 
 
-def test_ingest_story_default_status_is_draft(client):
-    """Newly ingested stories should default to 'draft'."""
+def test_ingest_story_default_status_is_published(client):
+    """Newly ingested stories should default to 'published'."""
     response = client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
-    assert response.json()["status"] == "draft"
+    assert response.json()["status"] == "published"
 
 
 def test_ingest_story_sources_saved(client):
@@ -327,13 +327,13 @@ def test_list_stories_filter_by_district(client):
 
 
 def test_list_stories_filter_by_status(client):
-    """Filter by status=draft should return only draft stories."""
+    """Filter by status=published should return only published stories."""
     client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
-    response = client.get(f"{STORIES_URL}?status=draft")
+    response = client.get(f"{STORIES_URL}?status=published")
     assert response.status_code == 200
     data = response.json()
     assert len(data) >= 1
-    assert all(s["status"] == "draft" for s in data)
+    assert all(s["status"] == "published" for s in data)
 
 
 def test_list_stories_filter_excludes_non_matching(client):

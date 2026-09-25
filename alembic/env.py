@@ -35,6 +35,12 @@ config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 # ... etc.
 
 
+# Saransh currently shares a Postgres instance with Rajniti, which owns the
+# default `alembic_version`. Tracking our history separately keeps the two
+# migration chains from overwriting each other.
+VERSION_TABLE = "alembic_version_saransh"
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -53,6 +59,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        version_table=VERSION_TABLE,
     )
 
     with context.begin_transaction():
@@ -74,7 +81,9 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            version_table=VERSION_TABLE,
         )
 
         with context.begin_transaction():

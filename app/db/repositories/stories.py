@@ -38,7 +38,7 @@ def get_story(db: Session, story_id: UUID) -> Optional[Story]:
 
 
 def create_story(db: Session, payload: StoryIn) -> Story:
-    """Persist a story and its sources as a draft, rolling back on failure."""
+    """Persist a story and its sources as published, rolling back on failure."""
     try:
         story = Story(
             title_en=payload.title_en,
