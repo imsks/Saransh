@@ -19,9 +19,11 @@ from typing import Generator
 # ---------------------------------------------------------------------------
 # 1. Set env vars before any application module is imported
 # ---------------------------------------------------------------------------
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+# Assigned, not setdefault: a sourced .env in the shell would otherwise aim the
+# suite at the real database and the real ingest key.
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+os.environ["SARANSH_INGEST_API_KEY"] = "test-api-key"
 os.environ.setdefault("OPENAI_API_KEY", "test-key-not-used")
-os.environ.setdefault("SARANSH_INGEST_API_KEY", "test-api-key")
 
 import pytest  # noqa: E402
 from fastapi import FastAPI  # noqa: E402

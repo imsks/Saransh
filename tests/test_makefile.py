@@ -1,4 +1,4 @@
-"""Makefile contract: setup, up, stop, deploy."""
+"""Makefile contract: setup, up, stop, migrate, revision, deploy."""
 
 from __future__ import annotations
 
@@ -13,16 +13,19 @@ MAKEFILE = ROOT / "Makefile"
 DEPLOY_SCRIPT = ROOT / "scripts" / "deploy_cloud_run.sh"
 
 
+TARGETS = ["setup", "up", "stop", "migrate", "revision", "deploy"]
+
+
 def _public_targets(text: str) -> list[str]:
     return re.findall(r"^([a-zA-Z][a-zA-Z0-9_-]*):", text, re.MULTILINE)
 
 
-def test_makefile_exposes_only_setup_up_stop_deploy():
+def test_makefile_exposes_only_the_documented_targets():
     targets = _public_targets(MAKEFILE.read_text())
-    assert targets == ["setup", "up", "stop", "deploy"]
+    assert targets == TARGETS
 
 
-@pytest.mark.parametrize("target", ["setup", "up", "stop", "deploy"])
+@pytest.mark.parametrize("target", TARGETS)
 def test_makefile_target_dry_runs(target: str):
     result = subprocess.run(
         ["make", "-n", target],
@@ -39,6 +42,31 @@ def test_makefile_up_advertises_api_frontend_and_postgres():
     assert ":8001" in text
     assert ":3001" in text
     assert "5433" in text
+
+
+def test_migrate_defaults_to_the_local_database():
+    # A real credential here would be committed; the remote URL is passed per run.
+    assert "MIGRATE_DATABASE_URL ?= postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti" in (
+        MAKEFILE.read_text()
+    )
+
+
+@pytest.mark.parametrize("target", ["migrate", "revision"])
+def test_migrate_targets_refuse_a_remote_database_url(target: str):
+    result = subprocess.run(
+        [
+            "make",
+            target,
+            "m=probe",
+            "MIGRATE_DATABASE_URL=postgresql://u:p@db.example.com:5432/postgres",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "CONFIRM_REMOTE" in result.stdout + result.stderr
 
 
 def test_deploy_target_runs_the_deploy_script():
@@ -69,6 +97,13 @@ def test_deploy_script_builds_the_production_target():
 def test_deploy_script_does_not_set_port():
     # Cloud Run injects PORT; setting it ourselves would fight the platform.
     assert "PORT=" not in DEPLOY_SCRIPT.read_text()
+
+
+def test_deploy_script_migrates_before_deploying_the_revision():
+    text = DEPLOY_SCRIPT.read_text()
+    assert "upgrade head" in text
+    assert "SKIP_MIGRATIONS" in text
+    assert text.index("upgrade head") < text.index("gcloud run deploy")
 
 
 def test_deploy_script_reports_every_missing_variable_at_once(tmp_path):

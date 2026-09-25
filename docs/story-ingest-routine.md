@@ -11,7 +11,7 @@ No API or app-code change is required — the routine only calls the existing en
 One [`StoryIn`](../app/schemas/stories.py) per request (the endpoint rejects an array). The write is
 guarded by the `X-API-Key` header, compared to `SARANSH_INGEST_API_KEY`
 ([`app/api/dependencies.py`](../app/api/dependencies.py)). Every ingested Story is stored as
-`draft` — see [Publication Status](specs/launch-readiness/05-publication-status.md).
+`published` and is readable immediately — review the payload before sending it.
 
 Required, non-blank:
 

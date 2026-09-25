@@ -23,11 +23,11 @@ An AI-generated concise version of a Story, attributed to its source Articles.
 _Avoid_: Excerpt, blurb, digest
 
 **Ingest**:
-The act of accepting a structured Story, with its Sources, from an Agent over the API. An ingested Story enters as a Draft.
+The act of accepting a structured Story, with its Sources, from an Agent over the API. An ingested Story enters as Published.
 _Avoid_: Upload, submit, push, create
 
 **Publication Status**:
-Where a Story sits in its lifecycle. A **Draft** is ingested but not publicly readable. A **Published** Story is visible to readers.
+Where a Story sits in its lifecycle. Every Story is **Published** — visible to readers — from the moment it is ingested. The **Draft** step was removed on 2026-09-25; review happens before ingest, not after.
 _Avoid_: State (reserved for geography), stage, visibility
 
 **Waitlist Signup**:
