@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "saransh"
-version = "0.1.0"
+version = "0.0.1"
 description = "Saransh — AI-powered news aggregation for India"
 authors = [{ name = "Saransh contributors" }]
 readme = "readme.md"
