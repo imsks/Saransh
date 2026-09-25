@@ -4,6 +4,8 @@ export interface Story {
   category: string;
   time: string;
   imageVariant: ImageVariant;
+  /** Real cover photo. When absent, the imageVariant gradient is shown instead. */
+  imageUrl?: string;
   credit: string;
   headline: string;
   body: string;

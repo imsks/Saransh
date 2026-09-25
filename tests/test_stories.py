@@ -16,6 +16,7 @@ VALID_PAYLOAD = {
     "title_hi": "नागपुर मेट्रो ने नए मार्ग की घोषणा की",
     "summary_en": "Nagpur Metro has announced a new route connecting the airport to the city centre.",
     "summary_hi": "नागपुर मेट्रो ने शहर के केंद्र को हवाई अड्डे से जोड़ने वाले नए मार्ग की घोषणा की है।",
+    "image_url": "https://example.com/cover.jpg",
     "category": "transport",
     "state": "Maharashtra",
     "district": "Nagpur",
@@ -48,6 +49,7 @@ def test_ingest_story_response_fields(client):
     assert data["title_hi"] == VALID_PAYLOAD["title_hi"]
     assert data["summary_en"] == VALID_PAYLOAD["summary_en"]
     assert data["summary_hi"] == VALID_PAYLOAD["summary_hi"]
+    assert data["image_url"] == VALID_PAYLOAD["image_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
     assert data["state"] == VALID_PAYLOAD["state"]
     assert data["district"] == VALID_PAYLOAD["district"]
@@ -141,6 +143,20 @@ def test_missing_summary_hi_returns_422(client):
 
 def test_missing_category_returns_422(client):
     payload = {k: v for k, v in VALID_PAYLOAD.items() if k != "category"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 422
+
+
+def test_missing_image_url_returns_422(client):
+    """image_url is a required cover photo; omitting it must be rejected."""
+    payload = {k: v for k, v in VALID_PAYLOAD.items() if k != "image_url"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 422
+
+
+def test_invalid_image_url_returns_422(client):
+    """A non-URL image_url must be rejected."""
+    payload = {**VALID_PAYLOAD, "image_url": "not-a-valid-url"}
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
     assert response.status_code == 422
 
@@ -268,6 +284,7 @@ def test_list_stories_response_fields(client):
         "title_hi",
         "summary_en",
         "summary_hi",
+        "image_url",
         "category",
         "status",
         "sources",
@@ -369,6 +386,7 @@ def test_get_story_response_fields(client):
     assert data["title_hi"] == VALID_PAYLOAD["title_hi"]
     assert data["summary_en"] == VALID_PAYLOAD["summary_en"]
     assert data["summary_hi"] == VALID_PAYLOAD["summary_hi"]
+    assert data["image_url"] == VALID_PAYLOAD["image_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
     assert isinstance(data["sources"], list)
     assert len(data["sources"]) == 1

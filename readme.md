@@ -157,6 +157,9 @@ See [`.env.example`](.env.example) and [`frontend/.env.example`](frontend/.env.e
 | `POST /api/v1/waitlist` | Public | Join launch waitlist |
 | `GET /api/v1/health` | Public | Health check |
 
+Automated ingestion runs off a scheduled Claude Code routine that calls `POST /api/v1/stories` —
+prompt and setup in [docs/story-ingest-routine.md](docs/story-ingest-routine.md).
+
 ---
 
 ## 📁 Repository Structure

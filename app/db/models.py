@@ -36,6 +36,9 @@ class Story(CreatedAtMixin, Base):
     summary_en = Column(Text, nullable=False)
     summary_hi = Column(Text, nullable=False)
 
+    # Cover photo shown with the Story. Required — every Story has an image.
+    image_url = Column(Text, nullable=False)
+
     category = Column(String(50), nullable=False)
     state = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)

@@ -18,6 +18,15 @@ export default function StoryCard({ story }: { story: Story }) {
       <div
         className={`relative mb-3 h-[108px] overflow-hidden rounded-sm after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_30%_35%,rgba(255,255,255,0.1)_0%,transparent_60%)] ${imageClassMap[story.imageVariant]}`}
       >
+        {story.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={story.imageUrl}
+            alt={story.headline}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : null}
         <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-sm bg-black/35 px-1.5 py-0.5 font-mono text-[9px] text-white/85">
           {story.credit}
         </span>
