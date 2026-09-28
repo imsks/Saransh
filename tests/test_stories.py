@@ -17,6 +17,7 @@ VALID_PAYLOAD = {
     "summary_en": "Nagpur Metro has announced a new route connecting the airport to the city centre.",
     "summary_hi": "नागपुर मेट्रो ने शहर के केंद्र को हवाई अड्डे से जोड़ने वाले नए मार्ग की घोषणा की है।",
     "image_url": "https://example.com/cover.jpg",
+    "source_url": "https://example.com/article",
     "category": "transport",
     "state": "Maharashtra",
     "district": "Nagpur",
@@ -50,6 +51,7 @@ def test_ingest_story_response_fields(client):
     assert data["summary_en"] == VALID_PAYLOAD["summary_en"]
     assert data["summary_hi"] == VALID_PAYLOAD["summary_hi"]
     assert data["image_url"] == VALID_PAYLOAD["image_url"]
+    assert data["source_url"] == VALID_PAYLOAD["source_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
     assert data["state"] == VALID_PAYLOAD["state"]
     assert data["district"] == VALID_PAYLOAD["district"]
@@ -88,6 +90,51 @@ def test_ingest_story_optional_geo_fields_can_be_omitted(client):
     data = response.json()
     assert data["state"] is None
     assert data["district"] is None
+
+
+def test_ingest_story_source_url_can_be_omitted(client):
+    """source_url is optional; Stories ingested before the field existed have none."""
+    payload = {k: v for k, v in VALID_PAYLOAD.items() if k != "source_url"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 201
+    assert response.json()["source_url"] is None
+
+
+def test_ingest_story_source_url_can_be_null(client):
+    """An explicit null source_url is accepted and stored as null."""
+    payload = {**VALID_PAYLOAD, "source_url": None}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 201
+    assert response.json()["source_url"] is None
+
+
+def test_ingest_story_source_url_is_independent_of_sources(client):
+    """The citation link is stored on the Story, not derived from sources[0]."""
+    payload = {
+        **VALID_PAYLOAD,
+        "source_url": "https://example.com/canonical",
+        "sources": [
+            {"outlet": "Source A", "url": "https://source-a.com/1"},
+            {"outlet": "Source B", "url": "https://source-b.com/2"},
+        ],
+    }
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 201
+    assert response.json()["source_url"] == "https://example.com/canonical"
+
+
+def test_invalid_story_source_url_returns_422(client):
+    """A non-URL source_url must be rejected."""
+    payload = {**VALID_PAYLOAD, "source_url": "not-a-valid-url"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 422
+
+
+def test_blank_story_source_url_returns_422(client):
+    """A blank source_url must be rejected — omit or send null instead."""
+    payload = {**VALID_PAYLOAD, "source_url": ""}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 422
 
 
 def test_ingest_story_multiple_sources(client):
@@ -285,6 +332,7 @@ def test_list_stories_response_fields(client):
         "summary_en",
         "summary_hi",
         "image_url",
+        "source_url",
         "category",
         "status",
         "sources",
@@ -387,6 +435,7 @@ def test_get_story_response_fields(client):
     assert data["summary_en"] == VALID_PAYLOAD["summary_en"]
     assert data["summary_hi"] == VALID_PAYLOAD["summary_hi"]
     assert data["image_url"] == VALID_PAYLOAD["image_url"]
+    assert data["source_url"] == VALID_PAYLOAD["source_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
     assert isinstance(data["sources"], list)
     assert len(data["sources"]) == 1

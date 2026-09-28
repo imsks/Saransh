@@ -22,6 +22,10 @@ _Avoid_: Publisher, outlet, feed
 An AI-generated concise version of a Story, attributed to its source Articles.
 _Avoid_: Excerpt, blurb, digest
 
+**Citation Link**:
+The single canonical Article a Story's Summary was extracted from, stored on the Story as `source_url`. Distinct from the Story's `sources`, which list every outlet that corroborates the event. A Story has at most one Citation Link and may have many Sources.
+_Avoid_: Primary source, origin link, reference
+
 **Ingest**:
 The act of accepting a structured Story, with its Sources, from an Agent over the API. An ingested Story enters as Published.
 _Avoid_: Upload, submit, push, create

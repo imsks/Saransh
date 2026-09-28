@@ -19,7 +19,12 @@ Required, non-blank:
 - `image_url`: the cover photo, an absolute `http`/`https` image URL
 - `sources`: at least one `{ outlet, url, source_type? }`
 
-Optional: `state`, `district` (omit or `null`; never send `""`).
+Optional: `source_url`, `state`, `district` (omit or `null`; never send `""`).
+
+`source_url` is the **citation link** — the single canonical article the summary was extracted from.
+It is stored on the Story itself, not derived from `sources[0]`, so a Story can cite corroborating
+outlets in `sources` while still pointing at the one article it was written from. The column is
+nullable because Stories ingested before 2026-09-28 predate it; the routine below always sends it.
 
 Never send `id`, `status`, `created_at`, or `published_at` — the server owns those.
 
@@ -31,7 +36,7 @@ Database limits the request schema does not enforce ([`app/db/models.py`](../app
 | `state`, `district` | ≤ 100 chars |
 | `outlet` | ≤ 150 chars |
 | `source_type` | ≤ 30 chars |
-| `url`, `image_url` | absolute `http`/`https` |
+| `url`, `image_url`, `source_url` | absolute `http`/`https` |
 
 The landing carousel ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) renders the
 label as `category · state · district` and picks the card image from `category` alone
@@ -70,9 +75,9 @@ Never print, log, or commit the API key.
 1. Load recent Stories so you do not duplicate them.
    GET $SARANSH_API_BASE/api/v1/stories?limit=100&offset=0
    Page with offset while created_at is within the last 48 hours (max offset 300).
-   Collect every sources[].url and every title_en. Skip any event whose URL or headline is already there.
+   Collect every source_url, every sources[].url, and every title_en. Skip any event whose URL or headline is already there.
 
-2. Find 10 distinct events from the last 36 hours. Open each article and confirm the page is about that event and returns successfully. Use the canonical article URL, not a homepage, app link, or tracker.
+2. Find 10 distinct events from the last 36 hours. Open each article and confirm the page is about that event and returns successfully. Use the canonical article URL, not a homepage, app link, or tracker. Keep that URL — it is the citation link you send as source_url, and it is the one article you write the summary from.
    Mix, within this run:
    - at least 4 National (category "National"; set state only when a body belongs in the label, e.g. state "Parliament")
    - at least 3 State (category "State", state = Indian state name, district null) — different states
@@ -93,6 +98,7 @@ Never print, log, or commit the API key.
      "summary_en": "2 to 4 sentences. What happened, who said it, what changes. Attribute claims (per PTI, the ministry said). No advice, no prediction, no adjectives that editorialize.",
      "summary_hi": "the same summary in Hindi, not a transliteration",
      "image_url": "https://absolute-url-to-a-real-cover-photo.jpg",
+     "source_url": "https://absolute-url-of-the-article-you-summarised",
      "category": "National | State | Regional | Infrastructure",
      "state": "Indian state, or Parliament, or null",
      "district": "district name or null",
@@ -108,10 +114,11 @@ Never print, log, or commit the API key.
    Rules:
    - title_en, title_hi, summary_en, summary_hi, image_url, category are required and non-blank.
    - image_url must be an absolute http(s) URL to a real image for this event that you confirmed loads. Skip the story if you cannot find one.
+   - source_url is the citation link: the absolute http(s) URL of the one article you summarised, the same URL you opened and confirmed in step 2. Always send it. Never send "" — omit it only if you somehow have no article URL, which should not happen. It must also appear in sources as the entry for that outlet.
    - category max 50 characters. Do not put " · " inside category; the site appends state and district itself.
    - state max 100, district max 100. Omit or null when unknown. Never send "".
    - At least one source. url must be absolute http(s). outlet required. source_type is "news" or "official" (max 30 characters).
-   - Do not send id, status, created_at, or published_at. The server stores status "draft".
+   - Do not send id, status, created_at, or published_at. The server stores status "published".
    - Hindi must be real Hindi. If you cannot write an accurate Hindi headline and summary, skip that story.
 
 5. Ingest one Story at a time:
@@ -122,13 +129,13 @@ Never print, log, or commit the API key.
 
    - 201: count it. Record id and title_en. Add its URLs to the skip list.
    - 401: stop the run. The key is missing or wrong.
-   - 422: fix that payload once (blank field, bad URL, bad image_url, empty sources) and POST again. If it fails again, skip it.
+   - 422: fix that payload once (blank field, bad URL, bad image_url, bad source_url, empty sources) and POST again. If it fails again, skip it.
    - 500 or a timeout after the request was sent: do not retry. The row may already exist. Skip it and say so.
    - Any other error: skip that story and continue.
 
 6. When you finish, report only:
    - how many 201s (target 10)
-   - for each success: id, title_en, category, state, district
+   - for each success: id, title_en, category, state, district, source_url
    - for each skip: title_en and the reason (duplicate, unverified URL, no valid image, 422, 500, weak Hindi)
    Do not include the API key or full article text.
 ```
