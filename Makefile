@@ -6,7 +6,7 @@ COMPOSE := docker compose
 # Alembic runs on the host: the image ships app/ only, not alembic/ or alembic.ini.
 # Local default only. Never hardcode a real credential here — this file is tracked.
 # Other targets: make migrate MIGRATE_DATABASE_URL="$DATABASE_URL"
-MIGRATE_DATABASE_URL ?= postgresql://postgres.ipyacfjxhvlvtprjyqsm:Rajniti%402026@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+MIGRATE_DATABASE_URL ?= postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti
 ALEMBIC := DATABASE_URL=$(MIGRATE_DATABASE_URL) $(if $(wildcard venv/bin/alembic),venv/bin/alembic,alembic)
 
 # Saransh shares a Postgres instance with Rajniti today, so a stray remote URL can
