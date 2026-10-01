@@ -108,6 +108,32 @@ A migration that is not backwards compatible with the currently-running revision
 two-step: deploy a revision that tolerates both shapes, migrate, then deploy the revision that
 requires the new shape.
 
+### Adopting a database Alembic has never stamped
+
+`app/db/bootstrap.py` creates tables with `create_all()` on startup, which writes the *current*
+model shape and no `alembic_version_saransh` row. Point `alembic upgrade head` at such a database
+and it replays the chain from the beginning, including the early migrations that drop legacy
+columns (`waitlist.language`, `stories.event_at`) the database never had. It fails on the first
+one:
+
+```
+psycopg2.errors.UndefinedColumn: column "language" of relation "waitlist" does not exist
+```
+
+The database is not behind — it is unstamped. Adopt it instead of replaying: read the real schema,
+find the newest revision whose effect is already present, stamp that, then upgrade.
+
+```bash
+alembic current                            # no output at all = never stamped
+psql "$DATABASE_URL" -c '\d stories' -c '\d sources' -c '\d waitlist'
+alembic stamp <newest-already-applied-revision>
+alembic upgrade head
+```
+
+Supabase was adopted this way on 2026-10-01: its `stories` already had `image_url` but not
+`source_url`, which puts it at `b2c3d4e5f6a7`. Do this once per new database, before the first
+`make deploy`, because the deploy script runs `upgrade head` itself.
+
 ---
 
 ## Rollback

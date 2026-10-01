@@ -12,6 +12,7 @@ export interface ApiStory {
   title_en: string;
   summary_en: string;
   image_url: string;
+  source_url?: string | null;
   category: string;
   state?: string | null;
   district?: string | null;
@@ -53,6 +54,8 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
     headline: story.title_en,
     body: story.summary_en,
     source: primarySource ? `${primarySource.outlet} · Verified` : "Saransh",
+    // Stories ingested before source_url existed fall back to their first source.
+    sourceUrl: story.source_url || primarySource?.url || undefined,
   };
 }
 

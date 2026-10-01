@@ -26,7 +26,9 @@ It is stored on the Story itself, not derived from `sources[0]`, so a Story can 
 outlets in `sources` while still pointing at the one article it was written from. The column is
 nullable because Stories ingested before 2026-09-28 predate it; the routine below always sends it.
 
-Never send `id`, `status`, `created_at`, or `published_at` — the server owns those.
+Never send `id`, `status`, or `created_at` — the server owns those. A Story is published the
+moment it is ingested, so `created_at` is the only time of record; the `published_at` column was
+dropped on 2026-10-01 and is no longer accepted or returned.
 
 Database limits the request schema does not enforce ([`app/db/models.py`](../app/db/models.py)):
 
@@ -44,6 +46,10 @@ label as `category · state · district` and picks the card image from `category
 `category` a single word and put geography in `state` / `district`. Example rendering as
 "State · Uttar Pradesh · Barabanki": `category: "State"`, `state: "Uttar Pradesh"`,
 `district: "Barabanki"`.
+
+The card's outlet badge is a link to `source_url`, falling back to the first `sources[].url` for
+Stories that predate the field. A wrong citation link is therefore visible to readers — verify the
+URL loads before you send it.
 
 Ingest is **not idempotent**
 ([04-ingest-dedupe.md](specs/launch-readiness/04-ingest-dedupe.md)): a retry after a timeout can
@@ -118,7 +124,7 @@ Never print, log, or commit the API key.
    - category max 50 characters. Do not put " · " inside category; the site appends state and district itself.
    - state max 100, district max 100. Omit or null when unknown. Never send "".
    - At least one source. url must be absolute http(s). outlet required. source_type is "news" or "official" (max 30 characters).
-   - Do not send id, status, created_at, or published_at. The server stores status "published".
+   - Do not send id, status, or created_at. The server stores status "published" and stamps created_at, which is the only time a reader sees. There is no published_at.
    - Hindi must be real Hindi. If you cannot write an accurate Hindi headline and summary, skip that story.
 
 5. Ingest one Story at a time:

@@ -82,6 +82,27 @@ def test_ingest_story_has_id_and_created_at(client):
     assert "created_at" in data
 
 
+def test_ingest_story_response_omits_published_at(client):
+    """created_at is the only time of record; published_at was dropped."""
+    response = client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
+    assert "published_at" not in response.json()
+
+
+def test_published_at_in_the_payload_is_ignored(client):
+    """A routine still sending published_at must not break ingest or leak it back."""
+    payload = {**VALID_PAYLOAD, "published_at": "2026-09-30T10:00:00+00:00"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 201
+    assert "published_at" not in response.json()
+
+
+def test_story_model_has_no_published_at_column():
+    """The column is gone from the table, not just hidden from the response."""
+    from app.db.models import Story
+
+    assert "published_at" not in Story.__table__.columns
+
+
 def test_ingest_story_optional_geo_fields_can_be_omitted(client):
     """state and district are optional; omitting them should still succeed."""
     payload = {**VALID_PAYLOAD, "state": None, "district": None}
@@ -339,6 +360,7 @@ def test_list_stories_response_fields(client):
         "created_at",
     ):
         assert field in story
+    assert "published_at" not in story
 
 
 def test_list_stories_filter_by_category(client):
@@ -437,6 +459,7 @@ def test_get_story_response_fields(client):
     assert data["image_url"] == VALID_PAYLOAD["image_url"]
     assert data["source_url"] == VALID_PAYLOAD["source_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
+    assert "published_at" not in data
     assert isinstance(data["sources"], list)
     assert len(data["sources"]) == 1
 

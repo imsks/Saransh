@@ -46,8 +46,9 @@ def test_makefile_up_advertises_api_frontend_and_postgres():
 
 def test_migrate_defaults_to_the_local_database():
     # A real credential here would be committed; the remote URL is passed per run.
-    assert "MIGRATE_DATABASE_URL ?= postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti" in (
-        MAKEFILE.read_text()
+    assert (
+        "MIGRATE_DATABASE_URL ?= postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti"
+        in (MAKEFILE.read_text())
     )
 
 

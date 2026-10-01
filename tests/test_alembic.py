@@ -5,11 +5,12 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from sqlalchemy import create_engine, inspect, text
+
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
 from alembic.script import ScriptDirectory
-from sqlalchemy import create_engine, inspect, text
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ENV_PY = REPO_ROOT / "alembic" / "env.py"
@@ -56,3 +57,47 @@ def test_add_story_source_url_migration_round_trips():
             module.downgrade()
         remaining = {c["name"] for c in inspect(connection).get_columns("stories")}
         assert "source_url" not in remaining
+
+
+def test_drop_story_published_at_migration_round_trips():
+    """The migration drops published_at and the downgrade restores it from created_at."""
+    revision = _script_directory().get_revision("f6a7b8c9d0e1")
+    module = revision.module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE stories ("
+                "  id TEXT PRIMARY KEY,"
+                "  status TEXT NOT NULL,"
+                "  created_at TIMESTAMP NOT NULL,"
+                "  published_at TIMESTAMP"
+                ")"
+            )
+        )
+        connection.execute(
+            text(
+                "INSERT INTO stories (id, status, created_at, published_at) VALUES"
+                " ('a', 'published', '2026-09-30 10:00:00', '2026-09-30 10:00:00')"
+            )
+        )
+        migration_context = MigrationContext.configure(connection)
+
+        with Operations.context(migration_context):
+            module.upgrade()
+        assert "published_at" not in {
+            c["name"] for c in inspect(connection).get_columns("stories")
+        }
+
+        with Operations.context(migration_context):
+            module.downgrade()
+        column = {c["name"]: c for c in inspect(connection).get_columns("stories")}[
+            "published_at"
+        ]
+        assert column["nullable"] is True
+        # The downgrade backfills the column it cannot otherwise recover.
+        restored = connection.execute(
+            text("SELECT published_at FROM stories WHERE id = 'a'")
+        ).scalar_one()
+        assert str(restored).startswith("2026-09-30 10:00:00")

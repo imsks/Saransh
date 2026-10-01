@@ -6,6 +6,36 @@ const imageClassMap = {
   civic: "bg-gradient-to-br from-[#7E9BAF] to-[#3E5D75]",
 } as const;
 
+const badgeClass =
+  "inline-flex items-center gap-1.5 rounded-sm border-[1.5px] border-red bg-red-tint px-2 py-0.5 font-mono text-[10px] text-red";
+
+/** The outlet credit. Links to the citation link when the story has one. */
+function SourceBadge({ story }: { story: Story }) {
+  const dot = <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-red" />;
+
+  if (!story.sourceUrl) {
+    return (
+      <div className={badgeClass}>
+        {dot}
+        <span>{story.source}</span>
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={story.sourceUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${story.source} — source article for ${story.headline}`}
+      className={`${badgeClass} underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red`}
+    >
+      {dot}
+      <span>{story.source}</span>
+    </a>
+  );
+}
+
 export default function StoryCard({ story }: { story: Story }) {
   return (
     <div className="relative">
@@ -36,10 +66,7 @@ export default function StoryCard({ story }: { story: Story }) {
       </p>
       <p className="mb-3 font-sans text-[13.5px] leading-[1.6] text-muted">{story.body}</p>
       <div className="flex items-center justify-between">
-        <div className="inline-flex items-center gap-1.5 rounded-sm border-[1.5px] border-red bg-red-tint px-2 py-0.5">
-          <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-red" />
-          <span className="font-mono text-[10px] text-red">{story.source}</span>
-        </div>
+        <SourceBadge story={story} />
       </div>
     </div>
   );

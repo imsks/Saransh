@@ -45,7 +45,6 @@ class Story(CreatedAtMixin, Base):
     district = Column(String(100), nullable=True)
 
     status = Column(String(20), nullable=False, default=STATUS_PUBLISHED)
-    published_at = Column(DateTime(timezone=True), nullable=True)
 
     updated_at = Column(
         DateTime(timezone=True),
@@ -79,9 +78,7 @@ class Source(CreatedAtMixin, Base):
 
     story = relationship("Story", back_populates="sources")
 
-    __table_args__ = (
-        UniqueConstraint("story_id", "url", name="uq_story_source_url"),
-    )
+    __table_args__ = (UniqueConstraint("story_id", "url", name="uq_story_source_url"),)
 
 
 class Waitlist(CreatedAtMixin, Base):

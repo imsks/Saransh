@@ -241,7 +241,7 @@ def test_ingest_requires_key():
 - Batch embedding calls; a per-Chunk round trip is the usual bottleneck.
 - Reuse one `httpx.AsyncClient` per scraper run rather than per request.
 - Selenium is a last resort — it's slow and flaky. Prefer HTTP + BeautifulSoup.
-- Index the columns you filter on (`published_at`, `source`) before optimising Python.
+- Index the columns you filter on (`created_at`, `category`, `state`) before optimising Python.
 
 ---
 

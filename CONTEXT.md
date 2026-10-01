@@ -23,7 +23,7 @@ An AI-generated concise version of a Story, attributed to its source Articles.
 _Avoid_: Excerpt, blurb, digest
 
 **Citation Link**:
-The single canonical Article a Story's Summary was extracted from, stored on the Story as `source_url`. Distinct from the Story's `sources`, which list every outlet that corroborates the event. A Story has at most one Citation Link and may have many Sources.
+The single canonical Article a Story's Summary was extracted from, stored on the Story as `source_url`. Distinct from the Story's `sources`, which list every outlet that corroborates the event. A Story has at most one Citation Link and may have many Sources. The carousel card's outlet badge links to it.
 _Avoid_: Primary source, origin link, reference
 
 **Ingest**:
@@ -31,7 +31,7 @@ The act of accepting a structured Story, with its Sources, from an Agent over th
 _Avoid_: Upload, submit, push, create
 
 **Publication Status**:
-Where a Story sits in its lifecycle. Every Story is **Published** — visible to readers — from the moment it is ingested. The **Draft** step was removed on 2026-09-25; review happens before ingest, not after.
+Where a Story sits in its lifecycle. Every Story is **Published** — visible to readers — from the moment it is ingested. The **Draft** step was removed on 2026-09-25; review happens before ingest, not after. Because ingest and publication are the same moment, `created_at` is the only time of record — `published_at` was dropped on 2026-10-01.
 _Avoid_: State (reserved for geography), stage, visibility
 
 **Waitlist Signup**:

@@ -10,6 +10,8 @@ export interface Story {
   headline: string;
   body: string;
   source: string;
+  /** Citation link — the article the summary was written from. Absent on older stories. */
+  sourceUrl?: string;
 }
 
 export const STORIES: Story[] = [
