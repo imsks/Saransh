@@ -35,8 +35,16 @@ Where a Story sits in its lifecycle. Every Story is **Published** — visible to
 _Avoid_: State (reserved for geography), stage, visibility
 
 **Waitlist Signup**:
-A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two.
+A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two. Carries a Signup Token for anything outside Saransh that needs to refer to it.
 _Avoid_: Subscriber, lead, user, waitlister
+
+**Signup Token**:
+The opaque public identifier of a Waitlist Signup — not the email, and not the row number. Stable: a second signup with the same email yields the same Token. Saransh hands it out so a Visitor can be matched to their Signup without the email leaving the system.
+_Avoid_: Signup ID, user ID, waitlist ID
+
+**Visitor**:
+Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a Waitlist Signup — one Visitor may create several Signups, and one Signup may be made from several Visitors. Saransh never learns a Visitor's name or email.
+_Avoid_: User, session, traffic, audience
 
 ### Processing Terms
 
