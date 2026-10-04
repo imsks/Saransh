@@ -42,11 +42,11 @@ describe("globals.css tokens", () => {
   });
 
   it("defines every palette token in both themes", () => {
-    const palette = [...light.keys()].filter(
+    const palette = Array.from(light.keys()).filter(
       (name) => !name.startsWith("--sutra-") && !["--background", "--foreground"].includes(name),
     );
     expect(palette.filter((name) => !dark.has(name))).toEqual([]);
-    expect([...dark.keys()].filter((name) => !light.has(name))).toEqual([]);
+    expect(Array.from(dark.keys()).filter((name) => !light.has(name))).toEqual([]);
   });
 
   it("carries the v1.2 app tokens with the design-system values", () => {
@@ -61,7 +61,7 @@ describe("globals.css tokens", () => {
 
   it("exposes every palette token to Tailwind", () => {
     const theme = tokens(css.slice(css.indexOf("@theme inline")));
-    const unmapped = [...light.keys()].filter((name) => {
+    const unmapped = Array.from(light.keys()).filter((name) => {
       if (name.startsWith("--sutra-")) return false;
       if (name === "--card-shadow" || name === "--print-shadow") return false;
       return theme.get(`--color-${name.slice(2)}`) !== `var(${name})`;
