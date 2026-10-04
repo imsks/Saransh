@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { ThemeToggle } from "@sutra_ui/ui";
-
+import ThemeSwitch from "@/components/layout/ThemeSwitch";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Navbar() {
@@ -24,7 +23,7 @@ export default function Navbar() {
           >
             GitHub
           </a>
-          <ThemeToggle className="relative size-8 rounded-[2px] after:absolute after:-inset-1.5 after:content-[''] border-line bg-transparent text-muted hover:bg-card hover:text-ink" />
+          <ThemeSwitch />
         </div>
       </div>
     </nav>
