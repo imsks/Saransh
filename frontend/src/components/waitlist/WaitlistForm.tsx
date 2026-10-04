@@ -1,48 +1,63 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { primaryButtonClass } from "@/components/ui/buttonClasses";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
-import { validateEmail, validateName } from "@/lib/validate";
+import { validateWaitlist, type WaitlistField, type WaitlistFieldErrors } from "@/lib/validate";
 
 interface WaitlistFormProps {
   onSuccess: () => void;
 }
 
+const GENERIC_ERROR = "Something went wrong. Please try again.";
+
 const fieldLabelClass =
-  "font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-muted";
+  "font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-ink";
 const inputClass =
-  "w-full rounded-[2px] border-[1.5px] border-line-heavy bg-paper px-[14px] py-[11px] font-sans text-[14px] text-ink outline-none focus:border-ink focus:bg-card";
+  "min-h-11 w-full rounded-[2px] border-[1.5px] border-line-heavy bg-card px-3 py-2.5 font-sans text-[13.5px] text-ink transition-colors placeholder:text-muted focus:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red aria-[invalid=true]:border-red dark:bg-paper";
+const errorClass = "font-mono text-[10px] tracking-[0.04em] text-red";
 
 export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [values, setValues] = useState<Record<WaitlistField, string>>({ name: "", email: "" });
+  const [fieldErrors, setFieldErrors] = useState<WaitlistFieldErrors>({});
+  const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  function handleChange(field: WaitlistField, value: string) {
+    setValues((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const nameResult = validateName(name);
-    if (!nameResult.valid) {
-      setError(nameResult.message ?? "Please enter your real name.");
+    const errors = validateWaitlist(values);
+    setFieldErrors(errors);
+    setFormError("");
+
+    if (errors.name) {
+      nameRef.current?.focus();
+      return;
+    }
+    if (errors.email) {
+      emailRef.current?.focus();
       return;
     }
 
-    const emailResult = validateEmail(email);
-    if (!emailResult.valid) {
-      setError(emailResult.message ?? "Please enter a valid email address.");
-      return;
-    }
-
-    setError("");
     setLoading(true);
 
     try {
       const response = await fetch(`${getApiBaseUrl()}/waitlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ name: values.name.trim(), email: values.email.trim() }),
       });
 
       const payload = (await response.json().catch(() => ({}))) as {
@@ -52,7 +67,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       };
 
       if (!response.ok) {
-        setError(payload.message || "Something went wrong. Please try again.");
+        setFormError(payload.message || GENERIC_ERROR);
         return;
       }
 
@@ -61,10 +76,10 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         return;
       }
 
-      setError("Something went wrong. Please try again.");
+      setFormError(GENERIC_ERROR);
     } catch (err) {
       logger.error({ err }, "waitlist.submit_failed");
-      setError("Something went wrong. Please try again.");
+      setFormError(GENERIC_ERROR);
     } finally {
       setLoading(false);
     }
@@ -85,37 +100,53 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               NAME
             </label>
             <input
+              ref={nameRef}
               id="wl-name"
               type="text"
               required
               className={inputClass}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={values.name}
+              onChange={(e) => handleChange("name", e.target.value)}
               disabled={loading}
               autoComplete="name"
               placeholder="Your name"
+              aria-invalid={fieldErrors.name ? true : undefined}
+              aria-describedby={fieldErrors.name ? "wl-name-error" : undefined}
             />
+            {fieldErrors.name && (
+              <p id="wl-name-error" className={errorClass} role="alert">
+                {fieldErrors.name}
+              </p>
+            )}
           </div>
           <div className="relative flex flex-col gap-1.5">
             <label htmlFor="wl-email" className={fieldLabelClass}>
               EMAIL ADDRESS
             </label>
             <input
+              ref={emailRef}
               id="wl-email"
               type="email"
               required
               className={inputClass}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={values.email}
+              onChange={(e) => handleChange("email", e.target.value)}
               disabled={loading}
               autoComplete="email"
               placeholder="you@example.com"
+              aria-invalid={fieldErrors.email ? true : undefined}
+              aria-describedby={fieldErrors.email ? "wl-email-error" : undefined}
             />
+            {fieldErrors.email && (
+              <p id="wl-email-error" className={errorClass} role="alert">
+                {fieldErrors.email}
+              </p>
+            )}
           </div>
         </div>
-        {error && (
-          <p className="mb-2 font-mono text-[10px] text-red" role="alert">
-            {error}
+        {formError && (
+          <p className={`mb-2 ${errorClass}`} role="alert">
+            {formError}
           </p>
         )}
         <button

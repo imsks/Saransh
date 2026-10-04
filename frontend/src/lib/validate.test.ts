@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { validateEmail, validateName } from "./validate";
+import { validateEmail, validateName, validateWaitlist } from "./validate";
 
 describe("validateName", () => {
   it("rejects empty names and very short values", () => {
@@ -64,5 +64,27 @@ describe("validateEmail", () => {
 
   it("accepts valid emails", () => {
     expect(validateEmail("hello@example.com")).toEqual({ valid: true });
+  });
+});
+
+describe("validateWaitlist", () => {
+  it("returns no errors for a valid signup", () => {
+    expect(validateWaitlist({ name: "Priya Sharma", email: "priya@example.com" })).toEqual({});
+  });
+
+  it("reports only the field that is wrong", () => {
+    expect(validateWaitlist({ name: "Priya Sharma", email: "not-an-email" })).toEqual({
+      email: "Please enter a valid email address.",
+    });
+    expect(validateWaitlist({ name: "A", email: "priya@example.com" })).toEqual({
+      name: "Please enter your real name.",
+    });
+  });
+
+  it("reports both fields when both are wrong", () => {
+    expect(validateWaitlist({ name: "", email: "" })).toEqual({
+      name: "Please enter your real name.",
+      email: "Please enter a valid email address.",
+    });
   });
 });
