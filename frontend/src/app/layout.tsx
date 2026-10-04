@@ -24,7 +24,8 @@ const fraunces = Fraunces({
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  // 700 and 800 are for the app story card (time line, headline).
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter",
   display: "swap",
 });

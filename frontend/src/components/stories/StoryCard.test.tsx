@@ -12,7 +12,7 @@ function story(overrides: Partial<Story> = {}): Story {
   return {
     category: "National · Parliament",
     time: "2 hrs ago",
-    imageVariant: "national",
+    topic: "civic",
     credit: "PTI",
     headline: "Parliament passes data bill",
     body: "The Lok Sabha passed the bill by voice vote.",
@@ -52,6 +52,43 @@ describe("StoryCard", () => {
 
     expect(screen.queryByRole("link")).toBeNull();
     expect(screen.getByText("PTI · Verified")).toBeTruthy();
+  });
+
+  it("offers Read story only when there is an article to read", () => {
+    const { rerender } = render(<StoryCard story={story()} />);
+
+    const cta = screen.getByRole("link", { name: /^Read story/ });
+    expect(cta.getAttribute("href")).toBe("https://example.com/canonical");
+    expect(cta.textContent).toBe("Read story");
+
+    rerender(<StoryCard story={story({ sourceUrl: undefined })} />);
+    expect(screen.queryByRole("link", { name: /^Read story/ })).toBeNull();
+  });
+
+  it("shows the tick for official sources only", () => {
+    const { container, rerender } = render(<StoryCard story={story({ official: true })} />);
+    expect(container.querySelector("[data-official-tick]")).not.toBeNull();
+
+    rerender(<StoryCard story={story({ official: false })} />);
+    expect(container.querySelector("[data-official-tick]")).toBeNull();
+  });
+
+  it("colours the time line by topic and nothing else", () => {
+    render(<StoryCard story={story({ topic: "transport" })} />);
+
+    expect(screen.getByText("2 hrs ago").className).toContain("text-topic-transport");
+    expect(screen.getByText("Parliament passes data bill").className).not.toContain("topic");
+    expect(screen.getByRole("link", { name: /^Read story/ }).className).not.toContain("topic");
+  });
+
+  it("uses the topic wash behind the image only when there is no photo", () => {
+    const { container, rerender } = render(<StoryCard story={story({ topic: "edu" })} />);
+    expect(container.querySelector("[data-topic]")?.className).toContain("bg-topic-edu-bg");
+
+    rerender(
+      <StoryCard story={story({ topic: "edu", imageUrl: "https://example.com/cover.jpg" })} />,
+    );
+    expect(container.querySelector("[data-topic]")?.className).not.toContain("bg-topic-edu-bg");
   });
 
   it("still renders headline, body and cover image alongside the link", () => {

@@ -17,9 +17,6 @@
  * primitives inherit the same look without forking a single component.
  * ------------------------------------------------------------------------ */
 :root {
-  --background: #eeedea;
-  --foreground: #0f1419;
-
   --paper: #eeedea;
   --card: #ffffff;
   --ink: #0f1419;
@@ -34,6 +31,42 @@
   --green: #1f6b3e;
   --green-tint: #eaf3ed;
   --amber: #b8691a;
+  --amber-tint: #fbf1e6;
+
+  /*
+   * Body background and text. Aliases, declared once: they follow --paper and
+   * --ink into dark mode on their own. Never give them a hex of their own.
+   */
+  --background: var(--paper);
+  --foreground: var(--ink);
+
+  /* Web cards: a hard offset, no blur. Editorial, not soft. */
+  --print-shadow: 4px 4px 0 rgba(15, 20, 25, 0.07);
+
+  /*
+   * Design system v1.2 — mobile app layer. Defined here so the app and the
+   * landing page share one palette; no web component uses them yet.
+   */
+  --body: #2d3139;
+  --edge: #e2e0d8;
+  --tint: #e8e6e0;
+  --img-bg: #dad7cf;
+  --on-red: #ffffff;
+  --scrim: rgba(15, 20, 25, 0.58);
+  --cta-shadow: #0f1419;
+  --card-shadow: 0 10px 28px rgba(15, 20, 25, 0.1);
+
+  /* Topic accents: the relative-time line and the illustration wash only. */
+  --topic-civic: #2457d6;
+  --topic-civic-bg: #d7e4ff;
+  --topic-edu: #6648d1;
+  --topic-edu-bg: #e4dcfb;
+  --topic-health: #17804f;
+  --topic-health-bg: #d2f0de;
+  --topic-jobs: #0b7f8a;
+  --topic-jobs-bg: #cbeef1;
+  --topic-transport: #b35f00;
+  --topic-transport-bg: #ffe5b3;
 
   /* Sutra override — masthead red is Saransh's accent. */
   --sutra-color-surface: var(--card);
@@ -67,9 +100,6 @@
  * Newsprint palette — dark (night edition)
  * ------------------------------------------------------------------------ */
 .dark {
-  --background: #111417;
-  --foreground: #e6e4df;
-
   --paper: #191816;
   --card: #211f1c;
   --ink: #e6e4df;
@@ -85,6 +115,31 @@
   --green-tint: #152518;
   --amber: #d4944a;
   --amber-tint: #352310;
+
+  --print-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+
+  --body: #c9c6bf;
+  --edge: #3a3730;
+  --tint: #2a2824;
+  --img-bg: #2a2824;
+  /* White on the lifted dark red is only 3.9:1, so text on red goes dark. */
+  --on-red: #191816;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --cta-shadow: #8e8a82;
+  /* Dark cards rely on --edge instead of a shadow. */
+  --card-shadow: none;
+
+  --topic-civic: #9db8f7;
+  --topic-edu: #bfaef4;
+  --topic-health: #86d7ac;
+  --topic-jobs: #86d6dc;
+  --topic-transport: #edbf63;
+  /* Dark illustration wash: the accent mixed 18% into the card colour. */
+  --topic-civic-bg: color-mix(in srgb, var(--topic-civic) 18%, var(--card));
+  --topic-edu-bg: color-mix(in srgb, var(--topic-edu) 18%, var(--card));
+  --topic-health-bg: color-mix(in srgb, var(--topic-health) 18%, var(--card));
+  --topic-jobs-bg: color-mix(in srgb, var(--topic-jobs) 18%, var(--card));
+  --topic-transport-bg: color-mix(in srgb, var(--topic-transport) 18%, var(--card));
 
   --sutra-color-surface: var(--card);
   --sutra-color-surface-subtle: var(--paper);
@@ -122,15 +177,22 @@ body {
   color: var(--foreground);
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-optical-sizing: auto;
+/* In the base layer so a font utility on a heading (font-mono, font-sans) still wins. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-optical-sizing: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
@@ -201,6 +263,26 @@ h4 {
   --color-green: var(--green);
   --color-green-tint: var(--green-tint);
   --color-amber: var(--amber);
+  --color-amber-tint: var(--amber-tint);
+
+  /* App layer (design system v1.2). */
+  --color-body: var(--body);
+  --color-edge: var(--edge);
+  --color-tint: var(--tint);
+  --color-img-bg: var(--img-bg);
+  --color-on-red: var(--on-red);
+  --color-scrim: var(--scrim);
+  --color-cta-shadow: var(--cta-shadow);
+  --color-topic-civic: var(--topic-civic);
+  --color-topic-civic-bg: var(--topic-civic-bg);
+  --color-topic-edu: var(--topic-edu);
+  --color-topic-edu-bg: var(--topic-edu-bg);
+  --color-topic-health: var(--topic-health);
+  --color-topic-health-bg: var(--topic-health-bg);
+  --color-topic-jobs: var(--topic-jobs);
+  --color-topic-jobs-bg: var(--topic-jobs-bg);
+  --color-topic-transport: var(--topic-transport);
+  --color-topic-transport-bg: var(--topic-transport-bg);
 
   /* Sutra semantic utilities — the class names `@sutra_ui/ui` ships with. */
   --color-surface: var(--sutra-color-surface);
@@ -234,6 +316,8 @@ h4 {
   --color-info-subtle: var(--sutra-color-info-subtle);
   --color-info-subtle-content: var(--sutra-color-info-subtle-content);
 
+  --shadow-print: var(--print-shadow);
+  --shadow-app-card: var(--card-shadow);
   --shadow-md: var(--sutra-shadow-md);
   --shadow-lg: var(--sutra-shadow-lg);
   --shadow-xl: var(--sutra-shadow-xl);

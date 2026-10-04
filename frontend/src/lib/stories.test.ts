@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { ApiStory } from "./stories";
-import { mapApiStoryToCarousel } from "./stories";
+import { mapApiStoryToCarousel, topicFor } from "./stories";
 
 function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   return {
@@ -28,7 +28,7 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.body).toContain("Lok Sabha");
     expect(story.category).toBe("National · Parliament");
     expect(story.source).toBe("PTI · Verified");
-    expect(story.imageVariant).toBe("national");
+    expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
   });
 
@@ -80,5 +80,19 @@ describe("mapApiStoryToCarousel", () => {
     const story = mapApiStoryToCarousel(apiStory({ source_url: "", sources: [] }));
 
     expect(story.sourceUrl).toBeUndefined();
+  });
+});
+
+describe("topicFor", () => {
+  it("maps a category onto the topic that has an accent", () => {
+    expect(topicFor("Education")).toBe("edu");
+    expect(topicFor("Public Health")).toBe("health");
+    expect(topicFor("Jobs")).toBe("jobs");
+    expect(topicFor("Road Infrastructure")).toBe("transport");
+  });
+
+  it("falls back to civic for anything it does not recognise", () => {
+    expect(topicFor("National")).toBe("civic");
+    expect(topicFor("Crime")).toBe("civic");
   });
 });

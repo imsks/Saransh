@@ -28,3 +28,21 @@ export function validateEmail(email: string): ValidationResult {
 
   return { valid: true };
 }
+
+export type WaitlistField = "name" | "email";
+
+/** One message per invalid field. An empty object means the signup is valid. */
+export type WaitlistFieldErrors = Partial<Record<WaitlistField, string>>;
+
+/** Validate a whole waitlist signup, so each field can show its own error. */
+export function validateWaitlist(values: Record<WaitlistField, string>): WaitlistFieldErrors {
+  const errors: WaitlistFieldErrors = {};
+
+  const name = validateName(values.name);
+  if (!name.valid) errors.name = name.message ?? "Please enter your real name.";
+
+  const email = validateEmail(values.email);
+  if (!email.valid) errors.email = email.message ?? "Please enter a valid email address.";
+
+  return errors;
+}
