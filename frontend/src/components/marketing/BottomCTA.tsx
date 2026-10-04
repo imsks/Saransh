@@ -14,7 +14,7 @@ export default function BottomCTA() {
         <h2 className="mb-[14px] font-serif text-[clamp(26px,3.5vw,42px)] font-semibold leading-[1.1] tracking-[-0.025em] text-ink">
           News you can <em className="font-medium italic text-red">verify</em> in under five minutes.
         </h2>
-        <p className="mx-auto mb-7 max-w-[44ch] font-sans text-[15.5px] leading-[1.72] text-muted">
+        <p className="mx-auto mb-7 max-w-[50ch] font-sans text-[15.5px] leading-[1.72] text-muted">
           Saransh is for people who want the story, not the take. Every summary is attributed and
           reviewed by a person before it goes live. Sign up to hear when it&apos;s ready.
         </p>

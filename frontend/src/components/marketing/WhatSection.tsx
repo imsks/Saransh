@@ -67,7 +67,7 @@ export default function WhatSection() {
   return (
     <section className="border-t border-line py-20">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
-        <div className="grid grid-cols-1 gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
+        <div className="grid grid-cols-1 items-center gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
           <StoryCarousel />
 
           <div>

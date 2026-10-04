@@ -32,8 +32,8 @@ function Chevron({ direction }: { direction: "back" | "next" }) {
 }
 
 /**
- * The landing-page preview of the app's story screen: progress strip, one card,
- * Back and Next. It moves only when the reader asks it to.
+ * The landing-page preview of the app's story screen: one card with Back and
+ * Next. It moves only when the reader asks it to.
  */
 export default function StoryCarouselClient({ stories }: StoryCarouselClientProps) {
   const [index, setIndex] = useState(0);
@@ -66,28 +66,15 @@ export default function StoryCarouselClient({ stories }: StoryCarouselClientProp
     <section
       aria-roledescription="carousel"
       aria-label="Story preview"
-      className="mx-auto w-full max-w-[358px] min-[860px]:mx-0"
+      className="mx-auto w-full max-w-[496px]"
     >
-      <div className="mb-1.5 flex items-baseline justify-between">
+      <div className="mb-3 flex items-baseline justify-between">
         <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
           LIVE FEED PREVIEW
         </span>
         <span className="font-sans text-[13px] font-semibold text-muted">
           {current + 1} / {stories.length}
         </span>
-      </div>
-      <div
-        role="progressbar"
-        aria-label="Stories read"
-        aria-valuemin={1}
-        aria-valuemax={stories.length}
-        aria-valuenow={current + 1}
-        className="mb-4 h-1.5 overflow-hidden rounded-[3px] bg-line-heavy"
-      >
-        <div
-          className="h-full rounded-[3px] bg-red transition-[width] duration-200"
-          style={{ width: `${((current + 1) / stories.length) * 100}%` }}
-        />
       </div>
       <div
         key={current}

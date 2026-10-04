@@ -54,7 +54,7 @@ describe("StoryCard", () => {
     expect(screen.getByText("PTI · Verified")).toBeTruthy();
   });
 
-  it("offers Read story only when there is an article to read", () => {
+  it("always shows Read story, but only links it when there is an article", () => {
     const { rerender } = render(<StoryCard story={story()} />);
 
     const cta = screen.getByRole("link", { name: /^Read story/ });
@@ -63,6 +63,7 @@ describe("StoryCard", () => {
 
     rerender(<StoryCard story={story({ sourceUrl: undefined })} />);
     expect(screen.queryByRole("link", { name: /^Read story/ })).toBeNull();
+    expect(screen.getByText("Read story").tagName).toBe("SPAN");
   });
 
   it("shows the tick for official sources only", () => {

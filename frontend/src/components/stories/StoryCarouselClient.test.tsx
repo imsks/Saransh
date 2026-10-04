@@ -36,13 +36,12 @@ describe("StoryCarouselClient", () => {
     );
   });
 
-  it("moves with Next and Back and keeps the progress strip in step", () => {
+  it("moves with Next and Back and keeps the counter in step", () => {
     render(<StoryCarouselClient stories={stories} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Next story" }));
     expect(screen.getByText("Second story")).toBeTruthy();
     expect(screen.getByText("2 / 3")).toBeTruthy();
-    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("2");
 
     fireEvent.click(screen.getByRole("button", { name: "Previous story" }));
     expect(screen.getByText("First story")).toBeTruthy();

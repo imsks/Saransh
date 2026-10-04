@@ -12,6 +12,9 @@ const topicClass: Record<Topic, { time: string; wash: string }> = {
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
 
+const readStoryClass =
+  "mr-[3px] inline-flex min-h-[46px] shrink-0 items-center justify-center rounded-[12px] border-[1.5px] border-ink bg-card px-[22px] font-sans text-[14.5px] font-bold text-ink no-underline shadow-[3px_3px_0_var(--cta-shadow)]";
+
 /** The green tick. It means "official source" and nothing else. */
 function OfficialTick() {
   return (
@@ -68,7 +71,7 @@ export default function StoryCard({ story }: { story: Story }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-[24px] border border-edge bg-card text-ink shadow-app-card">
       <div
-        className={`relative h-[206px] ${story.imageUrl ? "bg-img-bg" : topic.wash}`}
+        className={`relative h-[168px] ${story.imageUrl ? "bg-img-bg" : topic.wash}`}
         data-topic={story.topic}
       >
         {story.imageUrl ? (
@@ -98,11 +101,16 @@ export default function StoryCard({ story }: { story: Story }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Read story: ${story.headline}`}
-              className={`mr-[3px] inline-flex min-h-[46px] shrink-0 items-center justify-center rounded-[12px] border-[1.5px] border-ink bg-card px-[22px] font-sans text-[14.5px] font-bold text-ink no-underline shadow-[3px_3px_0_var(--cta-shadow)] ${focusRing}`}
+              className={`${readStoryClass} ${focusRing}`}
             >
               Read story
             </a>
-          ) : null}
+          ) : (
+            // Sample stories have no article behind them: the button is shown, not live.
+            <span aria-hidden="true" className={`${readStoryClass} cursor-default select-none`}>
+              Read story
+            </span>
+          )}
         </div>
       </div>
     </article>
