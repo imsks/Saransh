@@ -16,7 +16,7 @@ function block(selector: string): string {
 /** Custom properties declared in a block, as name → value. */
 function tokens(body: string): Map<string, string> {
   const found = new Map<string, string>();
-  for (const [, name, value] of body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+  for (const [, name, value] of Array.from(body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g))) {
     found.set(name, value.trim());
   }
   return found;
