@@ -45,9 +45,28 @@ describe("globals.css tokens", () => {
     const palette = [...light.keys()].filter(
       (name) => !name.startsWith("--sutra-") && !["--background", "--foreground"].includes(name),
     );
-    const missing = palette.filter((name) => !dark.has(name) && !name.endsWith("-bg"));
-    expect(missing).toEqual([]);
+    expect(palette.filter((name) => !dark.has(name))).toEqual([]);
     expect([...dark.keys()].filter((name) => !light.has(name))).toEqual([]);
+  });
+
+  it("carries the v1.2 app tokens with the design-system values", () => {
+    expect(light.get("--body")).toBe("#2d3139");
+    expect(dark.get("--body")).toBe("#c9c6bf");
+    expect(light.get("--on-red")).toBe("#ffffff");
+    expect(dark.get("--on-red")).toBe("#191816");
+    expect(dark.get("--card-shadow")).toBe("none");
+    expect(light.get("--topic-transport")).toBe("#b35f00");
+    expect(dark.get("--topic-transport")).toBe("#edbf63");
+  });
+
+  it("exposes every palette token to Tailwind", () => {
+    const theme = tokens(css.slice(css.indexOf("@theme inline")));
+    const unmapped = [...light.keys()].filter((name) => {
+      if (name.startsWith("--sutra-") || name === "--card-shadow") return false;
+      return theme.get(`--color-${name.slice(2)}`) !== `var(${name})`;
+    });
+    expect(unmapped).toEqual([]);
+    expect(theme.get("--shadow-app-card")).toBe("var(--card-shadow)");
   });
 
   it("keeps the heading font rule in the base layer so font utilities can override it", () => {
