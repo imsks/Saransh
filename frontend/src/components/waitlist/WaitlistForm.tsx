@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { primaryButtonClass } from "@/components/ui/buttonClasses";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
 import { validateEmail, validateName } from "@/lib/validate";
@@ -119,7 +120,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         )}
         <button
           type="submit"
-          className="mb-2.5 flex w-full items-center justify-center gap-2 rounded-[2px] border-none bg-ink px-5 py-3 font-mono text-[11.5px] font-semibold uppercase tracking-[0.12em] text-card hover:bg-red disabled:cursor-not-allowed disabled:bg-line-heavy"
+          className={`${primaryButtonClass} mb-2.5 w-full disabled:cursor-not-allowed disabled:bg-line-heavy`}
           disabled={loading}
         >
           {loading ? (

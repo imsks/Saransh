@@ -1,5 +1,7 @@
 "use client";
 
+import { primaryButtonClass } from "@/components/ui/buttonClasses";
+
 export default function BottomCTA() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -16,7 +18,7 @@ export default function BottomCTA() {
         <button
           type="button"
           onClick={scrollToTop}
-          className="inline-block rounded-[2px] bg-ink px-9 py-[14px] font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-card hover:bg-red"
+          className={primaryButtonClass}
         >
           JOIN THE WAITLIST
         </button>

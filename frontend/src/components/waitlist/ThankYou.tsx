@@ -1,6 +1,8 @@
 "use client";
 import { useEffect } from "react";
 
+import { primaryButtonClass, secondaryButtonClass } from "@/components/ui/buttonClasses";
+
 export default function ThankYou() {
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -43,7 +45,7 @@ export default function ThankYou() {
           href="https://github.com/imsks/Saransh"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-[2px] bg-ink px-[18px] py-2.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-card no-underline transition-colors hover:bg-red"
+          className={primaryButtonClass}
         >
           FOLLOW THE BUILD ON GITHUB
         </a>
@@ -51,7 +53,7 @@ export default function ThankYou() {
           href="https://rajniti-app.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-[2px] border-[1.5px] border-line-heavy px-[18px] py-2.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted no-underline transition-[border-color,color] hover:border-ink hover:text-ink"
+          className={secondaryButtonClass}
         >
           EXPLORE RAJNITI
         </a>
