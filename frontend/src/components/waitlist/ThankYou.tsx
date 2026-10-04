@@ -1,11 +1,15 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { primaryButtonClass, secondaryButtonClass } from "@/components/ui/buttonClasses";
 
 export default function ThankYou() {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    // The overlay covers the page, so keyboard and screen-reader focus must follow it.
+    headingRef.current?.focus();
     return () => {
       document.body.style.overflow = "";
     };
@@ -32,7 +36,11 @@ export default function ThankYou() {
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </div>
-      <h2 className="mb-4 text-center font-serif text-[clamp(28px,4vw,42px)] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
+      <h2
+        ref={headingRef}
+        tabIndex={-1}
+        className="mb-4 text-center font-serif text-[clamp(28px,4vw,42px)] font-semibold leading-[1.1] tracking-[-0.02em] text-ink focus:outline-none"
+      >
         You&apos;re on the list.
         <br />
         <em className="font-medium italic text-green">We&apos;ll be in touch.</em>
@@ -58,9 +66,15 @@ export default function ThankYou() {
           EXPLORE RAJNITI
         </a>
       </div>
-      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] text-line-heavy">
-        Saransh <span className="font-hindi">सारांश</span> —{" "}
-        <span className="font-hindi">आपके ज़िले की खबर, 60 शब्दों में, सबूत के साथ।</span>
+      <p className="absolute inset-x-0 bottom-6 px-5 text-center font-mono text-[10px] text-muted">
+        Saransh{" "}
+        <span lang="hi" className="font-hindi">
+          सारांश
+        </span>{" "}
+        —{" "}
+        <span lang="hi" className="font-hindi">
+          आपके ज़िले की खबर, 60 शब्दों में, सबूत के साथ।
+        </span>
       </p>
     </div>
   );

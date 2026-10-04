@@ -74,9 +74,9 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 pb-5 pt-0 pl-[18px]">
               <DocIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   VERIFIED SOURCES
-                </h3>
+                </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
                   Government portals, PIB, registered outlets. Nothing unattributed.
                 </p>
@@ -85,9 +85,9 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
               <CodeIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   OPEN-SOURCE PIPELINE
-                </h3>
+                </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
                   Prompts, ranking logic, deduplication rules — all public on GitHub.
                 </p>
@@ -96,9 +96,9 @@ export default function WhatSection() {
             <div className="flex items-start gap-3.5 border-t border-line px-0 py-5 pl-[18px]">
               <PersonIcon />
               <div>
-                <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
+                <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                   HUMAN REVIEWED
-                </h3>
+                </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
                   Every AI-drafted story is reviewed by a person before it goes live.
                 </p>

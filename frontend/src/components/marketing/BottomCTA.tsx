@@ -3,7 +3,10 @@
 import { primaryButtonClass } from "@/components/ui/buttonClasses";
 
 export default function BottomCTA() {
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToTop = () => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  };
 
   return (
     <section className="border-t border-line py-20 text-center">
