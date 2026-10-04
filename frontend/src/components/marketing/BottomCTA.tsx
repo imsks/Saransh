@@ -6,7 +6,7 @@ export default function BottomCTA() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <section className="border-t border-line py-[88px] text-center">
+    <section className="border-t border-line py-20 text-center">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
         <h2 className="mb-[14px] font-serif text-[clamp(26px,3.5vw,42px)] font-semibold leading-[1.1] tracking-[-0.025em] text-ink">
           News you can <em className="font-medium italic text-red">verify</em> in under five minutes.

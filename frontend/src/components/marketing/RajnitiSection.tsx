@@ -1,8 +1,8 @@
 export default function RajnitiSection() {
   return (
-    <section className="border-t border-line py-[88px]">
+    <section className="border-t border-line py-20">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
-        <div className="grid grid-cols-1 items-center gap-10 min-[860px]:grid-cols-[5fr_7fr] min-[860px]:gap-[72px]">
+        <div className="grid grid-cols-1 items-center gap-10 min-[860px]:grid-cols-[5fr_7fr] min-[860px]:gap-16">
           <div>
             <span className="mb-3.5 block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-blue">
               CIVIC ACCOUNTABILITY
