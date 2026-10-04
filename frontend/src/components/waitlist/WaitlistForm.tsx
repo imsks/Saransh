@@ -72,7 +72,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   return (
     <div
       id="waitlist"
-      className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 pb-[22px] pt-7 shadow-[4px_4px_0_rgba(15,20,25,0.07)]"
+      className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 pb-[22px] pt-7 shadow-print"
     >
       <form onSubmit={handleSubmit} noValidate>
         <span className="mb-[18px] block font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-muted">
@@ -124,7 +124,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         >
           {loading ? (
             <span
-              className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-transparent border-t-white"
+              className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-transparent border-t-current"
               aria-hidden="true"
             />
           ) : (

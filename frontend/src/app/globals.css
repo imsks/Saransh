@@ -40,6 +40,9 @@
   --background: var(--paper);
   --foreground: var(--ink);
 
+  /* Web cards: a hard offset, no blur. Editorial, not soft. */
+  --print-shadow: 4px 4px 0 rgba(15, 20, 25, 0.07);
+
   /*
    * Design system v1.2 — mobile app layer. Defined here so the app and the
    * landing page share one palette; no web component uses them yet.
@@ -112,6 +115,8 @@
   --green-tint: #152518;
   --amber: #d4944a;
   --amber-tint: #352310;
+
+  --print-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
 
   --body: #c9c6bf;
   --edge: #3a3730;
@@ -307,6 +312,7 @@ body {
   --color-info-subtle: var(--sutra-color-info-subtle);
   --color-info-subtle-content: var(--sutra-color-info-subtle-content);
 
+  --shadow-print: var(--print-shadow);
   --shadow-app-card: var(--card-shadow);
   --shadow-md: var(--sutra-shadow-md);
   --shadow-lg: var(--sutra-shadow-lg);

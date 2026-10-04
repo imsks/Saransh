@@ -62,11 +62,13 @@ describe("globals.css tokens", () => {
   it("exposes every palette token to Tailwind", () => {
     const theme = tokens(css.slice(css.indexOf("@theme inline")));
     const unmapped = [...light.keys()].filter((name) => {
-      if (name.startsWith("--sutra-") || name === "--card-shadow") return false;
+      if (name.startsWith("--sutra-")) return false;
+      if (name === "--card-shadow" || name === "--print-shadow") return false;
       return theme.get(`--color-${name.slice(2)}`) !== `var(${name})`;
     });
     expect(unmapped).toEqual([]);
     expect(theme.get("--shadow-app-card")).toBe("var(--card-shadow)");
+    expect(theme.get("--shadow-print")).toBe("var(--print-shadow)");
   });
 
   it("keeps the heading font rule in the base layer so font utilities can override it", () => {

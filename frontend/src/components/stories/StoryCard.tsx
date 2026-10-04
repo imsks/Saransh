@@ -57,7 +57,7 @@ export default function StoryCard({ story }: { story: Story }) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : null}
-        <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-sm bg-black/35 px-1.5 py-0.5 font-mono text-[9px] text-white/85">
+        <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-sm bg-scrim px-1.5 py-0.5 font-mono text-[9px] text-white">
           {story.credit}
         </span>
       </div>
