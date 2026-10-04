@@ -17,9 +17,6 @@
  * primitives inherit the same look without forking a single component.
  * ------------------------------------------------------------------------ */
 :root {
-  --background: #eeedea;
-  --foreground: #0f1419;
-
   --paper: #eeedea;
   --card: #ffffff;
   --ink: #0f1419;
@@ -34,6 +31,14 @@
   --green: #1f6b3e;
   --green-tint: #eaf3ed;
   --amber: #b8691a;
+  --amber-tint: #fbf1e6;
+
+  /*
+   * Body background and text. Aliases, declared once: they follow --paper and
+   * --ink into dark mode on their own. Never give them a hex of their own.
+   */
+  --background: var(--paper);
+  --foreground: var(--ink);
 
   /* Sutra override — masthead red is Saransh's accent. */
   --sutra-color-surface: var(--card);
@@ -67,9 +72,6 @@
  * Newsprint palette — dark (night edition)
  * ------------------------------------------------------------------------ */
 .dark {
-  --background: #111417;
-  --foreground: #e6e4df;
-
   --paper: #191816;
   --card: #211f1c;
   --ink: #e6e4df;
@@ -122,12 +124,15 @@ body {
   color: var(--foreground);
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-optical-sizing: auto;
+/* In the base layer so a font utility on a heading (font-mono, font-sans) still wins. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-optical-sizing: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -201,6 +206,7 @@ h4 {
   --color-green: var(--green);
   --color-green-tint: var(--green-tint);
   --color-amber: var(--amber);
+  --color-amber-tint: var(--amber-tint);
 
   /* Sutra semantic utilities — the class names `@sutra_ui/ui` ships with. */
   --color-surface: var(--sutra-color-surface);
