@@ -10,7 +10,7 @@ export default function RajnitiSection() {
             <h2 className="mb-5 font-serif text-[clamp(24px,3vw,34px)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
               When a story mentions a politician&apos;s promise, we link it to their record.
             </h2>
-            <p className="mb-6 max-w-[42ch] font-sans text-[15px] leading-[1.74] text-muted">
+            <p className="mb-6 max-w-[42ch] font-sans text-[15.5px] leading-[1.72] text-muted">
               Saransh runs alongside Rajniti, an open database tracking elected representatives and
               what they actually did. When a story mentions a government project or scheme, the feed
               links directly to the representative responsible. You see the original promise and the

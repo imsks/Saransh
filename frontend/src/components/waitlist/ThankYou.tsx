@@ -30,12 +30,12 @@ export default function ThankYou() {
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </div>
-      <h2 className="mb-4 text-center font-serif text-[clamp(28px,4vw,42px)] font-semibold leading-[1.1] tracking-tight text-ink">
+      <h2 className="mb-4 text-center font-serif text-[clamp(28px,4vw,42px)] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
         You&apos;re on the list.
         <br />
         <em className="font-medium italic text-green">We&apos;ll be in touch.</em>
       </h2>
-      <p className="mb-7 max-w-[42ch] text-center font-sans text-[15.5px] leading-[1.65] text-muted">
+      <p className="mb-7 max-w-[42ch] text-center font-sans text-[15.5px] leading-[1.72] text-muted">
         We&apos;ll email you once when Saransh launches. That&apos;s all you&apos;ll hear from us.
       </p>
       <div className="flex flex-wrap justify-center gap-3">

@@ -68,7 +68,7 @@ export default function StoryCarouselClient({ stories }: StoryCarouselClientProp
   return (
     <div>
       <div className="mb-2.5 flex items-center justify-between">
-        <span className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-muted">
+        <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
           LIVE FEED PREVIEW
         </span>
         <div className="flex items-center gap-1.5">

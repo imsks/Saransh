@@ -75,7 +75,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 pb-[22px] pt-7 shadow-print"
     >
       <form onSubmit={handleSubmit} noValidate>
-        <span className="mb-[18px] block font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-muted">
+        <span className="mb-[18px] block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
           JOIN THE WAITLIST
         </span>
         <div className="mb-3 flex flex-col gap-3">
@@ -131,7 +131,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             "JOIN THE WAITLIST"
           )}
         </button>
-        <p className="font-mono text-[9.5px] tracking-[0.04em] text-muted">
+        <p className="font-mono text-[9.5px] leading-[1.65] tracking-[0.05em] text-muted">
           You&apos;ll hear from us once, when Saransh is live.
         </p>
       </form>

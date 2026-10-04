@@ -43,7 +43,7 @@ export default function StoryCard({ story }: { story: Story }) {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.13em] text-red">
           {story.category}
         </span>
-        <span className="font-mono text-[10px] text-muted">{story.time}</span>
+        <span className="font-mono text-[10px] tracking-[0.03em] text-muted">{story.time}</span>
       </div>
       <div
         className={`relative mb-3 h-[108px] overflow-hidden rounded-[2px] after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_30%_35%,rgba(255,255,255,0.1)_0%,transparent_60%)] ${imageClassMap[story.imageVariant]}`}
@@ -61,7 +61,7 @@ export default function StoryCard({ story }: { story: Story }) {
           {story.credit}
         </span>
       </div>
-      <p className="mb-2 font-serif text-[18.5px] font-semibold leading-[1.25] tracking-tight text-ink">
+      <p className="mb-2 font-serif text-[18.5px] font-semibold leading-[1.25] tracking-[-0.01em] text-ink">
         {story.headline}
       </p>
       <p className="mb-3 font-sans text-[13.5px] leading-[1.6] text-muted">{story.body}</p>
