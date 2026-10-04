@@ -20,7 +20,7 @@ export default function RajnitiSection() {
               href="https://rajniti-app.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.1em] text-blue no-underline hover:opacity-70"
+              className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
             >
               Explore Rajniti
             </a>
@@ -31,11 +31,11 @@ export default function RajnitiSection() {
                 <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.17em] text-blue">
                   Rajniti · Your representative
                 </span>
-                <span className="border border-blue px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase tracking-[0.12em] text-blue opacity-75">
+                <span className="rounded-[3px] border border-blue px-1.5 py-0.5 font-mono text-[8.5px] font-semibold uppercase tracking-[0.1em] text-blue">
                   LINKED
                 </span>
               </div>
-              <p className="mb-2 font-serif text-[16px] font-semibold text-ink">MLA · Barabanki Sadar</p>
+              <p className="mb-2 font-sans text-[16px] font-bold text-ink">MLA · Barabanki Sadar</p>
               <p className="mb-3 font-sans text-[13.5px] italic leading-[1.6] text-muted">
                 Promise (2024): &quot;Deva Road widening complete by March 2026&quot; · Status:{" "}
                 <span className="not-italic font-semibold text-amber">Delayed, 60% complete</span>
@@ -44,7 +44,7 @@ export default function RajnitiSection() {
                 href="https://rajniti-app.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.1em] text-blue no-underline hover:opacity-70"
+                className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
               >
                 View profile on Rajniti
               </a>
