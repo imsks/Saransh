@@ -7,7 +7,7 @@ const imageClassMap = {
 } as const;
 
 const badgeClass =
-  "inline-flex items-center gap-1.5 rounded-sm border-[1.5px] border-red bg-red-tint px-2 py-0.5 font-mono text-[10px] text-red";
+  "inline-flex items-center gap-1.5 rounded-[2px] border-[1.5px] border-red bg-red-tint px-2 py-0.5 font-mono text-[10px] text-red";
 
 /** The outlet credit. Links to the citation link when the story has one. */
 function SourceBadge({ story }: { story: Story }) {
@@ -46,7 +46,7 @@ export default function StoryCard({ story }: { story: Story }) {
         <span className="font-mono text-[10px] text-muted">{story.time}</span>
       </div>
       <div
-        className={`relative mb-3 h-[108px] overflow-hidden rounded-sm after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_30%_35%,rgba(255,255,255,0.1)_0%,transparent_60%)] ${imageClassMap[story.imageVariant]}`}
+        className={`relative mb-3 h-[108px] overflow-hidden rounded-[2px] after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_30%_35%,rgba(255,255,255,0.1)_0%,transparent_60%)] ${imageClassMap[story.imageVariant]}`}
       >
         {story.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -57,7 +57,7 @@ export default function StoryCard({ story }: { story: Story }) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : null}
-        <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-sm bg-scrim px-1.5 py-0.5 font-mono text-[9px] text-white">
+        <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-[2px] bg-scrim px-1.5 py-0.5 font-mono text-[9px] text-white">
           {story.credit}
         </span>
       </div>

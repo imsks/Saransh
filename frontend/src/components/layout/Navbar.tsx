@@ -24,7 +24,7 @@ export default function Navbar() {
           >
             GitHub
           </a>
-          <ThemeToggle className="size-8 rounded-sm border-line bg-transparent text-muted hover:bg-card hover:text-ink" />
+          <ThemeToggle className="size-8 rounded-[2px] border-line bg-transparent text-muted hover:bg-card hover:text-ink" />
         </div>
       </div>
     </nav>
