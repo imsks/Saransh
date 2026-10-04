@@ -86,7 +86,7 @@ export default function StoryCarouselClient({ stories }: StoryCarouselClientProp
       </div>
       <div
         key={key}
-        className="rounded-[2px] border-[1.5px] border-ink bg-card px-[22px] pb-[18px] pt-5 shadow-print animate-card-in"
+        className="rounded-[2px] border-[1.5px] border-ink bg-card dark:border-line px-[22px] pb-[18px] pt-5 shadow-print animate-card-in"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >

@@ -2,12 +2,12 @@ import { Story } from "@/constants/stories";
 
 const imageClassMap = {
   national: "bg-gradient-to-br from-[#8FAE96] to-[#3E6B4A]",
-  road: "bg-gradient-to-br from-[#B5AFA4] via-[#7A756B] via-60% to-[#4A4640]",
+  road: "bg-[linear-gradient(165deg,#B5AFA4_0%,#8A8578_50%,#4A4640_100%)]",
   civic: "bg-gradient-to-br from-[#7E9BAF] to-[#3E5D75]",
 } as const;
 
 const badgeClass =
-  "inline-flex items-center gap-1.5 rounded-[2px] border-[1.5px] border-red bg-red-tint px-2 py-0.5 font-mono text-[10px] text-red";
+  "inline-flex items-center gap-1.5 rounded-[2px] border-[1.5px] border-red bg-red-tint px-2 py-[3px] font-mono text-[10px] tracking-[0.03em] text-red";
 
 /** The outlet credit. Links to the citation link when the story has one. */
 function SourceBadge({ story }: { story: Story }) {
@@ -57,7 +57,7 @@ export default function StoryCard({ story }: { story: Story }) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : null}
-        <span className="absolute bottom-1.5 left-1.5 z-[1] rounded-[2px] bg-scrim px-1.5 py-0.5 font-mono text-[9px] text-white">
+        <span className="absolute bottom-[5px] left-[7px] z-[1] rounded-[2px] bg-scrim px-1.5 py-0.5 font-mono text-[8.5px] text-white">
           {story.credit}
         </span>
       </div>

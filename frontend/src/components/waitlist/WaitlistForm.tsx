@@ -88,7 +88,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   return (
     <div
       id="waitlist"
-      className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 pb-[22px] pt-7 shadow-print"
+      className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 dark:border-line pb-[22px] pt-7 shadow-print"
     >
       <form onSubmit={handleSubmit} noValidate>
         <span className="mb-[18px] block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
