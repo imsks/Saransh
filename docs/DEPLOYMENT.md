@@ -202,6 +202,8 @@ and cache headers.
 Environment ownership: local values live in `frontend/.env.example` (mirroring Rajniti's key
 names). Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
 Do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` on Vercel — `getSiteUrl()`
-falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*`, `GOOGLE_CLIENT_*`, and
-`NEXT_PUBLIC_GA_MEASUREMENT_ID` keys are placeholders for parity with Rajniti and stay unused until
-sign-in or analytics ship.
+falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are
+placeholders for parity with Rajniti and stay unused until sign-in ships.
+Analytics: set `NEXT_PUBLIC_POSTHOG_KEY` on Vercel to turn PostHog on (optionally
+`NEXT_PUBLIC_POSTHOG_HOST`, which defaults to PostHog Cloud US). With no key — local development and
+CI — analytics is disabled and makes no requests.
