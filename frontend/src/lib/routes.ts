@@ -3,6 +3,7 @@
  */
 export const ROUTES = {
   home: "/",
+  privacy: "/privacy",
 } as const;
 
 export const EXTERNAL = {
@@ -14,4 +15,5 @@ export const EXTERNAL = {
     "https://github.com/imsks/Saransh/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22",
   rajniti: "https://rajniti-app.vercel.app",
   sutra: "https://github.com/imsks/sutra-ui",
+  maintainer: "https://github.com/imsks",
 } as const;
