@@ -35,16 +35,24 @@ Where a Story sits in its lifecycle. Every Story is **Published** — visible to
 _Avoid_: State (reserved for geography), stage, visibility
 
 **Waitlist Signup**:
-A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two. Carries a Signup Token for anything outside Saransh that needs to refer to it.
-_Avoid_: Subscriber, lead, user, waitlister
+A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two. Carries a Signup Token for anything outside Saransh that needs to refer to it. A Signup is not a User — it is an email we promised to contact, with no credentials and nothing to sign in to. A Signup may later become a User, and the Signup Token is what lets us say they are the same person.
+_Avoid_: Subscriber, lead, waitlister
 
 **Signup Token**:
-The opaque public identifier of a Waitlist Signup — not the email, and not the row number. Stable: a second signup with the same email yields the same Token. Saransh hands it out so a Visitor can be matched to their Signup without the email leaving the system.
+The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. A Token therefore outlives the Signup that may have created it, and is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Named for where it was first issued, not for the only thing it identifies.
 _Avoid_: Signup ID, user ID, waitlist ID
 
 **Visitor**:
-Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a Waitlist Signup — one Visitor may create several Signups, and one Signup may be made from several Visitors. Saransh never learns a Visitor's name or email.
-_Avoid_: User, session, traffic, audience
+Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a Waitlist Signup — one Visitor may create several Signups, and one Signup may be made from several Visitors. A Visitor is not a User either: a Visitor is a browser Saransh has not identified, so the moment one signs in they are a User for the rest of that browser's session. Saransh never learns an unidentified Visitor's name or email.
+_Avoid_: Session, traffic, audience
+
+**User**:
+A person who has signed in and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row, the same username, the same place — because both products key a User on the identifier their sign-in provider issues. A User is the only kind of person who can own anything: preferences, a feed, saved Stories. Every User reached Saransh as a Visitor first, and may or may not have been a Waitlist Signup. Users are readers of Saransh, never authors of Stories: Stories arrive by Ingest from an Agent, and no User can create or edit one.
+_Avoid_: Account, member, reader, subscriber, profile
+
+**Onboarding**:
+The questions Saransh asks a User once, immediately after their first sign-in, to make the feed worth reading: reading language, interests, place. Onboarding is per-product, not per-person — a User who completed Rajniti's onboarding has told Saransh nothing, and is still asked. Onboarding only asks what the shared profile cannot already answer, so a User arriving from Rajniti is asked less. It is complete when Saransh says it is, and completion is the gate between signing in and seeing a personalised feed.
+_Avoid_: Signup, registration, setup, profile completion, wizard
 
 ### Processing Terms
 

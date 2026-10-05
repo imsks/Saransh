@@ -1,4 +1,10 @@
+---
+status: superseded by [ADR-0006](./0006-shared-database-and-users.md)
+---
+
 # Separate Database for Saransh
+
+> **Superseded.** This decision was never implemented — `DATABASE_URL` continued to default to the `rajniti` database and `alembic/env.py` kept a `alembic_version_saransh` version table, which is only needed when two migration histories share one database. Building User authentication made the shared database load-bearing rather than accidental. See [One Database, Shared Users, Single-Owner Tables](./0006-shared-database-and-users.md).
 
 Saransh owns its own Postgres database, provisioned separately from Rajniti's. The link between a Story and an elected representative is an HTTP call to Rajniti's API, not a foreign key.
 
