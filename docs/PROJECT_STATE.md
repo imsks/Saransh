@@ -2,12 +2,12 @@
 
 **What this is:** one document describing everything that is built in this repository today, backend and frontend, and how it is built. It is meant to be the starting point for anyone (a founder, a contributor, a non-technical reader, or an AI assistant) who needs to build on top of what exists.
 
-**Last verified against the code:** 2026-10-08, at commit `039084b` on `copilot/frontend-replace-v1-2-topic-tokens` (the branch that replaced the v1.2 topic tokens with the seven of design system v1.3). Everything before that was verified at `4d91910` on `development`; `771bbac` added this file, and every other doc in the repository was brought in line with it the same day.
+**Last verified against the code:** 2026-10-08, at commit `479b922` on `development` (landing page positioning copy: "No noise. Just news. With proof." / "शोर नहीं। सिर्फ़ खबर। सबूत के साथ।"). Earlier verifications were at `039084b` on `copilot/frontend-replace-v1-2-topic-tokens` and at `4d91910` on `development`; `771bbac` added this file.
 **Product direction last updated:** 2026-10-08 (section 14, including the decisions closed later that day). Owner: Pratyusha Trivedi.
 
 **Scope rule:** sections 1–13 describe only what exists in the code. Planned work lives in section 14 of this file, in `docs/adr/`, and in PRD v1.1 (kept by the founder, outside this repository). Where the code differs from what the landing page or other docs say, the difference is listed in [section 11](#11-known-gaps-and-things-that-will-surprise-you). Earlier versions of this file pointed to `docs/specs/launch-readiness/`; that folder is not in the repository, so a mention of "spec 03", "spec 04" and so on names a planned item, not a file you can open.
 
-> **Read section 14 first if you are building something new.** On 8 Oct 2026 the product pivoted from district news to a national news app. The code below still reflects the earlier plan in places (the `district` column, the old positioning line, the old topic set in TypeScript). Section 14 lists what the code must change.
+> **Read section 14 first if you are building something new.** On 8 Oct 2026 the product pivoted from district news to a national news app. The code below still reflects the earlier plan in places (the `district` column above, the old topic set in TypeScript). Section 14 lists what the code must change.
 
 ---
 
@@ -441,7 +441,7 @@ Footer
 | Component | File | Type | Role |
 |---|---|---|---|
 | `Navbar` | `components/layout/Navbar.tsx` | Server | Sticky top bar: "Saransh सारांश" wordmark, GitHub link, theme toggle (`ThemeSwitch`). No waitlist button. |
-| `Footer` | `components/layout/Footer.tsx` | Server | Wordmark, Hindi tagline (the old "आपके ज़िले की खबर…" line; replace per 14.1), Privacy link, link to the repo. |
+| `Footer` | `components/layout/Footer.tsx` | Server | Wordmark, Hindi tagline ("शोर नहीं। सिर्फ़ खबर। सबूत के साथ।"), Privacy link, link to the repo. |
 | `HeroSection` | `components/marketing/HeroSection.tsx` | Client | Two-column hero. Owns the `submitted` state; shows `ThankYou` after a successful signup. |
 | `HeroContent` | `components/marketing/HeroContent.tsx` | (rendered inside client) | The headline and lede paragraph. Text only. |
 | `WaitlistForm` | `components/waitlist/WaitlistForm.tsx` | Client | Name + email form. Validates, posts to the API, reports success upward via `onSuccess`. Carries `id="waitlist"`. |
@@ -534,7 +534,7 @@ Only English fields are used. The Hindi title and summary are stored but not dis
 
 ### 8.8 SEO and metadata
 
-Set in `layout.tsx`: title template `%s | Saransh`, description, Open Graph and Twitter card defaults, `robots: index, follow`, and two JSON-LD blocks (WebSite and NewsMediaOrganization). The canonical site URL comes from `getSiteUrl()`: `NEXT_PUBLIC_SITE_URL` → `NEXTAUTH_URL` → `VERCEL_URL` → `http://localhost:3001`.
+Set in `layout.tsx`: default title `Saransh — No noise. Just news. With proof.`, title template `%s | Saransh`, description, Open Graph and Twitter card defaults, `robots: index, follow`, and two JSON-LD blocks (WebSite and NewsMediaOrganization). The canonical site URL comes from `getSiteUrl()`: `NEXT_PUBLIC_SITE_URL` → `NEXTAUTH_URL` → `VERCEL_URL` → `http://localhost:3001`.
 
 `vercel.json` adds `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, a strict referrer policy, and long-lived caching for `/_next/static/*`.
 
@@ -770,7 +770,7 @@ The first four come from the stopgap ingest routine. The founder has decided to 
 25. **No word-count check on ingest.** The product rule is English ≤ 60 words and Hindi ≤ 70 words, hard reject. Only blank-field and URL checks exist.
 26. **Every API story is labelled "· Verified"** next to the outlet name. The design rule is a plain outlet name, with the green tick for official sources only.
 27. **District is still everywhere.** The API accepts, stores, filters and returns `district`; two of the three sample stories are Barabanki stories; the Rajniti mock-up shows "MLA · Barabanki Sadar". The product no longer has a district tier.
-28. **The landing page uses the old positioning.** "आपके ज़िले की खबर…" in the footer and on the thank-you screen; "India's Hyperlocal News Digest" in the page title; the old headline in the hero and in `SITE_TAGLINE`.
+28. **The landing page used the old positioning.** "शोर नहीं। सिर्फ़ खबर। सबूत के साथ।" in the footer, hero and thank-you screen; "No noise. Just news. With proof." in the page title, hero headline, `SITE_TAGLINE` and Open Graph title. The old Hindi and English lines have been replaced.
 29. **One sample story carries an official tick for PTI.** PTI is a news agency, not an official source.
 30. **The card and the topic set in TypeScript are still design system v1.2.** `globals.css` now carries the seven v1.3 topic tokens, but `constants/stories.ts` and `lib/stories.ts` still use the five retired topics (`civic`, `edu`, `health`, `jobs`, `transport`), so `StoryCard` asks for topic classes that no longer resolve; topic colour is on the time line and there is no topic label (14.6).
 31. **The privacy page describes analytics that do not exist.** It describes PostHog usage analytics and session recordings. No analytics code is in the repository. Decided 8 Oct 2026: build the analytics to match the page.
@@ -779,7 +779,7 @@ The first four come from the stopgap ingest routine. The founder has decided to 
 34. **`docs/specs/launch-readiness/` does not exist.** The "spec" numbers in this section name planned items, not files.
 35. **`docs/design-audit.md` and `docs/design-audit-pr.md` are untracked**, and the `.gitignore` lines that would hide them (and this file) are commented out in an uncommitted change. This file itself is tracked as of commit `771bbac`.
 
-**Fixed since the 2 Oct version of this file:** dark `--background` no longer holds the cold `#111417` (it aliases `--paper`); `--amber-tint` is defined in both themes and mapped to a Tailwind colour; `image_url` is back on stories.
+**Fixed since the 2 Oct version of this file:** dark `--background` no longer holds the cold `#111417` (it aliases `--paper`); `--amber-tint` is defined in both themes and mapped to a Tailwind colour; `image_url` is back on stories. Landing page positioning copy updated to "No noise. Just news. With proof." / "शोर नहीं। सिर्फ़ खबर। सबूत के साथ।".
 
 ---
 
@@ -925,7 +925,7 @@ Publish with source link-out
 
 ### 14.6 Frontend and design changes
 
-- **Landing page:** replace the positioning line (Footer, thank-you screen, hero, page title, SEO tagline); label the preview "Sample story" when it shows samples; replace the district samples and remove the PTI tick; drop "· Verified" from the source line; remove the Barabanki Rajniti chip (Rajniti is V2); soften claims the code can't back yet (section 11, items 1–4).
+- **Landing page:** ~~replace the positioning line (Footer, thank-you screen, hero, page title, SEO tagline)~~ **done**; label the preview "Sample story" when it shows samples; replace the district samples and remove the PTI tick; drop "· Verified" from the source line; remove the Barabanki Rajniti chip (Rajniti is V2); soften claims the code can't back yet (section 11, items 1–4).
 - **Tokens:** the `--background` / `--foreground` aliases, the v1.2 app tokens and the seven v1.3 topic tokens are all in code (section 9.4); `globals.test.ts` guards them. Still to do: move the TypeScript `Topic` type and `topicFor()` onto the same seven keys so the card can use them.
 - **Story card:** add the topic label (12px / 700, topic colour, top-left of the card body); the time line becomes muted.
 - **Reader app fonts:** DM Sans + Noto Sans Devanagari, 800-weight sans headlines; Fraunces + Tiro Devanagari Hindi for the wordmark only. The landing page keeps Fraunces + Inter + IBM Plex Mono.
@@ -953,7 +953,7 @@ Publish with source link-out
 
 | # | Step | Depends on | Done |
 |---|---|---|---|
-| 1 | Landing page copy and token corrections (14.6) | code freeze lifts | ☐ |
+| 1 | Landing page copy and token corrections (14.6) | code freeze lifts | ☑ |
 | 2 | Word-limit validator + tests (14.4 #2) | — | ☐ |
 | 3 | Fix the Alembic baseline; restrict autogenerate to Saransh-owned tables (14.4 #4) | — | ☐ |
 | 4 | Schema changes: `tier`, topic list, own images, statuses, `pipeline_meta`, `corrections` (14.3) | 3 | ☐ |
