@@ -33,7 +33,7 @@ npm run build
 
 Copy `frontend/.env.example` → `frontend/.env` (or run `make setup` from the repo root).
 
-The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders: Saransh has no sign-in yet. `NEXT_PUBLIC_GA_MEASUREMENT_ID` is a leftover; analytics will be PostHog ([ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md)) and is not built. On Vercel, do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` — `getSiteUrl()` falls back to `VERCEL_URL`. Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
+The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys back Google sign-in. Getting real values is a one-time console job — [`docs/google-oauth-setup.md`](../docs/google-oauth-setup.md) — and nothing in the app reads them until the sign-in slices land, so the placeholders are enough to run everything that exists today. `NEXT_PUBLIC_GA_MEASUREMENT_ID` is a leftover; analytics will be PostHog ([ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md)) and is not built. On Vercel, do **not** set the localhost `NEXT_PUBLIC_SITE_URL`; `NEXTAUTH_URL` must be set there, to the production origin, because a Google redirect URI cannot match Vercel's per-deployment hostname.
 
 ## Rules worth knowing before you touch the UI
 

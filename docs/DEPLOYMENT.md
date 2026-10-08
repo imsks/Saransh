@@ -208,8 +208,12 @@ add that Vercel origin to `CORS_ORIGINS` on the API. `frontend/vercel.json` carr
 and cache headers.
 
 Environment ownership: local values live in `frontend/.env.example` (mirroring Rajniti's key
-names). Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
-Do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` on Vercel — `getSiteUrl()`
-falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders and stay unused until sign-in ships.
+names). Vercel carries the production `NEXT_PUBLIC_API_URL`, and — once Google sign-in is
+provisioned ([google-oauth-setup.md](google-oauth-setup.md)) — `NEXTAUTH_URL`, `NEXTAUTH_SECRET`,
+`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+Do **not** set the localhost `NEXT_PUBLIC_SITE_URL` on Vercel — `getSiteUrl()` falls back to
+`VERCEL_URL` for canonical/OG URLs. `NEXTAUTH_URL`, by contrast, must be set on Vercel to the stable
+production origin: `VERCEL_URL` is the per-deployment hostname and will never match the redirect URI
+registered with Google.
 `NEXT_PUBLIC_GA_MEASUREMENT_ID` is a leftover from Rajniti: Saransh's analytics will be PostHog
 ([ADR 0004](adr/0004-posthog-for-saransh-analytics.md)), which is not built yet.
