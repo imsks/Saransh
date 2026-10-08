@@ -2,12 +2,12 @@
 
 **What this is:** one document describing everything that is built in this repository today, backend and frontend, and how it is built. It is meant to be the starting point for anyone (a founder, a contributor, a non-technical reader, or an AI assistant) who needs to build on top of what exists.
 
-**Last verified against the code:** 2026-10-08, at commit `4d91910` on `development`. Application code is unchanged since then; `771bbac` added this file, and every other doc in the repository was brought in line with it the same day.
+**Last verified against the code:** 2026-10-08, at commit `039084b` on `copilot/frontend-replace-v1-2-topic-tokens` (the branch that replaced the v1.2 topic tokens with the seven of design system v1.3). Everything before that was verified at `4d91910` on `development`; `771bbac` added this file, and every other doc in the repository was brought in line with it the same day.
 **Product direction last updated:** 2026-10-08 (section 14, including the decisions closed later that day). Owner: Pratyusha Trivedi.
 
 **Scope rule:** sections 1–13 describe only what exists in the code. Planned work lives in section 14 of this file, in `docs/adr/`, and in PRD v1.1 (kept by the founder, outside this repository). Where the code differs from what the landing page or other docs say, the difference is listed in [section 11](#11-known-gaps-and-things-that-will-surprise-you). Earlier versions of this file pointed to `docs/specs/launch-readiness/`; that folder is not in the repository, so a mention of "spec 03", "spec 04" and so on names a planned item, not a file you can open.
 
-> **Read section 14 first if you are building something new.** On 8 Oct 2026 the product pivoted from district news to a national news app. The code below still reflects the earlier plan in places (the `district` column, the old positioning line, the old topic set). Section 14 lists what the code must change. The 8 Oct update to this file is documentation only: no code was changed.
+> **Read section 14 first if you are building something new.** On 8 Oct 2026 the product pivoted from district news to a national news app. The code below still reflects the earlier plan in places (the `district` column, the old positioning line, the old topic set in TypeScript). Section 14 lists what the code must change.
 
 ---
 
@@ -579,7 +579,7 @@ House rule (README): a component generic enough for Rajniti to want belongs in S
 There is no `tailwind.config` file. Tailwind v4 is configured entirely in `globals.css`.
 
 1. **Tokens.** `:root` defines the light palette as CSS variables. `.dark` redefines them.
-2. **Tailwind mapping.** The `@theme inline` block turns each variable into a Tailwind colour, so `bg-paper`, `text-ink`, `border-line`, `text-red` and so on all follow the active theme automatically. Components use these names and rarely need a `dark:` prefix; the few that have one (the waitlist form, the outlined button) use it where a token alone cannot express the difference.
+2. **Tailwind mapping.** The `@theme inline` block turns each variable into a Tailwind colour, so `bg-paper`, `text-ink`, `border-line`, `text-red`, `text-topic-politics`, `bg-topic-politics-bg` and so on all follow the active theme automatically. Components use these names and rarely need a `dark:` prefix; the few that have one (the waitlist form, the outlined button) use it where a token alone cannot express the difference.
 3. **Dark variant.** `@custom-variant dark (&:where(.dark, .dark *))` ties Tailwind's `dark:` to the `.dark` class rather than the OS setting.
 4. **Switching.** Sutra's `ThemeProvider` adds or removes `.dark` on `<html>` and saves the choice in `localStorage` under `saransh-theme`.
 5. **No flash.** An inline script in `layout.tsx` runs before the first paint, reads the same key (or the OS preference if the choice is "system" or unset), and sets `.dark` immediately.
@@ -618,7 +618,19 @@ There is no `tailwind.config` file. Tailwind v4 is configured entirely in `globa
 | `--cta-shadow` | `#0f1419` | `#8e8a82` | Hard shadow on "Read story" |
 | `--card-shadow` | `0 10px 28px rgba(15,20,25,.1)` | `none` | App story card |
 
-**Topic tokens in the code are the retired v1.2 set**: `--topic-civic`, `--topic-edu`, `--topic-health`, `--topic-jobs`, `--topic-transport`, each with a `-bg` wash (in dark mode the wash is the accent mixed 18% into the card colour). Design system v1.3 replaces them with seven: `politics`, `civic`, `education`, `crime`, `business`, `entertainment`, `sports` (see 14.6). Not yet in code.
+**Topic tokens are the seven of design system v1.3 §05**, each with a `-bg` illustration wash. In dark mode the wash is the accent mixed 18% into `--card`; in light mode it is a pastel of the accent. Topic colour is used only on the topic label and the illustration wash.
+
+| Token | Light | Dark | Light wash (`-bg`) |
+|---|---|---|---|
+| `--topic-politics` | `#0b7f8a` | `#86d6dc` | `#cbeef1` |
+| `--topic-civic` | `#2457d6` | `#9db8f7` | `#d7e4ff` |
+| `--topic-education` | `#6648d1` | `#bfaef4` | `#e4dcfb` |
+| `--topic-crime` | `#7a1f1f` | `#f27474` | `#f7d7d7` |
+| `--topic-business` | `#946f00` | `#f2c94c` | `#ffedb8` |
+| `--topic-entertainment` | `#a21caf` | `#e59bef` | `#f5cef8` |
+| `--topic-sports` | `#4d7c0f` | `#a9d46a` | `#ddf0c2` |
+
+The retired v1.2 topics (`edu`, `health`, `jobs`, `transport`) are gone, and `globals.test.ts` fails if one comes back. The TypeScript `Topic` type still carries the old five (section 11, item 30).
 
 
 ### 9.5 Typography
@@ -758,7 +770,7 @@ The first four come from the stopgap ingest routine. The founder has decided to 
 27. **District is still everywhere.** The API accepts, stores, filters and returns `district`; two of the three sample stories are Barabanki stories; the Rajniti mock-up shows "MLA · Barabanki Sadar". The product no longer has a district tier.
 28. **The landing page uses the old positioning.** "आपके ज़िले की खबर…" in the footer and on the thank-you screen; "India's Hyperlocal News Digest" in the page title; the old headline in the hero and in `SITE_TAGLINE`.
 29. **One sample story carries an official tick for PTI.** PTI is a news agency, not an official source.
-30. **Topic set and card are design system v1.2.** Five retired topics in `globals.css`, `constants/stories.ts` and `lib/stories.ts`; topic colour on the time line; no topic label.
+30. **The card and the topic set in TypeScript are still design system v1.2.** `globals.css` now carries the seven v1.3 topic tokens, but `constants/stories.ts` and `lib/stories.ts` still use the five retired topics (`civic`, `edu`, `health`, `jobs`, `transport`), so `StoryCard` asks for topic classes that no longer resolve; topic colour is on the time line and there is no topic label (14.6).
 31. **The privacy page describes analytics that do not exist.** It describes PostHog usage analytics and session recordings. No analytics code is in the repository. Decided 8 Oct 2026: build the analytics to match the page.
 32. **The live stopgap routine may be running an older prompt.** `docs/story-ingest-routine.md` was updated on 8 Oct 2026 (no "Regional" tier, no district, word limits stated), but a routine only changes when its scheduled prompt is replaced. Until then it may still send `district` and "Regional" stories.
 33. **The ADRs are records of their date.** ADR 0001's context mentions scraping and embeddings, ADR 0005 refers to the superseded ADR 0003, and ADR 0006 lists "district" as a reader preference. ADR 0005 and ADR 0006 carry a dated note pointing to the current position; the original text is left as written.
@@ -912,7 +924,7 @@ Publish with source link-out
 ### 14.6 Frontend and design changes
 
 - **Landing page:** replace the positioning line (Footer, thank-you screen, hero, page title, SEO tagline); label the preview "Sample story" when it shows samples; replace the district samples and remove the PTI tick; drop "· Verified" from the source line; remove the Barabanki Rajniti chip (Rajniti is V2); soften claims the code can't back yet (section 11, items 1–4).
-- **Tokens:** the `--background` / `--foreground` aliases and the v1.2 app tokens are already in code. Still to do: replace the five v1.2 topic tokens with the seven `--topic-*` colours from design system v1.3 §05 (`edu` becomes `education`; `health`, `jobs` and `transport` are removed), update the Tailwind mapping and `globals.test.ts`; remove nothing the landing page still uses.
+- **Tokens:** the `--background` / `--foreground` aliases, the v1.2 app tokens and the seven v1.3 topic tokens are all in code (section 9.4); `globals.test.ts` guards them. Still to do: move the TypeScript `Topic` type and `topicFor()` onto the same seven keys so the card can use them.
 - **Story card:** add the topic label (12px / 700, topic colour, top-left of the card body); the time line becomes muted.
 - **Reader app fonts:** DM Sans + Noto Sans Devanagari, 800-weight sans headlines; Fraunces + Tiro Devanagari Hindi for the wordmark only. The landing page keeps Fraunces + Inter + IBM Plex Mono.
 - **Topic colours (light / dark):** Politics `#0b7f8a` / `#86d6dc` · Civic `#2457d6` / `#9db8f7` · Education `#6648d1` / `#bfaef4` · Crime `#7a1f1f` / `#f27474` · Business & Economy `#946f00` / `#f2c94c` · Entertainment `#a21caf` / `#e59bef` · Sports `#4d7c0f` / `#a9d46a`. Used only on the topic label and the illustration pastel.
