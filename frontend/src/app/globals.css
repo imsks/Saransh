@@ -56,17 +56,22 @@
   --cta-shadow: #0f1419;
   --card-shadow: 0 10px 28px rgba(15, 20, 25, 0.1);
 
-  /* Topic accents: the relative-time line and the illustration wash only. */
+  /* Topic accents (design system v1.3 §05): the topic label and the
+   * illustration wash only. */
+  --topic-politics: #0b7f8a;
+  --topic-politics-bg: #cbeef1;
   --topic-civic: #2457d6;
   --topic-civic-bg: #d7e4ff;
-  --topic-edu: #6648d1;
-  --topic-edu-bg: #e4dcfb;
-  --topic-health: #17804f;
-  --topic-health-bg: #d2f0de;
-  --topic-jobs: #0b7f8a;
-  --topic-jobs-bg: #cbeef1;
-  --topic-transport: #b35f00;
-  --topic-transport-bg: #ffe5b3;
+  --topic-education: #6648d1;
+  --topic-education-bg: #e4dcfb;
+  --topic-crime: #7a1f1f;
+  --topic-crime-bg: #f7d7d7;
+  --topic-business: #946f00;
+  --topic-business-bg: #ffedb8;
+  --topic-entertainment: #a21caf;
+  --topic-entertainment-bg: #f5cef8;
+  --topic-sports: #4d7c0f;
+  --topic-sports-bg: #ddf0c2;
 
   /* Sutra override — masthead red is Saransh's accent. */
   --sutra-color-surface: var(--card);
@@ -129,17 +134,21 @@
   /* Dark cards rely on --edge instead of a shadow. */
   --card-shadow: none;
 
+  --topic-politics: #86d6dc;
   --topic-civic: #9db8f7;
-  --topic-edu: #bfaef4;
-  --topic-health: #86d7ac;
-  --topic-jobs: #86d6dc;
-  --topic-transport: #edbf63;
+  --topic-education: #bfaef4;
+  --topic-crime: #f27474;
+  --topic-business: #f2c94c;
+  --topic-entertainment: #e59bef;
+  --topic-sports: #a9d46a;
   /* Dark illustration wash: the accent mixed 18% into the card colour. */
+  --topic-politics-bg: color-mix(in srgb, var(--topic-politics) 18%, var(--card));
   --topic-civic-bg: color-mix(in srgb, var(--topic-civic) 18%, var(--card));
-  --topic-edu-bg: color-mix(in srgb, var(--topic-edu) 18%, var(--card));
-  --topic-health-bg: color-mix(in srgb, var(--topic-health) 18%, var(--card));
-  --topic-jobs-bg: color-mix(in srgb, var(--topic-jobs) 18%, var(--card));
-  --topic-transport-bg: color-mix(in srgb, var(--topic-transport) 18%, var(--card));
+  --topic-education-bg: color-mix(in srgb, var(--topic-education) 18%, var(--card));
+  --topic-crime-bg: color-mix(in srgb, var(--topic-crime) 18%, var(--card));
+  --topic-business-bg: color-mix(in srgb, var(--topic-business) 18%, var(--card));
+  --topic-entertainment-bg: color-mix(in srgb, var(--topic-entertainment) 18%, var(--card));
+  --topic-sports-bg: color-mix(in srgb, var(--topic-sports) 18%, var(--card));
 
   --sutra-color-surface: var(--card);
   --sutra-color-surface-subtle: var(--paper);
@@ -273,16 +282,20 @@ body {
   --color-on-red: var(--on-red);
   --color-scrim: var(--scrim);
   --color-cta-shadow: var(--cta-shadow);
+  --color-topic-politics: var(--topic-politics);
+  --color-topic-politics-bg: var(--topic-politics-bg);
   --color-topic-civic: var(--topic-civic);
   --color-topic-civic-bg: var(--topic-civic-bg);
-  --color-topic-edu: var(--topic-edu);
-  --color-topic-edu-bg: var(--topic-edu-bg);
-  --color-topic-health: var(--topic-health);
-  --color-topic-health-bg: var(--topic-health-bg);
-  --color-topic-jobs: var(--topic-jobs);
-  --color-topic-jobs-bg: var(--topic-jobs-bg);
-  --color-topic-transport: var(--topic-transport);
-  --color-topic-transport-bg: var(--topic-transport-bg);
+  --color-topic-education: var(--topic-education);
+  --color-topic-education-bg: var(--topic-education-bg);
+  --color-topic-crime: var(--topic-crime);
+  --color-topic-crime-bg: var(--topic-crime-bg);
+  --color-topic-business: var(--topic-business);
+  --color-topic-business-bg: var(--topic-business-bg);
+  --color-topic-entertainment: var(--topic-entertainment);
+  --color-topic-entertainment-bg: var(--topic-entertainment-bg);
+  --color-topic-sports: var(--topic-sports);
+  --color-topic-sports-bg: var(--topic-sports-bg);
 
   /* Sutra semantic utilities — the class names `@sutra_ui/ui` ships with. */
   --color-surface: var(--sutra-color-surface);
