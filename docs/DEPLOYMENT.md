@@ -1,7 +1,14 @@
 # Deploying Saransh
 
-The API runs on **Cloud Run**; the frontend runs on **Vercel**. This mirrors how Rajniti is
-hosted, with different ports and service names.
+The API runs on **Cloud Run**, the frontend runs on **Vercel**, and the database is Postgres hosted
+on **Supabase** (database only — no Supabase Auth or SDK). This mirrors how Rajniti is hosted, with
+different ports and service names.
+
+**The production database is shared with Rajniti** ([ADR 0006](adr/0006-shared-database-and-users.md)).
+Rajniti owns `users`; Saransh owns `stories`, `sources` and `waitlist`. A Saransh migration must
+never create, alter or drop a table Saransh does not own — read every migration before you deploy
+it. Saransh keeps its place in its own version table, `alembic_version_saransh`, so the two
+migration histories do not overwrite each other.
 
 Deploys are triggered by a human running a committed script — there is no CI deploy job. That is
 a deliberate choice (decision D6); promoting it to GitHub Actions with Workload Identity
@@ -95,13 +102,14 @@ Apple Silicon machine would otherwise produce.
 
 ## Migrations
 
-Alembic owns the schema (decision D5). Run migrations against the target database **before**
-deploying, never from application startup — `create_all()` cannot alter a column and races across
-instances.
+Alembic owns the schema (decision D5). Migrations run against the target database **before** the
+new code goes live, never from application startup — `create_all()` cannot alter a column and races
+across instances. `make deploy` does this for you (see [Migrations on deploy](#migrations-on-deploy)).
+To run them by hand first, for example to check a migration on its own:
 
 ```bash
 DATABASE_URL='<production-url>' alembic upgrade head
-make deploy
+SKIP_MIGRATIONS=1 make deploy
 ```
 
 A migration that is not backwards compatible with the currently-running revision needs the usual
@@ -202,6 +210,6 @@ and cache headers.
 Environment ownership: local values live in `frontend/.env.example` (mirroring Rajniti's key
 names). Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
 Do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` on Vercel — `getSiteUrl()`
-falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*`, `GOOGLE_CLIENT_*`, and
-`NEXT_PUBLIC_GA_MEASUREMENT_ID` keys are placeholders for parity with Rajniti and stay unused until
-sign-in or analytics ship.
+falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders and stay unused until sign-in ships.
+`NEXT_PUBLIC_GA_MEASUREMENT_ID` is a leftover from Rajniti: Saransh's analytics will be PostHog
+([ADR 0004](adr/0004-posthog-for-saransh-analytics.md)), which is not built yet.

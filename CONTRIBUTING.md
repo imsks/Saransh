@@ -1,6 +1,6 @@
 # Contributing to Saransh
 
-Thanks for helping make India's news legible. Saransh is community-driven, and every contribution — a corrected attribution, a bug fix, or a new Source — matters.
+Thanks for helping make India's news legible. Saransh is an open-source news app for India: short, sourced stories in Hindi and English, approved by a person, with no personalisation. It is community-driven, and every contribution — a corrected attribution, a bug fix, or a clearer doc — matters.
 
 This guide covers **how to contribute**. For **how to run the project** (setup, Makefile, env vars, API endpoints, structure), see the [README](./readme.md) and [`frontend/README.md`](./frontend/README.md). We won't repeat that here.
 
@@ -12,9 +12,22 @@ This guide covers **how to contribute**. For **how to run the project** (setup, 
 
 - Every Summary must trace back to one or more real, citable Articles.
 - If a fact isn't in a Source, it doesn't go in the Summary — don't fill gaps from the model's memory.
-- Summarization Agent output is for human review, not auto-publish, until it clears confidence checks.
+- AI output is a draft for human review. A person approves every Story before it is published; an agent may flag problems but never approves.
 
 Everything else in this guide is negotiable style. This rule is not.
+
+---
+
+## Keep `docs/PROJECT_STATE.md` current
+
+**Every pull request that changes how the project works must update [`docs/PROJECT_STATE.md`](./docs/PROJECT_STATE.md) in the same pull request.** That file is the one description of what is built and how. Contributors, reviewers and AI assistants all start from it, so a change that is not recorded there is a trap for the next person.
+
+- **Before you start:** read it, especially section 11 (known gaps) and section 14 (product direction).
+- **When you change something:** update the matching section. Section 13 of the file lists which section goes with which kind of change (an endpoint, a table or migration, a page or component, an env var, a fix to a known gap).
+- **When you finish:** update the "Last verified" date and commit hash at the top.
+- **If you notice the file is wrong** about something you did not change, fix it or add it to section 11.
+
+A pull request that changes behaviour without touching this file will be sent back. Changes with nothing to record (a typo, a dependency bump, a refactor with no behaviour change) are exempt; say so in the PR description.
 
 ---
 
@@ -25,20 +38,22 @@ Saransh has a settled domain language — use it in code, commits, and reviews. 
 | Term | Means | Don't say |
 | --- | --- | --- |
 | **Story** | A news event: headline, summary, sources, metadata | Article, news item, post |
-| **Article** | One source document scraped from an outlet | Story, news piece |
-| **Source** | A verified outlet Articles are scraped from | Publisher, feed |
-| **Summary** | AI-generated concise Story text, attributed | Excerpt, blurb, digest |
-| **Chunk / Embedding** | Semantic segment / its vector | Segment, encoding |
-| **Pipeline** | scrape → chunk → embed → store | Workflow, flow |
-| **Agent** | Autonomous task process (summarization, curation) | Bot, worker |
+| **Article** | One source document from an outlet | Story, news piece |
+| **Source** | An approved outlet or official body a Story is drawn from | Publisher, feed |
+| **Summary** | AI-drafted, human-approved Story text, attributed | Excerpt, blurb, digest |
+| **Tier** | National, State or International | Level, scope |
+| **Topic** | The one primary subject of a Story (Politics, Civic, Education, Business & Economy, Crime) | Category, tag |
+| **Edition** | One batch of cards a reader gets (15, 15, 10 and 10 in a day) | Session, batch |
+| **Pipeline** | fetch → summarise → translate → tag → agent check → human review → publish | Workflow, flow |
+| **Agent** | An automated first-pass checker or drafter; it never approves | Bot, worker |
 
 ---
 
 ## Ways to contribute
 
 - **Code — frontend or backend:** pick an issue from the backlog and ship it.
-- **Sources & scrapers:** add or fix a Source under `app/scrapers/`, wired through `app/scrapers/factory.py`.
-- **Agents & pipeline:** improve summarization, curation, chunking, or embeddings.
+- **Pipeline:** the planned pipeline (section 14.5 of `docs/PROJECT_STATE.md`) is not built yet. Pick up an issue for one of its steps.
+- **Corrections:** report a wrong Story or a wrong attribution (see the end of this guide).
 - **Design system:** shared UI lives in [Sutra](https://github.com/imsks/sutra-ui) (`@sutra_ui/ui`). If a component is generic enough for Rajniti to want it too, contribute it there, not here.
 - **Bug reports & feature ideas:** open an issue.
 - **Docs:** improve the README, this guide, or the ADRs in `docs/adr/`.
@@ -66,7 +81,7 @@ Full instructions are in the [README](./readme.md). The short version:
 ```bash
 git clone https://github.com/imsks/Saransh.git && cd Saransh
 make setup            # copies .env templates
-make up               # full stack (API :8001 + Next.js :3001 + Postgres :5432)
+make up               # full stack (API :8001 + Next.js :3001 + Postgres :5433)
 ```
 
 > **Port note:** Saransh runs on `:8001` / `:3001` so it can sit beside Rajniti on `:8000` / `:3000`.
@@ -88,7 +103,7 @@ Branch prefixes:
 | --- | --- |
 | `feat/` | New feature or enhancement |
 | `fix/` | Bug fix |
-| `source/` | New or corrected Source / scraper |
+| `source/` | New or corrected Source |
 | `refactor/` | Code cleanup, no behaviour change |
 | `docs/` | Documentation only |
 | `chore/` | Tooling, CI, deps |
@@ -102,9 +117,13 @@ Example: `feat/story-carousel-keyboard-nav`, `fix/waitlist-duplicate-email`.
 These are settled architectural decisions. Work within them — a PR that violates one will be sent back.
 
 - **Use Sutra first.** Import `@sutra_ui/ui` for Button, Card, Input, Badge, Text, Link, Modal, Toast, Skeleton, Avatar, Theme. Don't hand-roll a local twin. Re-skin via `--sutra-color-accent-*` overrides, never by forking the component.
-- **Dark mode:** use real `dark:bg-* / text-* / border-*` classes only. **No `filter: invert()` hacks.** Every UI change must look right in **both** light and dark.
-- **Attribution is visible.** A Summary rendered without its Source links is a bug, not a layout choice.
-- **Public reading needs no login.** Reading Stories must never sit behind auth. Accounts are only for personalisation.
+- **Style with theme token names, never hex.** Use `bg-paper`, `text-ink`, `border-line` and the other names mapped in `globals.css`; they follow the active theme on their own. Reach for a `dark:` class only where a token cannot express the difference. **No `filter: invert()` hacks.** Every UI change must look right in **both** light and dark.
+- **Attribution is visible.** A Summary rendered without its Source link is a bug, not a layout choice.
+- **No personalisation.** Nothing is learned from clicks, reading time or analytics. Topics are a filter the reader sets and can see. Analytics and read records must never feed ranking or suggestions.
+- **Hindi and English are equal.** A feature that works in one language and not the other is not done.
+- **Word limits are hard.** English ≤ 60 words, Hindi ≤ 70. Reject, never warn.
+- **No publisher images.** Story images are an official photo or a Saransh illustration.
+- **The production database is shared with Rajniti.** Rajniti owns `users`. A Saransh migration never creates or alters a table Saransh does not own ([ADR 0006](./docs/adr/0006-shared-database-and-users.md)).
 - **Accessibility baseline:** keyboard-navigable, correct ARIA roles, visible focus, contrast that passes AA, tap targets ≥ 44px, and no horizontal overflow at 360px.
 - **Server components by default.** Reach for `"use client"` only when you need state, effects, or browser APIs.
 
@@ -154,7 +173,8 @@ cd frontend && npm test
 3. **Link the issue:** put `Closes #<issue-number>` in the description so it auto-closes on merge.
 4. **UI changes:** attach before/after screenshots in **both light and dark mode**, and a mobile (360px) shot.
 5. **Never commit** `.env`, API keys, or secrets.
-6. Keep the diff to intended changes only; review it yourself first.
+6. **Update `docs/PROJECT_STATE.md`** if your change alters how the project works (see above).
+7. Keep the diff to intended changes only; review it yourself first.
 
 Map your work back to the issue's **acceptance criteria** — a reviewer will check each box against your PR.
 
@@ -162,23 +182,29 @@ Map your work back to the issue's **acceptance criteria** — a reviewer will ch
 
 ## Review & merge
 
-- A maintainer reviews for correctness, the house rules above, tests, and green CI.
+- A maintainer reviews for correctness, the house rules above, tests, green CI, and an updated `docs/PROJECT_STATE.md`.
 - Respond to feedback with follow-up commits (don't force-push over the review history unless asked).
 - Once approved and CI is green, a maintainer merges. The version-bump label drives the automatic release bump.
 - Be patient and kind — reviewers are volunteers too.
 
 ---
 
-## Source & AI-agent contributions
+## Source & pipeline contributions
 
-To run the Agents locally you need at least one LLM key (`OPENAI_API_KEY` in `.env`). Rules: every enriched field must be Source-backed, no secrets in commits, and the test suite must be green before you push. See **Running agents** in the [README](./readme.md).
+The pipeline is planned, not built, so these are the rules any pipeline work must follow:
+
+- **Sources:** RSS feeds, licensed feeds and official sources only. No scraping of article pages. An outlet's reuse terms are checked before it is added, and the source list is the founder's call.
+- **AI:** local models only (Ollama), so no API key is needed and the cost stays at zero. Do not add a paid AI service.
+- **Prompts:** fact-only, attributed claims ("according to police…"), no opinion adjectives. Every prompt is versioned and public.
+- **Failure:** fail per Story, not per batch. Validator, dedupe and tagger changes come with tests.
+- No secrets in commits, and the test suite must be green before you push.
 
 ---
 
 ## Reporting bugs & requesting features
 
 - **Bug:** open an issue ([new issue](https://github.com/imsks/Saransh/issues/new)). Include steps to reproduce, expected vs actual, environment, and a screenshot/log.
-- **Bad Summary or attribution:** open an issue with the Story, the Source links, and what's wrong — accuracy bugs are our highest-priority class.
+- **Bad Summary, wrong attribution, or a grievance about a Story:** open an issue with the Story, the Source links, and what's wrong. Corrections and grievances are handled in public, as GitHub Issues, and accuracy bugs are our highest-priority class.
 - **Feature idea:** start a [Discussion](https://github.com/imsks/Saransh/discussions) or open a feature issue so we can align before code.
 
 ---

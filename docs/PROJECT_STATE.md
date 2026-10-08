@@ -2,10 +2,10 @@
 
 **What this is:** one document describing everything that is built in this repository today, backend and frontend, and how it is built. It is meant to be the starting point for anyone (a founder, a contributor, a non-technical reader, or an AI assistant) who needs to build on top of what exists.
 
-**Last verified against the code:** 2026-10-08, at commit `4d91910` on `development`.
+**Last verified against the code:** 2026-10-08, at commit `4d91910` on `development`. Application code is unchanged since then; `771bbac` added this file, and every other doc in the repository was brought in line with it the same day.
 **Product direction last updated:** 2026-10-08 (section 14, including the decisions closed later that day). Owner: Pratyusha Trivedi.
 
-**Scope rule:** sections 1–13 describe only what exists in the code. Planned work lives in `docs/adr/`, `CLAUDE.md` and section 14 of this file. Where the code differs from what the landing page, README or other docs say, the difference is listed in [section 11](#11-known-gaps-and-things-that-will-surprise-you). Earlier versions of this file pointed to `docs/specs/launch-readiness/`; that folder is not in the repository, so a mention of "spec 03", "spec 04" and so on names a planned item, not a file you can open.
+**Scope rule:** sections 1–13 describe only what exists in the code. Planned work lives in section 14 of this file, in `docs/adr/`, and in PRD v1.1 (kept by the founder, outside this repository). Where the code differs from what the landing page or other docs say, the difference is listed in [section 11](#11-known-gaps-and-things-that-will-surprise-you). Earlier versions of this file pointed to `docs/specs/launch-readiness/`; that folder is not in the repository, so a mention of "spec 03", "spec 04" and so on names a planned item, not a file you can open.
 
 > **Read section 14 first if you are building something new.** On 8 Oct 2026 the product pivoted from district news to a national news app. The code below still reflects the earlier plan in places (the `district` column, the old positioning line, the old topic set). Section 14 lists what the code must change. The 8 Oct update to this file is documentation only: no code was changed.
 
@@ -32,7 +32,7 @@
 
 ## 1. Plain-language summary
 
-Saransh is a news product for India: short, attributed summaries of news stories, each linked to the source it came from, with nothing published until a person has reviewed it.
+Saransh is an open-source news app for India: short, attributed summaries of news stories in Hindi and English, each linked to the source it came from, with no personalisation. The product rule is that nothing is published until a person has reviewed it; that rule is not yet true of the code (see below).
 
 What exists today is the foundation, not the product:
 
@@ -108,8 +108,8 @@ Key design decisions already made (see `docs/adr/`):
 - **One production database, shared with Rajniti** (ADR 0006, which supersedes ADR 0003; confirmed by the founder on 8 Oct 2026). Rajniti owns the single `users` table; Saransh owns `stories`, `sources`, `waitlist` and, when built, `saransh_user_preferences`. Each product's migrations may only touch its own tables. Saransh tracks its migrations in its own version table, `alembic_version_saransh`.
 - **PostHog for analytics**, not Google Analytics (ADR 0004). Not in the code yet.
 - **The backend verifies who the user is**; it does not trust an id sent by the browser (ADR 0005). Not in the code yet.
-- **The frontend has no API routes of its own.** Every data call goes to FastAPI. Next.js only *proxies* `/api/v1/*` to the backend.
-- **The shared layer between Saransh and Rajniti is the UI library (Sutra), not the backend or the data.**
+- **The frontend has no API routes of its own today.** Every data call goes to FastAPI. Next.js only *proxies* `/api/v1/*` to the backend. ADR 0005 plans thin Next.js Route Handlers for signed-in data, and ADR 0004 plans a second rewrite that proxies analytics requests; neither exists yet.
+- **What Saransh and Rajniti share:** the UI library (Sutra) and, in production, the database with its `users` table. They do not share backend code, and neither product reads the other's tables apart from `users`.
 
 ### Tech stack
 
@@ -579,7 +579,7 @@ House rule (README): a component generic enough for Rajniti to want belongs in S
 There is no `tailwind.config` file. Tailwind v4 is configured entirely in `globals.css`.
 
 1. **Tokens.** `:root` defines the light palette as CSS variables. `.dark` redefines them.
-2. **Tailwind mapping.** The `@theme inline` block turns each variable into a Tailwind colour, so `bg-paper`, `text-ink`, `border-line`, `text-red` and so on all follow the active theme automatically. Components never use `dark:` prefixes; they just use these names.
+2. **Tailwind mapping.** The `@theme inline` block turns each variable into a Tailwind colour, so `bg-paper`, `text-ink`, `border-line`, `text-red` and so on all follow the active theme automatically. Components use these names and rarely need a `dark:` prefix; the few that have one (the waitlist form, the outlined button) use it where a token alone cannot express the difference.
 3. **Dark variant.** `@custom-variant dark (&:where(.dark, .dark *))` ties Tailwind's `dark:` to the `.dark` class rather than the OS setting.
 4. **Switching.** Sutra's `ThemeProvider` adds or removes `.dark` on `<html>` and saves the choice in `localStorage` under `saransh-theme`.
 5. **No flash.** An inline script in `layout.tsx` runs before the first paint, reads the same key (or the OS preference if the choice is "system" or unset), and sets `.dark` immediately.
@@ -741,8 +741,8 @@ These are observations from reading the code, listed so nobody builds on a wrong
 
 **Docs and tooling**
 
-18. **`frontend/README.md` mentions `make frontend-install` and `make frontend-dev`.** Those targets do not exist; the Makefile has only `setup`, `up`, `stop`, `deploy`.
-19. **`CONTEXT.md` and `.github/agents/*.md` describe the future pipeline** (Articles, Chunks, Embeddings, Agents, an `app/ai/` folder) as if it existed. Treat them as vocabulary and intent, not as a description of the code.
+18. **A Google Analytics placeholder is still in the environment template.** `frontend/.env.example` carries `NEXT_PUBLIC_GA_MEASUREMENT_ID`. ADR 0004 chose PostHog and said to delete this key; nothing reads it.
+19. **`CONTEXT.md` and `.github/agents/*.md` define terms for things that are not built yet** (Tier, Edition, Review, the Pipeline and its Agents). They were rewritten on 8 Oct 2026 for the national-news plan and mark planned items as planned. Treat them as vocabulary and rules, and this file as the description of the code.
 20. **`requirements-test.txt` and `conftest.py` carry leftovers** from an earlier AI-pipeline version of the project (e.g. an `OPENAI_API_KEY` test default) that nothing uses.
 
 **Added 2026-10-08 (mismatches with the current product decisions)**
@@ -755,15 +755,15 @@ The first four come from the stopgap ingest routine. The founder has decided to 
 24. **The routine is not local AI.** The cost rule is ₹0 with local models (Ollama).
 25. **No word-count check on ingest.** The product rule is English ≤ 60 words and Hindi ≤ 70 words, hard reject. Only blank-field and URL checks exist.
 26. **Every API story is labelled "· Verified"** next to the outlet name. The design rule is a plain outlet name, with the green tick for official sources only.
-27. **District is still everywhere.** The API accepts, stores, filters and returns `district`; the routine asks for "Regional" stories with a district; two of the three sample stories are Barabanki stories; the Rajniti mock-up shows "MLA · Barabanki Sadar". The product no longer has a district tier.
+27. **District is still everywhere.** The API accepts, stores, filters and returns `district`; two of the three sample stories are Barabanki stories; the Rajniti mock-up shows "MLA · Barabanki Sadar". The product no longer has a district tier.
 28. **The landing page uses the old positioning.** "आपके ज़िले की खबर…" in the footer and on the thank-you screen; "India's Hyperlocal News Digest" in the page title; the old headline in the hero and in `SITE_TAGLINE`.
 29. **One sample story carries an official tick for PTI.** PTI is a news agency, not an official source.
 30. **Topic set and card are design system v1.2.** Five retired topics in `globals.css`, `constants/stories.ts` and `lib/stories.ts`; topic colour on the time line; no topic label.
 31. **The privacy page describes analytics that do not exist.** It describes PostHog usage analytics and session recordings. No analytics code is in the repository. Decided 8 Oct 2026: build the analytics to match the page.
-32. **`README.md`, `CONTEXT.md`, `CONTRIBUTING.md`, the PR template and `.github/agents/*.md` still describe the earlier plan** (scrapers, OpenAI, chunks and embeddings). Scraping article pages is ruled out by the legal requirements in 14.5.
-33. **ADR 0006 lists "district" as a reader preference.** After the pivot that preference is the reader's state.
-34. **`docs/specs/launch-readiness/` does not exist**, although older text in this file and in `docs/story-ingest-routine.md` refers to it.
-35. **This file is ignored by git** in an uncommitted `.gitignore` change (along with `docs/design-audit.md` and `docs/design-audit-pr.md`). If that change is committed, contributors will not see this file, and section 13's "update it in the same pull request" cannot work.
+32. **The live stopgap routine may be running an older prompt.** `docs/story-ingest-routine.md` was updated on 8 Oct 2026 (no "Regional" tier, no district, word limits stated), but a routine only changes when its scheduled prompt is replaced. Until then it may still send `district` and "Regional" stories.
+33. **The ADRs are records of their date.** ADR 0001's context mentions scraping and embeddings, ADR 0005 refers to the superseded ADR 0003, and ADR 0006 lists "district" as a reader preference. ADR 0005 and ADR 0006 carry a dated note pointing to the current position; the original text is left as written.
+34. **`docs/specs/launch-readiness/` does not exist.** The "spec" numbers in this section name planned items, not files.
+35. **`docs/design-audit.md` and `docs/design-audit-pr.md` are untracked**, and the `.gitignore` lines that would hide them (and this file) are commented out in an uncommitted change. This file itself is tracked as of commit `771bbac`.
 
 **Fixed since the 2 Oct version of this file:** dark `--background` no longer holds the cold `#111417` (it aliases `--paper`); `--amber-tint` is defined in both themes and mapped to a Tailwind colour; `image_url` is back on stories.
 
@@ -773,7 +773,7 @@ The first four come from the stopgap ingest routine. The founder has decided to 
 
 Conventions to follow, drawn from the existing code.
 
-**Vocabulary.** Use the terms in `CONTEXT.md`: Story, Source, Summary, Ingest, Publication Status, Waitlist Signup. Never use "state" for the draft/published lifecycle. New terms from 14: **Tier** (national / state / international), **Topic** (one primary per story), **Edition** (one batch of cards: 15, 15, 10 and 10 in a day). "Edition" is the word in the app and in the docs; do not call it a session.
+**Vocabulary.** Use the terms in `CONTEXT.md`: Story, Source, Summary, Citation Link, Ingest, Publication Status, Tier, State, Topic, Edition, Review, Waitlist Signup, User. Never use "state" for the draft/published lifecycle, and never call an edition a session.
 
 **Adding a backend endpoint**
 
@@ -788,7 +788,7 @@ Conventions to follow, drawn from the existing code.
 **Changing the database**
 
 1. Edit `app/db/models.py` (explicit `Column(...)` style; reuse `CreatedAtMixin`).
-2. Create a migration: `alembic revision -m "…"`, using `op.batch_alter_table` as the existing revisions do. Fix the empty baseline (spec 03) before adding new revisions.
+2. Create a migration: `make revision m="…"`, using `op.batch_alter_table` as the existing revisions do. Read the generated file before committing: it must touch only Saransh-owned tables, never `users` or any other Rajniti table (ADR 0006). Fix the empty baseline (spec 03) and restrict autogenerate to Saransh-owned tables before adding new revisions.
 3. Apply it to each environment before deploying code that needs it.
 4. Update the matching Pydantic schema and the tables in section 6 of this document.
 
@@ -822,6 +822,7 @@ Update this file in the same pull request as the change it describes.
 | Change env vars, Docker, CI or deploy | 5.2, 8.9, 10 |
 | Fix something listed in section 11 | Remove it from 11 |
 | Notice a new mismatch between docs and code | Add it to 11 |
+| Change a product rule or a term | 14, `CONTEXT.md`, and the rules in `CONTRIBUTING.md` and `.github/agents/` |
 | Build something listed in section 14 | Move it from 14 into the matching section, and tick it in 14.8 |
 
 Then update the "Last verified" date and commit hash at the top.
@@ -830,7 +831,7 @@ Then update the "Last verified" date and commit hash at the top.
 
 ## 14. Product direction and the gap to close (8 Oct 2026)
 
-**This section is planned work, not code.** It summarises the product decisions so that anyone building next knows what the code must become. The full decisions and their reasons live in `CLAUDE.md` (sections 1, 2 and 4) and design system v1.3 (`saransh-design-system.html`). PRD v1.1 is pending; until it exists, `CLAUDE.md` wins over PRD v1.0.
+**This section is planned work, not code.** It summarises the product decisions so that anyone building next knows what the code must become. The full requirements are in **PRD v1.1** (8 Oct 2026, draft for founder review), which supersedes PRD v1.0 and the earlier GitHub PRD #79; the decisions and their reasons are in the founder's `CLAUDE.md` and design system v1.3. Those documents are kept by the founder outside this repository. If this section and PRD v1.1 disagree, PRD v1.1 wins and this section should be corrected.
 
 ### 14.1 What Saransh is now
 
@@ -849,12 +850,14 @@ Then update the "Last verified" date and commit hash at the top.
 | Platform | Installable PWA with an offline page. **No card caching.** |
 | Sign-in | Google (NextAuth), Saransh's own OAuth client. The backend verifies identity itself (ADR 0005). Users live in the shared `users` table that Rajniti owns (ADR 0006). |
 | Guests | **6** National and International cards, **counted toward the 50** (they belong to edition 1), then a sign-in wall. Progress carries over after sign-in (matched by device). |
-| Onboarding | Language (required, nothing pre-selected, fallback English) · state (required) · topics (optional, up to 3; edited in Settings only). Name prefilled from Google, editable. |
+| Onboarding | Language (required, nothing pre-selected, fallback English) · state (required, searchable) · topics (optional, up to 3). Name prefilled from Google, editable. **No username step and no district question.** Language, state and topics are changed later in Settings. |
 | Home | One swipeable card per story (80px threshold, tap and button fallbacks). |
 | Daily limit | 50 per reader, in editions of **15 / 15 / 10 / 10**. 4-hour wait counted from the end of an edition. Midnight IST reset. "You're all caught up" card when supply runs out. |
 | Feed mix (config) | Daily tier minimums **National 25, State 15, International 10**. Chosen topics ≈ 60% within each tier. Tiers interleaved (never more than twice in a row), newest first within a tier, the same topic never more than three times in a row. Short tiers filled from National and topic stories. |
 | Card | Image (official photo or Saransh topic illustration, never a publisher image) → topic label + ⋮ → headline → body → muted time line → source + "Read story" link-out. Green tick only for official sources. |
-| Sheets | Share and Report open to guests; Save needs sign-in. Reminder ask on the done screen. |
+| Sheets | Share and Report open to guests; Save needs sign-in. Reminder ask on the done screen, not at onboarding. |
+| Trust surfaces | Public corrections log. Corrections and grievances are raised as GitHub Issues (`correction` and `grievance` labels, an issue template). In-app "Report an error" opens a prefilled report. Public source registry and prompts. |
+| No personalisation | The feed depends only on the reader's chosen language, state and topics; the story's tier, state, topic and time; and how much of the day's 50 is used. Analytics events, `read_events` and session replays never feed ranking, topic suggestions or the tier mix. A test and a code-review rule enforce this. |
 
 ### 14.3 Data changes
 
@@ -865,15 +868,15 @@ Then update the "Last verified" date and commit hash at the top.
 | Keep `state` (a fixed list of Indian states / UTs) | Required for State-tier stories; null for National and International. |
 | Stop using `district` (leave the column, drop from the API and samples) | District tier removed. Drop the column only in a later cleanup migration. |
 | Keep `image_url` (re-added in migration `b2c3d4e5f6a7`), restrict it to Saransh's own or official images, and add an image credit field | Every story has an image, never a publisher's. Today any URL is accepted. |
-| Extend `status` to `draft` / `in_review` / `published` / `corrected` / `retracted` | Review and corrections flow. |
+| Extend `status` to `draft` / `in_review` / `published` / `corrected` / `retracted`, and restore `published_at` | Review and corrections flow. |
 | Add review metadata (`pipeline_meta`: model, prompt version, reviewer, agent check results, tag corrections) | Audit trail and the tagging-accuracy metric. |
 | Add `corrections` table (public) | Corrections log (IT Rules 2021). |
 | Add `saransh_user_preferences` (keyed by `user_id` → `users.id`: language, state, topics, coming-soon interests, onboarding done) and `read_events` (user/device, story, edition, timestamp). Do **not** create or alter `users`: Rajniti owns it (ADR 0006) | Sign-in, onboarding, the 50/day limit and edition tracking. |
-| Make `source_type` a fixed list (`rss`, `licensed`, `official`) | Source registry and the official-tick rule. |
+| Make `source_type` a fixed list (`rss`, `licensed`, `official`) and add an `official` flag | Source registry and the official-tick rule. |
 
 ### 14.4 Backend changes
 
-1. **Bring back the draft stage, then published-only reads (do first).** Ingest saves as `draft` again; `GET /stories` defaults to published; `GET /stories/{id}` returns 404 for anything not published. This empties the landing preview back to samples until the publish action (#3) exists, so the two ship together. The stopgap routine stays as it is until then (14.9).
+1. **Bring back the draft stage and published-only reads, together with the publish action (#3).** Ingest saves as `draft` again; `GET /stories` defaults to published; `GET /stories/{id}` returns 404 for anything not published. On its own this would empty the landing preview back to samples, so it ships with the publish action, and the stopgap routine is switched off at the same time (14.9).
 2. **Word-limit validator.** English ≤ 60 words, Hindi ≤ 70 words, hard reject (422). One shared counter: a word is anything between spaces; punctuation does not count. Tests in both languages.
 3. **Publish action.** `PATCH` to move a story through `status`, set `published_at`, and log who approved it and when (the reserved `PATCH` in CORS).
 4. **Fix the Alembic baseline** (spec 03) before any new migration.
@@ -915,7 +918,7 @@ Publish with source link-out
 - **Topic colours (light / dark):** Politics `#0b7f8a` / `#86d6dc` · Civic `#2457d6` / `#9db8f7` · Education `#6648d1` / `#bfaef4` · Crime `#7a1f1f` / `#f27474` · Business & Economy `#946f00` / `#f2c94c` · Entertainment `#a21caf` / `#e59bef` · Sports `#4d7c0f` / `#a9d46a`. Used only on the topic label and the illustration pastel.
 - **Hindi overflow test** with real 70-word stories before launch; if the card overflows, drop the time line or shrink the image.
 - **Coming-soon topic pills** (Entertainment, Sports): solid hairline border, muted label, small "Soon" / "जल्द" tag. Not dashed.
-- **Hindi label for Civic is "सिविक"** (decided 8 Oct 2026; design system v1.3 still shows "नागरिक" and is to be updated).
+- **Hindi label for Civic is "सिविक"** (decided 8 Oct 2026; design system v1.3 and app mock v4 both use it).
 - **"Edition" is the word** for a batch of cards, in the app and in the docs.
 - Design system v1.3 (synced to app mock v4) is the source of truth. Use token names, never hex.
 
@@ -925,27 +928,32 @@ Publish with source link-out
 - **Production:** 50+ reviewed stories a day on at least 24 of 28 days; tier minimums met on 80% of days; corrections under 2%; zero unsourced stories; reviewers keep at least 90% of AI tags.
 - **Readers (minimum / goal / great):** signed-in 15 / 30 / 60; reading 3+ days a week 8 / 15 / 30; half of editions reach "You're all caught up".
 - **AI:** 95% of summaries pass the word limits in both languages first time.
-- **Community:** rewritten README, CONTRIBUTING guide, 5 starter issues, 1 outside contribution.
+- **Community:** rewritten README and CONTRIBUTING guide (done 8 Oct 2026), 5 starter issues, 1 outside contribution.
 - **Go-formal gate:** production targets met AND (15 weekly readers OR 3 outside contributors).
+- **North Star:** weekly readers who open an edition on 3 or more distinct days.
+- **State coverage is measured, not guaranteed.** 50 approved stories a day cannot give every reader 15 own-state stories across 36 states and UTs. The tier minimum is a config target; the measures are average own-state cards per reader per day, and the share of readers who got at least 5. Baselines are set in pilot week 1.
+- **T0** is the first day a reviewed story is published by the new pipeline. Before T0: the word-limit validator is live; the source list is confirmed and reuse terms checked; the Hindi evaluation has passed; the review screen and publish action are live and the stopgap routine is switched off; the landing page is corrected; the grievance route is live.
+- **Pilot tasks:** set baselines in week 1; run the Hindi overflow test; observe or interview at least 5 readers of the kind Saransh is for, since no primary research exists yet.
 
 ### 14.8 Suggested build order
 
 | # | Step | Depends on | Done |
 |---|---|---|---|
-| 1 | Draft stage back + published-only reads (14.4 #1), shipped with step 5 | — | ☐ |
+| 1 | Landing page copy and token corrections (14.6) | code freeze lifts | ☐ |
 | 2 | Word-limit validator + tests (14.4 #2) | — | ☐ |
-| 3 | Fix Alembic baseline (14.4 #4) | — | ☐ |
-| 4 | Schema changes: `tier`, topic list, `image_url`, statuses, `pipeline_meta`, `corrections` (14.3) | 3 | ☐ |
-| 5 | Publish action + audit log (14.4 #3) | 4 | ☐ |
-| 6 | Landing page copy + token fixes (14.6) | — | ☐ |
-| 7 | Source list confirmed + reuse terms checked | founder | ☐ |
-| 8 | Pipeline: fetch → summarise → translate → tag → agent check (14.5) | 2, 4, 7 | ☐ |
-| 9 | Review screen (side-by-side, approve / edit / kill, tag correction) | 5, 8 | ☐ |
-| 10 | Google sign-in, `saransh_user_preferences`, `read_events`, onboarding (14.2, 14.4 #7) | 4 | ☐ |
-| 11 | Feed endpoint + swipe deck PWA (14.2, 14.4 #6) | 9, 10 | ☐ |
-| 12 | Hindi overflow test, topic labels, illustrations | 11 | ☐ |
-| 13 | Instrumentation for the success numbers (14.7) | 11 | ☐ |
-| 14 | Ops hardening (14.4 #5, #8) | — | ☐ |
+| 3 | Fix the Alembic baseline; restrict autogenerate to Saransh-owned tables (14.4 #4) | — | ☐ |
+| 4 | Schema changes: `tier`, topic list, own images, statuses, `pipeline_meta`, `corrections` (14.3) | 3 | ☐ |
+| 5 | Draft stage, published-only reads and the publish action, shipped together; stopgap routine switched off (14.4 #1, #3) | 4 | ☐ |
+| 6 | Source list confirmed + reuse terms checked | founder | ☐ |
+| 7 | Pipeline: fetch → summarise → translate → tag → agent check (14.5) | 2, 4, 6 | ☐ |
+| 8 | Review screen (side-by-side, approve / edit / kill, tag correction) | 5, 7 | ☐ |
+| 9 | Google sign-in, `saransh_user_preferences`, `read_events`, onboarding (14.2, 14.4 #7) | 4 | ☐ |
+| 10 | Feed endpoint + swipe deck PWA (14.2, 14.4 #6) | 8, 9 | ☐ |
+| 11 | Hindi overflow test, topic labels, illustrations | 10 | ☐ |
+| 12 | Analytics and instrumentation for the success numbers (14.7) | 10 | ☐ |
+| 13 | Ops hardening (14.4 #5, #8) | — | ☐ |
+
+This order follows PRD v1.1 section 12.
 
 ### 14.9 Decisions closed on 8 Oct 2026, and open items
 
@@ -961,13 +969,22 @@ Publish with source link-out
 | Coming-soon pills | Solid border with a "Soon" tag. |
 | Hindi label for Civic | "सिविक". |
 | Wording | "Edition", not "session". |
+| Onboarding | Language, state, optional topics. No username and no district. The earlier GitHub PRD #79 is superseded on these points; its backend-verified sign-in design is kept. |
+| Analytics wall | Analytics measures the product and never feeds ranking, suggestions or the tier mix. |
+| State coverage | A measured target, not a guarantee (14.7). |
+| Grievances and corrections | Raised as GitHub Issues. |
+| Documentation | Every pull request that changes how the project works updates this file in the same pull request (`CONTRIBUTING.md`). |
 | Code | No code changes yet. Documents first; code work starts when the founder says go. |
 
 **Open:**
 
 - Source list (founder to confirm, or check the database first).
-- Local-only AI: test Hindi quality early; the machine must be on when the pipeline runs.
+- Local-only AI: a hand-checked Hindi evaluation must pass before ingestion starts; the machine must be on when the pipeline runs.
 - Hindi overflow test: a 70-word Hindi story with a 3-line headline is not yet tested.
+- A public definition of "official source" (what earns the tick).
+- Licence for the prompts and the source registry (the code is MIT).
+- A response-time target for grievances, and the names of the three reviewers.
 - Public "How we work" page: after the translation approach is final.
+- GitHub issues written from the earlier PRD #79 (username, place and feed-shaping) need rewriting or closing to match 14.2.
 - While the stopgap routine runs, the landing page's "Human reviewed" and "Verified sources" lines describe the plan, not the stories on the page. Soften the copy (14.6) or accept it until the pipeline ships.
-- PRD v1.1 and case-study rewrite: pending.
+- PRD v1.1 is a draft awaiting the founder's review.

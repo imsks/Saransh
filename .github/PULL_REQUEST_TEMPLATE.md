@@ -1,11 +1,12 @@
 ## What does this PR do?
 
-<!-- A brief description of the change. -->
+<!-- A brief description of the change. Link the issue: Closes #123 -->
 
 ## Type of change
 
-- [ ] New source / scraper (added or updated a news Source)
-- [ ] Agent or pipeline change (summarization, curation, chunking, embeddings)
+- [ ] Reader app or landing page (frontend)
+- [ ] API or database (backend)
+- [ ] Pipeline (sources, summariser, tagger, checker, review)
 - [ ] Bug fix
 - [ ] Feature / enhancement
 - [ ] Refactor / code cleanup
@@ -14,8 +15,9 @@
 
 ## Scope
 
-<!-- For source/scraper PRs: which outlet? How many Articles were verified end-to-end? -->
-<!-- For code PRs: which modules are affected? -->
+<!-- Which modules are affected? -->
+<!-- For a new Source: which outlet, is it RSS / licensed / official, and where are its reuse terms? -->
+<!-- For a database change: which migration, and does it touch only Saransh-owned tables? -->
 
 ## How was this tested?
 
@@ -40,14 +42,24 @@
 ## Checklist
 
 - [ ] I have **not** committed `.env`, API keys, or any secrets
-- [ ] Every Summary in this change is **attributed to a real, citable Source**
+- [ ] I have updated **`docs/PROJECT_STATE.md`** to match this change (or it changes nothing about how the project works — say so above)
 - [ ] I have reviewed the diff and it only contains intended changes
 - [ ] Tests pass locally (`pytest tests/ -v` and `cd frontend && npm test`)
 - [ ] UI changes look right in **both light and dark mode** and at 360px
 
+**Product rules** (tick the ones this change touches; leave the rest)
+
+- [ ] Every Summary in this change is **attributed to a real, citable Source** and links out to it
+- [ ] Anything shown to readers works in **both Hindi and English**
+- [ ] Word limits hold: English ≤ 60 words, Hindi ≤ 70 (reject, never warn)
+- [ ] No publisher image is used; images are an official photo or a Saransh illustration
+- [ ] Nothing is learned from clicks, reading time or analytics (**no personalisation**)
+- [ ] No article page is scraped; Sources are RSS, licensed or official
+- [ ] Migrations touch only Saransh-owned tables (never `users`)
+
 ## Screenshots / logs (optional)
 
-<!-- Attach relevant logs, screenshots, or snippets if helpful. -->
+<!-- UI changes: before and after, in light and dark, plus a 360px shot. -->
 
 ## Additional notes
 
