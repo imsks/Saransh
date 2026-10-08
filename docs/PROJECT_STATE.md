@@ -515,7 +515,8 @@ StoryCarousel → fetchPublishedStories(3)
 GET {server base}/stories?status=published&limit=3     (Next caches for 60 seconds)
    ▼
 ≥1 story  → map each to a card:
-              time      = hours since created_at ("3 hrs ago", minimum 1)
+              time      = "Just now" for ages under 1 hour; otherwise whole hours,
+                          capped at "12 hrs ago"
               headline  = title_en,  body = summary_en
               image     = image_url, loaded straight from wherever it points
               credit    = first source's outlet name

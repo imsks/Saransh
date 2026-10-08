@@ -30,7 +30,9 @@ function categoryLabel(story: ApiStory): string {
 
 function relativeTime(iso: string): string {
   const deltaMs = Date.now() - new Date(iso).getTime();
-  const hours = Math.max(1, Math.round(deltaMs / (1000 * 60 * 60)));
+  if (!Number.isFinite(deltaMs) || deltaMs < 1000 * 60 * 60) return "Just now";
+
+  const hours = Math.min(12, Math.floor(deltaMs / (1000 * 60 * 60)));
   return `${hours} hr${hours === 1 ? "" : "s"} ago`;
 }
 
