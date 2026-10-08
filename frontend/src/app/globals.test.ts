@@ -55,8 +55,37 @@ describe("globals.css tokens", () => {
     expect(light.get("--on-red")).toBe("#ffffff");
     expect(dark.get("--on-red")).toBe("#191816");
     expect(dark.get("--card-shadow")).toBe("none");
-    expect(light.get("--topic-transport")).toBe("#b35f00");
-    expect(dark.get("--topic-transport")).toBe("#edbf63");
+  });
+
+  it("defines the seven v1.3 topic accents in both themes", () => {
+    const accents: [string, string, string][] = [
+      ["politics", "#0b7f8a", "#86d6dc"],
+      ["civic", "#2457d6", "#9db8f7"],
+      ["education", "#6648d1", "#bfaef4"],
+      ["crime", "#7a1f1f", "#f27474"],
+      ["business", "#946f00", "#f2c94c"],
+      ["entertainment", "#a21caf", "#e59bef"],
+      ["sports", "#4d7c0f", "#a9d46a"],
+    ];
+
+    for (const [topic, lightValue, darkValue] of accents) {
+      expect(light.get(`--topic-${topic}`)).toBe(lightValue);
+      expect(dark.get(`--topic-${topic}`)).toBe(darkValue);
+      expect(light.get(`--topic-${topic}-bg`)).toMatch(/^#[0-9a-f]{6}$/);
+      expect(dark.get(`--topic-${topic}-bg`)).toBe(
+        `color-mix(in srgb, var(--topic-${topic}) 18%, var(--card))`,
+      );
+    }
+
+    expect(Array.from(light.keys()).filter((name) => name.startsWith("--topic-"))).toHaveLength(
+      accents.length * 2,
+    );
+  });
+
+  it("keeps the retired v1.2 topic tokens out", () => {
+    for (const retired of ["edu", "health", "jobs", "transport"]) {
+      expect(css).not.toMatch(new RegExp(`--(?:color-)?topic-${retired}(?![\\w])`));
+    }
   });
 
   it("exposes every palette token to Tailwind", () => {
