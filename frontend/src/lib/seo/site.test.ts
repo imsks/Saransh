@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { getSiteUrl } from "./site";
+import { getSiteUrl, SITE_TAGLINE } from "./site";
+
+describe("SITE_TAGLINE", () => {
+  it("uses the new English positioning line", () => {
+    expect(SITE_TAGLINE).toBe("No noise. Just news. With proof.");
+  });
+});
 
 describe("getSiteUrl", () => {
   const originalEnv = {

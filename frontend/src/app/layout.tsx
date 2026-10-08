@@ -47,7 +47,7 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${SITE_NAME} — India's Hyperlocal News Digest`,
+    default: `${SITE_NAME} — No noise. Just news. With proof.`,
     template: `%s | ${SITE_NAME}`,
   },
   description: defaultDescription,
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     ...buildDefaultOg(),
-    title: `${SITE_NAME} — India's Hyperlocal News Digest`,
+    title: `${SITE_NAME} — No noise. Just news. With proof.`,
     description: defaultDescription,
   },
   twitter: buildDefaultTwitter(),

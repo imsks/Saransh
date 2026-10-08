@@ -15,4 +15,10 @@ describe("Footer", () => {
     const link = screen.getByRole("link", { name: "Privacy" });
     expect(link.getAttribute("href")).toBe(ROUTES.privacy);
   });
+
+  it("renders the new Hindi tagline", () => {
+    render(<Footer />);
+
+    expect(screen.getByText("शोर नहीं। सिर्फ़ खबर। सबूत के साथ।")).toBeTruthy();
+  });
 });

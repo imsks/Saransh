@@ -24,7 +24,7 @@ export function getSiteUrl(): string {
 
 export const SITE_NAME = "Saransh";
 
-export const SITE_TAGLINE = "India's news. Sourced, summarised, accountable.";
+export const SITE_TAGLINE = "No noise. Just news. With proof.";
 
 export const defaultDescription =
   "Saransh pulls directly from verified sources and gives you a concise, attributed summary of each story. No opinion. No algorithm. No forwarded videos.";
