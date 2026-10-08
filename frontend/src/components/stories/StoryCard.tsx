@@ -1,12 +1,14 @@
 import type { Story, Topic } from "@/constants/stories";
 
-/** Topic colour is allowed in exactly two places: the time line and the illustration wash. */
+/** Topic colour is allowed in exactly two places: the topic label and the illustration wash. */
 const topicClass: Record<Topic, { time: string; wash: string }> = {
+  politics: { time: "text-topic-politics", wash: "bg-topic-politics-bg" },
   civic: { time: "text-topic-civic", wash: "bg-topic-civic-bg" },
-  edu: { time: "text-topic-edu", wash: "bg-topic-edu-bg" },
-  health: { time: "text-topic-health", wash: "bg-topic-health-bg" },
-  jobs: { time: "text-topic-jobs", wash: "bg-topic-jobs-bg" },
-  transport: { time: "text-topic-transport", wash: "bg-topic-transport-bg" },
+  education: { time: "text-topic-education", wash: "bg-topic-education-bg" },
+  crime: { time: "text-topic-crime", wash: "bg-topic-crime-bg" },
+  business: { time: "text-topic-business", wash: "bg-topic-business-bg" },
+  entertainment: { time: "text-topic-entertainment", wash: "bg-topic-entertainment-bg" },
+  sports: { time: "text-topic-sports", wash: "bg-topic-sports-bg" },
 };
 
 const focusRing =

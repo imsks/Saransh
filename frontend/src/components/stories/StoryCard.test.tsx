@@ -2,7 +2,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import type { Story } from "@/constants/stories";
+import type { Story, Topic } from "@/constants/stories";
 
 import StoryCard from "./StoryCard";
 
@@ -75,21 +75,46 @@ describe("StoryCard", () => {
   });
 
   it("colours the time line by topic and nothing else", () => {
-    render(<StoryCard story={story({ topic: "transport" })} />);
+    render(<StoryCard story={story({ topic: "sports" })} />);
 
-    expect(screen.getByText("2 hrs ago").className).toContain("text-topic-transport");
+    expect(screen.getByText("2 hrs ago").className).toContain("text-topic-sports");
     expect(screen.getByText("Parliament passes data bill").className).not.toContain("topic");
     expect(screen.getByRole("link", { name: /^Read story/ }).className).not.toContain("topic");
   });
 
   it("uses the topic wash behind the image only when there is no photo", () => {
-    const { container, rerender } = render(<StoryCard story={story({ topic: "edu" })} />);
-    expect(container.querySelector("[data-topic]")?.className).toContain("bg-topic-edu-bg");
+    const { container, rerender } = render(<StoryCard story={story({ topic: "education" })} />);
+    expect(container.querySelector("[data-topic]")?.className).toContain("bg-topic-education-bg");
 
     rerender(
-      <StoryCard story={story({ topic: "edu", imageUrl: "https://example.com/cover.jpg" })} />,
+      <StoryCard
+        story={story({ topic: "education", imageUrl: "https://example.com/cover.jpg" })}
+      />,
     );
-    expect(container.querySelector("[data-topic]")?.className).not.toContain("bg-topic-edu-bg");
+    expect(container.querySelector("[data-topic]")?.className).not.toContain(
+      "bg-topic-education-bg",
+    );
+  });
+
+  it("renders the wash for every v1.3 topic", () => {
+    const topics: Topic[] = [
+      "politics",
+      "civic",
+      "education",
+      "crime",
+      "business",
+      "entertainment",
+      "sports",
+    ];
+
+    for (const topic of topics) {
+      const { container } = render(<StoryCard story={story({ topic })} />);
+      const wash = container.querySelector("[data-topic]");
+
+      expect(wash?.getAttribute("data-topic")).toBe(topic);
+      expect(wash?.className).toContain(`bg-topic-${topic}-bg`);
+      cleanup();
+    }
   });
 
   it("still renders headline, body and cover image alongside the link", () => {

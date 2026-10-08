@@ -449,7 +449,7 @@ Footer
 | `WhatSection` | `components/marketing/WhatSection.tsx` | Server | Carousel plus three points: Verified sources, Open-source pipeline, Human reviewed. Icons are inline SVGs. |
 | `StoryCarousel` | `components/stories/StoryCarousel.tsx` | Server (async) | Fetches up to 3 published stories; falls back to the sample stories if none. |
 | `StoryCarouselClient` | `components/stories/StoryCarouselClient.tsx` | Client | Shows one card at a time under the label "LIVE FEED PREVIEW", with a position counter. Moves only when asked: outlined Back and filled Next circles, and swipe on touch (80px threshold). No auto-advance. |
-| `StoryCard` | `components/stories/StoryCard.tsx` | (rendered inside client) | The app story card from design system v1.2: image (the story's `image_url`, or a topic-coloured wash when there is none) with a credit chip, headline, body, a time line in the topic colour, the source line, and an outlined "Read story" link to the source article. No topic label yet (14.6). |
+| `StoryCard` | `components/stories/StoryCard.tsx` | (rendered inside client) | The app story card from design system v1.2: image (the story's `image_url`, or a topic-coloured wash when there is none) with a credit chip, headline, body, a time line in the topic colour, the source line, and an outlined "Read story" link to the source article. Carries a wash and a time colour for each of the seven v1.3 topics (`politics`, `civic`, `education`, `crime`, `business`, `entertainment`, `sports`); the matching theme tokens land with the palette change in 14.6. No topic label yet (14.6). |
 | `RajnitiSection` | `components/marketing/RajnitiSection.tsx` | Server | Explains the Rajniti link. The "MLA · Barabanki Sadar" chip is static illustration, not data. |
 | `BottomCTA` | `components/marketing/BottomCTA.tsx` | Client | "Join the waitlist" button that smooth-scrolls to the top of the page. |
 | `ThemeProvider` | `components/providers/ThemeProvider.tsx` | Client | Thin wrapper around Sutra's theme provider. |
@@ -462,7 +462,7 @@ Footer
 | File | Role |
 |---|---|
 | `api-base.ts` | `getApiBaseUrl()` — decides which URL to call the backend on. See 8.5. |
-| `stories.ts` | `fetchPublishedStories(limit)`, `mapApiStoryToCarousel()` and `topicFor()` — fetches from the API, converts an API story into the card shape, and picks a topic from keywords in the free-text category. Returns `[]` on any error. |
+| `stories.ts` | `fetchPublishedStories(limit)`, `mapApiStoryToCarousel()` and `topicFor()` — fetches from the API, converts an API story into the card shape, and picks one of the seven v1.3 topics from the free-text category: an exact topic key first (case-insensitive), then a keyword match, else `civic`. Returns `[]` on any error. |
 | `validate.ts` | `validateName()` and `validateEmail()` for the waitlist form. |
 | `logger.ts` | pino logger named `saransh-web`; works on server and in the browser. |
 | `routes.ts` | `ROUTES` (internal paths) and `EXTERNAL` (repo, issues, Rajniti, Sutra links). |
@@ -521,8 +521,9 @@ GET {server base}/stories?status=published&limit=3     (Next caches for 60 secon
               credit    = first source's outlet name
               source    = "<first outlet> · Verified"
               link      = source_url, else the first source's URL
-              topic     = guessed from keywords in category
-                          (edu / health / jobs / transport, else civic)
+              topic     = category read as a topic key (case-insensitive), else
+                          guessed from keywords (politics / education / crime /
+                          business / entertainment / sports / civic), else civic
 0 stories or any error → use the 3 hardcoded samples in constants/stories.ts
    ▼
 StoryCarouselClient shows one card with Back and Next
