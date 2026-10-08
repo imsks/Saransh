@@ -4,6 +4,12 @@ default_language_version:
   python: python3
 
 repos:
+  # Credentials must never reach a tracked file — this repo is public.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:

@@ -46,6 +46,7 @@ def create_story(db: Session, payload: StoryIn) -> Story:
             summary_en=payload.summary_en,
             summary_hi=payload.summary_hi,
             image_url=str(payload.image_url),
+            source_url=str(payload.source_url) if payload.source_url else None,
             category=payload.category,
             state=payload.state,
             district=payload.district,

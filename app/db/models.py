@@ -37,12 +37,14 @@ class Story(CreatedAtMixin, Base):
     # Cover photo shown with the Story. Required — every Story has an image.
     image_url = Column(Text, nullable=False)
 
+    # Canonical Article the Summary was extracted from, cited alongside the Story.
+    source_url = Column(Text, nullable=True)
+
     category = Column(String(50), nullable=False)
     state = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)
 
     status = Column(String(20), nullable=False, default=STATUS_PUBLISHED)
-    published_at = Column(DateTime(timezone=True), nullable=True)
 
     updated_at = Column(
         DateTime(timezone=True),
@@ -76,9 +78,7 @@ class Source(CreatedAtMixin, Base):
 
     story = relationship("Story", back_populates="sources")
 
-    __table_args__ = (
-        UniqueConstraint("story_id", "url", name="uq_story_source_url"),
-    )
+    __table_args__ = (UniqueConstraint("story_id", "url", name="uq_story_source_url"),)
 
 
 class Waitlist(CreatedAtMixin, Base):

@@ -1,4 +1,4 @@
-import type { Story, ImageVariant } from "@/constants/stories";
+import type { Story, Topic } from "@/constants/stories";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
 
@@ -12,6 +12,7 @@ export interface ApiStory {
   title_en: string;
   summary_en: string;
   image_url: string;
+  source_url?: string | null;
   category: string;
   state?: string | null;
   district?: string | null;
@@ -33,11 +34,18 @@ function relativeTime(iso: string): string {
   return `${hours} hr${hours === 1 ? "" : "s"} ago`;
 }
 
-function imageVariantFor(story: ApiStory): ImageVariant {
-  const category = story.category.toLowerCase();
-  if (category.includes("national") || category.includes("parliament")) return "national";
-  if (category.includes("road") || category.includes("infrastructure")) return "road";
-  return "civic";
+const TOPIC_KEYWORDS: [Topic, string[]][] = [
+  ["edu", ["education", "school", "college", "university", "exam"]],
+  ["health", ["health", "hospital", "medical"]],
+  ["jobs", ["job", "employment", "recruitment"]],
+  ["transport", ["transport", "road", "rail", "infrastructure", "metro"]],
+];
+
+/** Pick the topic accent from the story's free-text category. Civic is the default. */
+export function topicFor(category: string): Topic {
+  const lowered = category.toLowerCase();
+  const match = TOPIC_KEYWORDS.find(([, keywords]) => keywords.some((k) => lowered.includes(k)));
+  return match ? match[0] : "civic";
 }
 
 /** Map a FastAPI story payload into the carousel card shape. */
@@ -47,12 +55,14 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
   return {
     category: categoryLabel(story),
     time: relativeTime(story.created_at),
-    imageVariant: imageVariantFor(story),
+    topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
     credit: primarySource?.outlet ?? "Saransh",
     headline: story.title_en,
     body: story.summary_en,
     source: primarySource ? `${primarySource.outlet} · Verified` : "Saransh",
+    // Stories ingested before source_url existed fall back to their first source.
+    sourceUrl: story.source_url || primarySource?.url || undefined,
   };
 }
 

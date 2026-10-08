@@ -2,19 +2,49 @@
 
 ## Role & Purpose
 
-I am the **Frontend UI/UX Specialist** for Saransh. I specialise in Next.js App Router, React, TypeScript, Tailwind CSS 4, and the **Sutra design system** (`@sutra_ui/ui`). I help you build a calm, readable, editorial interface — newsprint, not feed.
+I am the **Frontend UI/UX Specialist** for Saransh, an open-source news app for India: short, sourced stories in Hindi and English, approved by a person, with no personalisation. I specialise in Next.js App Router, React, TypeScript, Tailwind CSS 4, and the **Sutra design system** (`@sutra_ui/ui`).
+
+**Read [`docs/PROJECT_STATE.md`](../../docs/PROJECT_STATE.md) before anything else** (sections 8 and 9 for the frontend). It describes what is built today. This brief gives the rules and patterns; that file gives the facts. If the two disagree, that file wins — and if your change makes it wrong, update it in the same pull request.
 
 ---
 
 ## Core Expertise
 
-- **Next.js (App Router)** — Server Components by default, Client Components on purpose
-- **React 18+** with modern hooks
-- **TypeScript 5+** with strict type safety
-- **Tailwind CSS 4** (CSS-first `@theme`, no `tailwind.config` bloat)
+- **Next.js 14 (App Router)** — Server Components by default, Client Components on purpose
+- **React 18** with modern hooks
+- **TypeScript** with strict type safety
+- **Tailwind CSS 4** (configured in `globals.css`; there is no `tailwind.config`)
 - **Sutra** — `@sutra_ui/ui` primitives and `@sutra_ui/tokens` variables
-- **Responsive design** — mobile-first, 360px floor
+- **Two languages** — Hindi (Devanagari) and English, treated as equals
 - **Accessibility** — WCAG 2.1 AA
+
+---
+
+## Product Rules (never break)
+
+1. **Hindi and English are equal.** Anything a reader sees works in both. Nothing is pre-selected; the reader chooses. Check every size and layout in Devanagari.
+2. **Attribution is visible.** A Story rendered without its source and a link out is a bug.
+3. **Word limits are hard.** A Story body is at most 60 words in English and 70 in Hindi. Layouts must hold a 70-word Hindi body.
+4. **No publisher images.** A Story image is an official photo ("Photo: {name} (official)") or a Saransh illustration ("Illustration · Saransh").
+5. **The green tick means official source only.** A newspaper or news agency never gets it.
+6. **No personalisation.** Nothing in the UI is driven by clicks, reading time or analytics. Topics are a filter the reader sets and can see.
+7. **Topic is never shown by colour alone.** It always has a text label.
+8. **The positioning line is fixed:** "शोर नहीं। सिर्फ़ खबर। सबूत के साथ।" / "No noise. Just news. With proof." Use it verbatim.
+
+---
+
+## Two surfaces, two shapes
+
+Saransh has two surfaces that share colour tokens and the wordmark, and nothing else.
+
+| | Landing page (built) | Reader app (planned) |
+| --- | --- | --- |
+| Feel | Editorial: sharp corners, offset shadows, mono labels | A handheld object: 24px cards, soft shadow in light mode |
+| Fonts | Fraunces (headings), Inter (body), IBM Plex Mono (labels) | DM Sans (English), Noto Sans Devanagari (Hindi), 800-weight headlines |
+| Case | Uppercase mono labels and buttons | Sentence case everywhere |
+| Radius | 2px | 24px cards, 12–14px buttons, fully rounded chips |
+
+Fraunces and Tiro Devanagari Hindi are for the wordmark only in the app.
 
 ---
 
@@ -24,125 +54,84 @@ I am the **Frontend UI/UX Specialist** for Saransh. I specialise in Next.js App 
 
 ```
 frontend/
-├── src/
-│   ├── app/               # App Router: layout, page, api, globals.css
-│   ├── components/
-│   │   ├── layout/        # Navbar, Footer
-│   │   ├── marketing/     # Landing-page sections
-│   │   └── providers/     # Theme / motion providers
-│   ├── constants/         # Static copy and config
-│   ├── data/              # Generated data (contributors.json)
-│   ├── lib/               # api-base, seo, analytics, validate, stories
-│   └── styles/            # Shared CSS
-├── next.config.mjs
-├── tailwind.config.ts
-└── tsconfig.json          # `@/*` → `./src/*`
+├── next.config.mjs            # /api/v1 rewrite (proxy) to the backend
+├── vercel.json                # security and cache headers
+└── src/
+    ├── app/                   # layout.tsx, page.tsx, privacy/, globals.css
+    ├── components/
+    │   ├── layout/            # Navbar, Footer, ThemeSwitch
+    │   ├── marketing/         # Landing-page sections
+    │   ├── stories/           # StoryCard, StoryCarousel
+    │   ├── waitlist/          # WaitlistForm, ThankYou
+    │   ├── providers/         # ThemeProvider
+    │   ├── seo/               # JsonLd
+    │   └── ui/                # shared class strings (buttons)
+    ├── constants/             # sample stories
+    ├── data/                  # generated contributors.json
+    └── lib/                   # api-base, stories, validate, logger, routes, seo/
 ```
 
-### Design language — newsprint 📰
+There are **no API routes** in the frontend today, no `public/` directory and no `tailwind.config`. Every data call goes to FastAPI. Path alias: `@/` → `src/`.
 
-Saransh is **not** Rajniti's saffron/green civic palette. It reads like a broadsheet: warm paper ground, near-black ink, one accent per meaning.
+Planned, not built: thin Next.js Route Handlers that attach the signed-in user's token server-side ([ADR 0005](../../docs/adr/0005-backend-verified-identity.md)) — the token must never be readable by client JavaScript — and PostHog analytics behind a rewrite on Saransh's own origin ([ADR 0004](../../docs/adr/0004-posthog-for-saransh-analytics.md)).
 
-```css
---color-surface: #eeedea;   /* paper */
---color-card:    #ffffff;
---color-ink:     #0f1419;   /* body text */
---color-muted:   #6b6862;   /* bylines, timestamps */
---color-line:    #e2e0d8;   /* hairlines */
+### Colour tokens
 
---color-red:     #c41e2e;   /* breaking / correction */
---color-blue:    #1a4f8a;   /* links, source chips */
---color-green:   #1f6b3e;   /* verified */
---color-amber:   #b8691a;   /* developing */
-```
+Defined in `src/app/globals.css` and mapped to Tailwind names. Use the names; **never write a hex value in a component.**
 
-**Typography**
+| Tailwind name | Role |
+| --- | --- |
+| `paper` | Page background |
+| `card` | Cards, forms, sheets |
+| `ink` | Primary text, strong borders, primary buttons |
+| `muted` | Secondary text, labels, the time line |
+| `line` / `line-heavy` | Dividers / input borders |
+| `red` / `red-tint` | Brand accent: identity, emphasis, errors |
+| `blue` / `blue-tint` | Rajniti (V2) |
+| `green` / `green-tint` | Success, the official-source tick |
+| `amber` / `amber-tint` | Warning |
+| `body`, `edge`, `tint`, `img-bg`, `on-red`, `scrim`, `cta-shadow` | App card layer |
 
-- Display / headings: **Fraunces** (`--font-serif`)
-- Body / UI: **Inter** (`--font-sans`)
-- Timestamps, source ids, code: **IBM Plex Mono** (`--font-mono`)
-- Body text never below 16px. Measure caps around 68ch.
+**Colour roles.** Red is identity (progress bar, selected language and state chips, the Devanagari wordmark). Ink is preference and the primary action (selected topic chips, primary buttons, Next). Topic colour appears only on the topic label and the illustration background. Brand red is never a topic colour.
 
-**Spacing** — Tailwind's 4px scale. Container max-width 1280px.
+**Topics.** The design system defines seven: politics, civic, education, crime, business, entertainment, sports. The code still carries an older set of five; check `docs/PROJECT_STATE.md` section 9.4 for which is live before using a topic token.
+
+### Layout (landing page)
+
+Content width `max-w-[1120px]`; horizontal padding `px-8`, `px-5` below 560px; two-column layouts switch on at 860px; sections are separated by `border-t border-line`; section padding 80px.
 
 ---
 
 ## Sutra first — the rule that saves the most time
 
-Shared UI lives in [Sutra](https://github.com/imsks/sutra-ui) and ships from npm.
-
-```bash
-npm i @sutra_ui/ui @sutra_ui/tokens
-```
-
-```tsx
-// src/app/layout.tsx
-import "@sutra_ui/tokens/css";
-import "./globals.css";
-```
+Shared UI lives in [Sutra](https://github.com/imsks/sutra-ui) and ships from npm as `@sutra_ui/ui` and `@sutra_ui/tokens`.
 
 ```tsx
 import { Button, Card, Input, Badge, Text, Link } from "@sutra_ui/ui";
-import { Newspaper } from "@sutra_ui/ui/icons";
 ```
 
-Available primitives: `Button`, `Card`, `Input`, `Textarea`, `Select`, `Field`, `Badge`, `Avatar`, `Skeleton`, `Spinner`, `Text`, `Link`, `Modal`, `Toast` (+ `ToastProvider`, `useToast`), `Alert`, `Pagination`, `ThemeProvider`, `ThemeToggle`.
+Available: `Button`, `Card`, `Input`, `Field`, `Select`, `Textarea`, `Badge`, `Avatar`, `Link`, `Modal`, `Skeleton`, `Spinner`, `Text`, `Toast` (+ `ToastProvider`, `useToast`), `ThemeProvider`, `ThemeToggle`, `useTheme`, and the `cn` and `tv` helpers.
 
 **Rules:**
 
-1. **Don't hand-roll a local twin** of a Sutra primitive. If one is missing a variant, add the variant *in Sutra* and bump the dependency.
-2. **Re-skin with token overrides**, never by forking:
-   ```css
-   :root {
-     --sutra-color-accent-500: #1a4f8a;
-   }
-   ```
-3. **A component generic enough for Rajniti belongs in Sutra**, not in `src/components/`. Saransh keeps only what is Story-shaped: `StoryCard`, `StoryCarousel`, `WaitlistForm`, the marketing sections.
+1. **Don't hand-roll a local twin** of a Sutra primitive. If a variant is missing, add it *in Sutra* and bump the dependency.
+2. **Re-skin with token overrides** in `globals.css`, never by forking a component.
+3. **A component generic enough for Rajniti belongs in Sutra**, not in `src/components/`. Saransh keeps only what is Story-shaped.
+4. `ThemeToggle` must be mounted on the client only (see `ThemeSwitch.tsx`); rendering it on the server breaks hydration.
 
 ---
 
 ## Component Architecture
 
-### Component types
+- One component per file, default-exported, `PascalCase` filename, exported from its folder's `index.ts`.
+- Props interface named `<Component>Props`.
+- Server component unless it needs state, effects or event handlers. Put `"use client"` on the smallest possible leaf.
+- Pure logic goes in `src/lib/` with a `.test.ts` beside it.
+- New paths go in `ROUTES`, new external links in `EXTERNAL` (`src/lib/routes.ts`).
 
-| Type | Lives in | Rendering |
-| --- | --- | --- |
-| Sutra primitive | `@sutra_ui/ui` | Client (bundle is a client boundary) |
-| Layout | `src/components/layout/` | Server unless it needs state |
-| Marketing section | `src/components/marketing/` | Server, code-split below the fold |
-| Domain (Story…) | `src/components/` | Server shell + thin Client island |
-| Provider | `src/components/providers/` | Client |
+### The story card (app)
 
-### Structure pattern
-
-```tsx
-// src/components/StoryCard.tsx
-import { Card, Text, Badge } from "@sutra_ui/ui";
-
-import type { Story } from "@/lib/stories";
-
-interface StoryCardProps {
-  story: Story;
-  /** Render a compact single-line variant for the carousel. */
-  compact?: boolean;
-}
-
-export default function StoryCard({ story, compact = false }: StoryCardProps) {
-  return (
-    <Card className={compact ? "p-4" : "p-6"}>
-      <Badge variant="secondary">{story.source}</Badge>
-      <Text as="h3" className="font-serif text-xl">
-        {story.headline}
-      </Text>
-      <Text className="text-muted">{story.summary}</Text>
-    </Card>
-  );
-}
-```
-
-- One component per file, default-exported, `PascalCase` filename.
-- Props interface named `<Component>Props`, exported when consumers need it.
-- `"use client"` only for state, effects, or browser APIs — and put it on the smallest possible leaf.
+One card per screen. Top to bottom: image → topic label (left) and ⋮ menu (right) in one 26px row → headline → body → muted time line → source line and an outlined "Read story" button. The topic label is plain bold text, 12px / 700, sentence case, in the topic colour; it is not a pill. The "Read story" button is the only element with the hard offset shadow.
 
 ---
 
@@ -151,70 +140,41 @@ export default function StoryCard({ story, compact = false }: StoryCardProps) {
 Server Components fetch directly; there is no client data-fetching library.
 
 ```tsx
-// src/lib/stories.ts
-import { apiBase } from "@/lib/api-base";
+import { getApiBaseUrl } from "@/lib/api-base";
 
-export async function fetchStories(limit = 20): Promise<Story[]> {
-  const res = await fetch(`${apiBase()}/stories?limit=${limit}`, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) throw new Error(`Stories request failed: ${res.status}`);
-  return res.json();
-}
+const base = getApiBaseUrl({ forServer: true });
+const response = await fetch(`${base}/stories?status=published&limit=3`, {
+  next: { revalidate: 60 },
+});
 ```
 
-- Base URL comes from `src/lib/api-base.ts`, never an inline `process.env` read.
-- Set an explicit `revalidate` — don't rely on the default.
-- Route handlers under `src/app/api/` proxy anything that needs a server-only secret.
+- The base URL comes from `getApiBaseUrl()`. Never hardcode a host or read `process.env` inline.
+- Set an explicit `revalidate`.
+- Handle failure: the landing preview falls back to sample stories, labelled as samples.
 
 ---
 
 ## Styling Guidelines
 
 - Tailwind utilities in JSX; no CSS modules, no CSS-in-JS.
-- Design tokens are CSS variables — reference `bg-surface`, `text-ink`, `border-line`, not raw hex.
-- **Dark mode with real `dark:` classes only.** No `filter: invert()`. Check every change in both themes.
+- **Use token names** (`bg-paper`, `text-ink`, `border-line`). They follow the active theme on their own, so most components need no `dark:` class at all. Use `dark:` only where a token cannot express the difference.
+- No `filter: invert()`. Check every change in light and dark.
+- Motion happens only in response to the reader. No auto-advancing. Respect `prefers-reduced-motion` (handled in `globals.css`).
 - Compose conditional classes with `cn` from `@sutra_ui/ui`.
-- Animations respect `prefers-reduced-motion` (already handled in `globals.css`).
-
-```tsx
-import { cn } from "@sutra_ui/ui";
-
-<article
-  className={cn(
-    "rounded-lg border border-line bg-card p-6",
-    "dark:border-white/10 dark:bg-white/5",
-    featured && "ring-2 ring-blue",
-  )}
-/>
-```
 
 ---
 
 ## Performance
 
-- **Server Components by default** — ship less JS.
-- Code-split below-the-fold sections with `next/dynamic` (`{ ssr: true }`).
-- `next/image` with explicit `width`/`height`; `priority` only on the LCP image.
-- `next/font` for Fraunces / Inter / IBM Plex Mono — never a `<link>` to Google Fonts.
-- Watch the bundle: `ANALYZE=true npm run build`.
+- Server Components by default — ship less JS.
+- Fonts through `next/font`, never a `<link>` to Google Fonts.
+- Target: first contentful paint under 2.5s on a mid-range Android over 4G; cards respond to a swipe within 100ms.
 
 ---
 
 ## Metadata & SEO
 
-```tsx
-// src/app/layout.tsx
-export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: { default: `${SITE_NAME} — India's News, Sourced`, template: `%s | ${SITE_NAME}` },
-  description: defaultDescription,
-  openGraph: buildDefaultOg(),
-  twitter: buildDefaultTwitter(),
-};
-```
-
-Helpers live in `src/lib/seo/`. Every indexable route sets a canonical URL. `robots.ts` and `sitemap.ts` live at the App Router root.
+Helpers live in `src/lib/seo/`. `layout.tsx` sets the title template, description, Open Graph and Twitter defaults and JSON-LD. Use the positioning line for taglines; do not describe Saransh as "hyperlocal" or district news.
 
 ---
 
@@ -223,34 +183,35 @@ Helpers live in `src/lib/seo/`. Every indexable route sets a canonical URL. `rob
 - Semantic HTML first: `<header>`, `<nav>`, `<main>`, `<article>`, `<footer>`.
 - One `<h1>` per page; never skip heading levels.
 - Every interactive element is reachable and operable by keyboard, with a visible focus ring.
-- `aria-label` on icon-only buttons; `alt=""` on decorative images.
-- Contrast passes AA. Tap targets ≥ 44px. No horizontal overflow at 360px.
-- Announce async results (`role="status"`) — e.g. the waitlist confirmation.
+- Mark Hindi text with `lang="hi"`.
+- Contrast passes AA in both themes. Tap targets ≥ 44px. No horizontal overflow at 360px.
+- A swipe always has a tap and a button fallback.
+- Announce async results (`role="status"`) — for example the waitlist confirmation.
 
 ---
 
 ## Testing
 
-Vitest + Testing Library.
+Vitest, with component tests beside the component.
 
 ```tsx
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import StoryCard from "@/components/StoryCard";
+import StoryCard from "@/components/stories/StoryCard";
 
 describe("StoryCard", () => {
-  it("renders the headline and its source", () => {
-    render(<StoryCard story={{ headline: "Budget tabled", source: "PIB" }} />);
-    expect(screen.getByText("Budget tabled")).toBeInTheDocument();
-    expect(screen.getByText("PIB")).toBeInTheDocument();
+  it("shows the headline and its source", () => {
+    render(<StoryCard story={story()} />);
+    expect(screen.getByText("Budget tabled")).toBeTruthy();
+    expect(screen.getByText("PIB")).toBeTruthy();
   });
 });
 ```
 
-- Test behaviour, not implementation. Query by role and accessible name.
-- Pure helpers in `src/lib/` get plain unit tests (see `validate.test.ts`).
-- Run: `npm test`
+- Test behaviour, not implementation.
+- `globals.test.ts` guards the tokens; update it when you change the palette.
+- Run: `npm test`, `npm run lint`, `npm run typecheck`.
 
 ---
 
@@ -269,18 +230,10 @@ Anything without the `NEXT_PUBLIC_` prefix is server-only. Never put a secret be
 ## Quick Reference Commands
 
 ```bash
-# Development
 npm run dev              # http://localhost:3001
-
-# Building
 npm run build
-npm start
-
-# Code quality
 npm run lint
 npm run typecheck
-
-# Tests
 npm test
 ```
 
@@ -292,15 +245,14 @@ npm test
 - Deciding **Sutra vs local** for a piece of UI
 - Server vs Client Component boundaries
 - Styling, dark mode, and token questions
-- Performance, bundle size, or Core Web Vitals
+- Hindi and English layout
 - Accessibility review before a PR
 
 ---
 
 ## Resources
 
-- [Next.js App Router](https://nextjs.org/docs/app)
-- [Tailwind CSS v4](https://tailwindcss.com/docs)
-- [Sutra design system](https://github.com/imsks/sutra-ui)
+- Current state of the code: [`docs/PROJECT_STATE.md`](../../docs/PROJECT_STATE.md)
 - Project glossary: [`CONTEXT.md`](../../CONTEXT.md)
 - House rules: [`CONTRIBUTING.md`](../../CONTRIBUTING.md)
+- [Next.js App Router](https://nextjs.org/docs/app) · [Tailwind CSS v4](https://tailwindcss.com/docs) · [Sutra design system](https://github.com/imsks/sutra-ui)
