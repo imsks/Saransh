@@ -62,7 +62,7 @@ What does **not** exist yet: the planned pipeline (approved RSS sources, local A
 | Planned pipeline (RSS, local AI, agent check) | Not built | `app/agents/` is an empty package. |
 | Reviewer/admin UI | Not built | |
 | Reader news feed, story pages | Not built | |
-| Accounts, sign-in | Not built | Decided in ADR 0005 and ADR 0006; env keys are placeholders only. |
+| Accounts, sign-in | Not built | Decided in ADR 0005 and ADR 0006. The Google OAuth client is provisioned by hand (`docs/google-oauth-setup.md`); no code reads the keys yet, and the repository cannot tell you whether the console work was done. |
 | Analytics | Not built | Decided in ADR 0004 (PostHog). To be implemented as the privacy page describes. |
 | Rajniti cross-linking | Not built | The landing page shows a static mock-up of it. Now planned for V2. |
 | Database migrations (Alembic) | Set up | Nine revisions. See caveat in section 6. |
@@ -159,7 +159,7 @@ Saransh/
 │       ├── lib/               api-base, stories, validate, logger, routes, seo/
 │       ├── constants/stories.ts    Sample stories for the preview
 │       └── data/contributors.json  Generated weekly
-├── docs/                      DEPLOYMENT.md, story-ingest-routine.md, adr/, this file
+├── docs/                      DEPLOYMENT.md, story-ingest-routine.md, google-oauth-setup.md, adr/, this file
 ├── .github/                   CI workflows, PR template, AI agent briefs
 ├── Dockerfile                 API image: base → development / production
 ├── docker-compose.yml         Local stack: postgres + api + web
@@ -545,7 +545,8 @@ Set in `layout.tsx`: title template `%s | Saransh`, description, Open Graph and 
 | `API_URL` / `INTERNAL_API_URL` | Optional server-side backend URL. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL for SEO. Leave unset on Vercel. |
 | `NEXT_PUBLIC_LOG_LEVEL` | pino level. Default `debug` locally, `info` in production. |
-| `NEXTAUTH_*`, `GOOGLE_CLIENT_*`, `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Placeholders copied from Rajniti. Nothing reads them. Google sign-in (14.2) will use the `NEXTAUTH_*` / `GOOGLE_CLIENT_*` keys with Saransh's own OAuth client. |
+| `NEXTAUTH_*`, `GOOGLE_CLIENT_*` | Google sign-in. No code reads them yet, but they are no longer parity placeholders: the OAuth client is provisioned per `docs/google-oauth-setup.md` and the sign-in slices will consume these exact names. `NEXTAUTH_URL` must be the production origin on Vercel, not left to `VERCEL_URL`. |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Placeholder copied from Rajniti. Nothing reads it; analytics is PostHog ([ADR 0004](adr/0004-posthog-for-saransh-analytics.md)). |
 
 ---
 
