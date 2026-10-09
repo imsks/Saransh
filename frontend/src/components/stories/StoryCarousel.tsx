@@ -4,7 +4,8 @@ import { STORIES } from "@/constants/stories";
 
 export default async function StoryCarousel() {
   const liveStories = await fetchPublishedStories(3);
-  const stories = liveStories.length > 0 ? liveStories : STORIES;
+  const isSample = liveStories.length === 0;
+  const stories = isSample ? STORIES : liveStories;
 
-  return <StoryCarouselClient stories={stories} />;
+  return <StoryCarouselClient stories={stories} isSample={isSample} />;
 }

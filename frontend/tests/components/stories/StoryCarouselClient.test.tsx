@@ -100,4 +100,17 @@ describe("StoryCarouselClient", () => {
     const { container } = render(<StoryCarouselClient stories={[]} />);
     expect(container.firstChild).toBeNull();
   });
+
+  it("labels samples as Sample story", () => {
+    render(<StoryCarouselClient stories={stories} isSample />);
+
+    expect(screen.getByText("Sample story")).toBeTruthy();
+  });
+
+  it("shows no sample label for live stories", () => {
+    render(<StoryCarouselClient stories={stories} />);
+
+    expect(screen.queryByText("Sample story")).toBeNull();
+    expect(screen.queryByText(/Live feed/i)).toBeNull();
+  });
 });
