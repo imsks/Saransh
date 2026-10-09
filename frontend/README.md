@@ -37,9 +37,6 @@ The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders: Saransh has no sig
 
 ## Rules worth knowing before you touch the UI
 
-- All data calls go through FastAPI on `:8001`; there are no Next.js API routes today.
-- Style with the theme colour names (`bg-paper`, `text-ink`, `border-line`), never a hex value.
-- Reach for a [Sutra](https://github.com/imsks/sutra-ui) component before hand-writing one.
-- Anything a reader sees must work in both Hindi and English, and in light and dark.
+`frontend/.env.example` mirrors Rajniti's key names (NextAuth/Google are placeholders — Saransh has no sign-in yet). Analytics runs on PostHog: set `NEXT_PUBLIC_POSTHOG_KEY` (and optionally `NEXT_PUBLIC_POSTHOG_HOST`) to enable it; with no key every analytics entry point is a no-op, which is how local development and CI run. On Vercel, do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` — `getSiteUrl()` falls back to `VERCEL_URL`. Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
 
 House rules in full: [`CONTRIBUTING.md`](../CONTRIBUTING.md). Agent brief: [`.github/agents/frontend-agent.md`](../.github/agents/frontend-agent.md).
