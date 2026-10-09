@@ -85,5 +85,12 @@ class Waitlist(CreatedAtMixin, Base):
     __tablename__ = "waitlist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+
+    # Opaque public identifier of the Signup. The integer id is never exposed:
+    # it leaks how many Signups exist and is trivially enumerable.
+    signup_token = Column(
+        UUID(as_uuid=True), nullable=False, unique=True, default=uuid.uuid4
+    )
+
     name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
