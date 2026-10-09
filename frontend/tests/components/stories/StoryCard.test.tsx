@@ -16,7 +16,7 @@ function story(overrides: Partial<Story> = {}): Story {
     credit: "PTI",
     headline: "Parliament passes data bill",
     body: "The Lok Sabha passed the bill by voice vote.",
-    source: "PTI · Verified",
+    source: "PTI",
     sourceUrl: "https://example.com/canonical",
     ...overrides,
   };
@@ -28,7 +28,7 @@ describe("StoryCard", () => {
 
     const link = screen.getByRole("link", { name: /source article/ });
     expect(link.getAttribute("href")).toBe("https://example.com/canonical");
-    expect(link.textContent).toContain("PTI · Verified");
+    expect(link.textContent).toContain("PTI");
   });
 
   it("keeps the visible credit inside the accessible name", () => {
@@ -36,7 +36,7 @@ describe("StoryCard", () => {
     render(<StoryCard story={story()} />);
 
     const link = screen.getByRole("link", { name: /source article/ });
-    expect(link.getAttribute("aria-label")).toContain("PTI · Verified");
+    expect(link.getAttribute("aria-label")).toContain("PTI");
   });
 
   it("opens the citation link safely in a new tab", () => {
@@ -48,10 +48,10 @@ describe("StoryCard", () => {
   });
 
   it("renders the credit as plain text when there is no citation link", () => {
-    render(<StoryCard story={story({ sourceUrl: undefined })} />);
+    render(<StoryCard story={story({ sourceUrl: undefined, credit: "PTI Photo" })} />);
 
     expect(screen.queryByRole("link")).toBeNull();
-    expect(screen.getByText("PTI · Verified")).toBeTruthy();
+    expect(screen.getByText("PTI")).toBeTruthy();
   });
 
   it("always shows Read story, but only links it when there is an article", () => {

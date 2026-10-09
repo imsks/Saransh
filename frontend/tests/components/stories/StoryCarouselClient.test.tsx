@@ -20,7 +20,7 @@ function story(headline: string): Story {
     credit: "PTI",
     headline,
     body: "Body copy.",
-    source: "PTI · Verified",
+    source: "PTI",
   };
 }
 
