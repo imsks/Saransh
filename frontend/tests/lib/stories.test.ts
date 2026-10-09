@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ApiStory } from "./stories";
-import { mapApiStoryToCarousel, topicFor } from "./stories";
+import type { ApiStory } from "@/lib/stories";
+import { mapApiStoryToCarousel, topicFor } from "@/lib/stories";
 
 function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   return {
@@ -30,6 +30,23 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.source).toBe("PTI · Verified");
     expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
+  });
+
+  it.each([
+    [0, "Just now"],
+    [65_000, "Just now"],
+    [59 * 60 * 1000, "Just now"],
+    [60 * 60 * 1000, "1 hr ago"],
+    [10.5 * 60 * 60 * 1000, "10 hrs ago"],
+    [12 * 60 * 60 * 1000, "12 hrs ago"],
+    [200 * 60 * 60 * 1000, "12 hrs ago"],
+    [-60 * 60 * 1000, "Just now"],
+  ])("formats a story created %i ms ago as %s", (ageMs, expected) => {
+    const story = mapApiStoryToCarousel(
+      apiStory({ created_at: new Date(Date.now() - ageMs).toISOString() }),
+    );
+
+    expect(story.time).toBe(expected);
   });
 
   it("leaves imageUrl undefined when the API sends an empty image_url", () => {
@@ -70,29 +87,51 @@ describe("mapApiStoryToCarousel", () => {
   });
 
   it("leaves sourceUrl undefined when the story has no link at all", () => {
-    const story = mapApiStoryToCarousel(apiStory({ source_url: null, sources: [] }));
+    const story = mapApiStoryToCarousel(
+      apiStory({ source_url: null, sources: [] }),
+    );
 
     expect(story.sourceUrl).toBeUndefined();
     expect(story.source).toBe("Saransh");
   });
 
   it("ignores an empty source_url rather than rendering a dead link", () => {
-    const story = mapApiStoryToCarousel(apiStory({ source_url: "", sources: [] }));
+    const story = mapApiStoryToCarousel(
+      apiStory({ source_url: "", sources: [] }),
+    );
 
     expect(story.sourceUrl).toBeUndefined();
   });
 });
 
 describe("topicFor", () => {
-  it("maps a category onto the topic that has an accent", () => {
-    expect(topicFor("Education")).toBe("edu");
-    expect(topicFor("Public Health")).toBe("health");
-    expect(topicFor("Jobs")).toBe("jobs");
-    expect(topicFor("Road Infrastructure")).toBe("transport");
+  it("matches an exact topic key", () => {
+    expect(topicFor("politics")).toBe("politics");
+    expect(topicFor("civic")).toBe("civic");
+    expect(topicFor("education")).toBe("education");
+    expect(topicFor("crime")).toBe("crime");
+    expect(topicFor("business")).toBe("business");
+    expect(topicFor("entertainment")).toBe("entertainment");
+    expect(topicFor("sports")).toBe("sports");
+  });
+
+  it("matches an exact topic key whatever the casing", () => {
+    expect(topicFor("Politics")).toBe("politics");
+    expect(topicFor("ENTERTAINMENT")).toBe("entertainment");
+  });
+
+  it("falls back to a keyword in a free-text category", () => {
+    expect(topicFor("Lok Sabha Election 2026")).toBe("politics");
+    expect(topicFor("School exams")).toBe("education");
+    expect(topicFor("Police investigation")).toBe("crime");
+    expect(topicFor("Markets and trade")).toBe("business");
+    expect(topicFor("Bollywood film release")).toBe("entertainment");
+    expect(topicFor("Cricket")).toBe("sports");
+    expect(topicFor("Road Infrastructure")).toBe("civic");
   });
 
   it("falls back to civic for anything it does not recognise", () => {
     expect(topicFor("National")).toBe("civic");
-    expect(topicFor("Crime")).toBe("civic");
+    expect(topicFor("")).toBe("civic");
   });
 });

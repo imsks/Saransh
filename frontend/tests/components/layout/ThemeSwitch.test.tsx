@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
-import ThemeSwitch from "./ThemeSwitch";
+import ThemeSwitch from "@/components/layout/ThemeSwitch";
 
 beforeEach(() => {
   vi.stubGlobal(

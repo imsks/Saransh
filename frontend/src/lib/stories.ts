@@ -30,20 +30,42 @@ function categoryLabel(story: ApiStory): string {
 
 function relativeTime(iso: string): string {
   const deltaMs = Date.now() - new Date(iso).getTime();
-  const hours = Math.max(1, Math.round(deltaMs / (1000 * 60 * 60)));
+  if (!Number.isFinite(deltaMs) || deltaMs < 1000 * 60 * 60) return "Just now";
+
+  const hours = Math.min(12, Math.floor(deltaMs / (1000 * 60 * 60)));
   return `${hours} hr${hours === 1 ? "" : "s"} ago`;
 }
 
-const TOPIC_KEYWORDS: [Topic, string[]][] = [
-  ["edu", ["education", "school", "college", "university", "exam"]],
-  ["health", ["health", "hospital", "medical"]],
-  ["jobs", ["job", "employment", "recruitment"]],
-  ["transport", ["transport", "road", "rail", "infrastructure", "metro"]],
+const TOPICS: Topic[] = [
+  "politics",
+  "civic",
+  "education",
+  "crime",
+  "business",
+  "entertainment",
+  "sports",
 ];
 
-/** Pick the topic accent from the story's free-text category. Civic is the default. */
+const TOPIC_KEYWORDS: [Topic, string[]][] = [
+  ["politics", ["politic", "parliament", "election", "minister", "government"]],
+  ["education", ["education", "school", "college", "university", "exam"]],
+  ["crime", ["crime", "police", "court", "arrest", "fir"]],
+  ["business", ["business", "economy", "market", "trade", "job", "employment"]],
+  ["entertainment", ["entertainment", "film", "cinema", "music", "bollywood"]],
+  ["sports", ["sport", "cricket", "football", "olympic", "match"]],
+  ["civic", ["civic", "road", "transport", "health", "hospital", "infrastructure"]],
+];
+
+/**
+ * Pick the topic from the story's free-text category: an exact topic key first
+ * (case-insensitive), then a keyword match. Civic is the default.
+ */
 export function topicFor(category: string): Topic {
-  const lowered = category.toLowerCase();
+  const lowered = category.trim().toLowerCase();
+
+  const exact = TOPICS.find((topic) => topic === lowered);
+  if (exact) return exact;
+
   const match = TOPIC_KEYWORDS.find(([, keywords]) => keywords.some((k) => lowered.includes(k)));
   return match ? match[0] : "civic";
 }

@@ -1,5 +1,12 @@
-/** Topics with an accent in the design system. Colours the time line and the illustration wash. */
-export type Topic = "civic" | "edu" | "health" | "jobs" | "transport";
+/** The seven topics of design system v1.3. Colours the topic label and the illustration wash. */
+export type Topic =
+  | "politics"
+  | "civic"
+  | "education"
+  | "crime"
+  | "business"
+  | "entertainment"
+  | "sports";
 
 export interface Story {
   category: string;
@@ -31,7 +38,7 @@ export const STORIES: Story[] = [
   {
     category: "State · Uttar Pradesh",
     time: "4 hrs ago",
-    topic: "transport",
+    topic: "civic",
     credit: "© PWD Barabanki · CC BY",
     headline: "Deva Road widening stalls again; contractor served 15-day notice",
     body: "The PWD said the Deva Road widening has stalled a third time over a payment dispute. It served the contractor a 15-day notice. The project was to finish by March 2026; 60% of work is complete.",
@@ -40,7 +47,7 @@ export const STORIES: Story[] = [
   {
     category: "Regional · Barabanki",
     time: "6 hrs ago",
-    topic: "edu",
+    topic: "education",
     credit: "BSA Office · Press note",
     headline: "12 council schools receive smart classrooms in first phase",
     body: "Per the BSA office, 12 council-run primary schools in Barabanki now have smart classrooms. Phase one covers 3,400 students across four blocks. Phase two is proposed for October.",

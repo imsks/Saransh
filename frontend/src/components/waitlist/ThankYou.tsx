@@ -73,7 +73,7 @@ export default function ThankYou() {
         </span>{" "}
         —{" "}
         <span lang="hi" className="font-hindi">
-          आपके ज़िले की खबर, 60 शब्दों में, सबूत के साथ।
+          शोर नहीं। सिर्फ़ खबर। सबूत के साथ।
         </span>
       </p>
     </div>
