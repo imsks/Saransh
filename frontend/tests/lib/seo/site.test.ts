@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { getSiteUrl, SITE_TAGLINE } from "./site";
+import { getSiteUrl, SITE_TAGLINE } from "@/lib/seo/site";
 
 describe("SITE_TAGLINE", () => {
   it("uses the new English positioning line", () => {

@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { ROUTES } from "@/lib/routes";
 
-import Footer from "./Footer";
+import Footer from "@/components/layout/Footer";
 
 afterEach(cleanup);
 

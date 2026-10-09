@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
-import PrivacyPage, { metadata } from "./page";
+import PrivacyPage, { metadata } from "@/app/privacy/page";
 
 beforeEach(() => {
   // The page renders the Navbar, whose theme switch reads the colour-scheme query.

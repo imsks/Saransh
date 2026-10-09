@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(path.resolve(__dirname, "globals.css"), "utf8");
+const css = readFileSync(path.resolve(__dirname, "../../src/app/globals.css"), "utf8");
 
 /** Body of the first rule whose selector is exactly `selector`. */
 function block(selector: string): string {

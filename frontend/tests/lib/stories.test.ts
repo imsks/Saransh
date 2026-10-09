@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ApiStory } from "./stories";
-import { mapApiStoryToCarousel, topicFor } from "./stories";
+import type { ApiStory } from "@/lib/stories";
+import { mapApiStoryToCarousel, topicFor } from "@/lib/stories";
 
 function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   return {
@@ -87,14 +87,18 @@ describe("mapApiStoryToCarousel", () => {
   });
 
   it("leaves sourceUrl undefined when the story has no link at all", () => {
-    const story = mapApiStoryToCarousel(apiStory({ source_url: null, sources: [] }));
+    const story = mapApiStoryToCarousel(
+      apiStory({ source_url: null, sources: [] }),
+    );
 
     expect(story.sourceUrl).toBeUndefined();
     expect(story.source).toBe("Saransh");
   });
 
   it("ignores an empty source_url rather than rendering a dead link", () => {
-    const story = mapApiStoryToCarousel(apiStory({ source_url: "", sources: [] }));
+    const story = mapApiStoryToCarousel(
+      apiStory({ source_url: "", sources: [] }),
+    );
 
     expect(story.sourceUrl).toBeUndefined();
   });

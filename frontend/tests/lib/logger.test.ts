@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { logger } from "./logger";
+import { logger } from "@/lib/logger";
 
 describe("logger", () => {
   it("tags records with the web service name", () => {

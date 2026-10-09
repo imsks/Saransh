@@ -1,10 +1,16 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Story } from "@/constants/stories";
 
-import StoryCarouselClient from "./StoryCarouselClient";
+import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
 
 function story(headline: string): Story {
   return {
@@ -18,7 +24,11 @@ function story(headline: string): Story {
   };
 }
 
-const stories = [story("First story"), story("Second story"), story("Third story")];
+const stories = [
+  story("First story"),
+  story("Second story"),
+  story("Third story"),
+];
 
 afterEach(() => {
   cleanup();
@@ -31,9 +41,11 @@ describe("StoryCarouselClient", () => {
 
     expect(screen.getByText("First story")).toBeTruthy();
     expect(screen.getByText("1 / 3")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Previous story" }).hasAttribute("disabled")).toBe(
-      true,
-    );
+    expect(
+      screen
+        .getByRole("button", { name: "Previous story" })
+        .hasAttribute("disabled"),
+    ).toBe(true);
   });
 
   it("moves with Next and Back and keeps the counter in step", () => {
@@ -71,7 +83,9 @@ describe("StoryCarouselClient", () => {
 
   it("ignores a drag shorter than the swipe threshold", () => {
     render(<StoryCarouselClient stories={stories} />);
-    const card = screen.getByText("First story").closest("[aria-live]") as HTMLElement;
+    const card = screen
+      .getByText("First story")
+      .closest("[aria-live]") as HTMLElement;
 
     fireEvent.touchStart(card, { touches: [{ clientX: 200 }] });
     fireEvent.touchEnd(card, { changedTouches: [{ clientX: 150 }] });

@@ -1,8 +1,14 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import WaitlistForm from "./WaitlistForm";
+import WaitlistForm from "@/components/waitlist/WaitlistForm";
 
 const fetchMock = vi.fn();
 
@@ -26,7 +32,9 @@ function respond(status: number, body: unknown) {
 
 function fill(name: string, email: string) {
   fireEvent.change(screen.getByLabelText("NAME"), { target: { value: name } });
-  fireEvent.change(screen.getByLabelText("EMAIL ADDRESS"), { target: { value: email } });
+  fireEvent.change(screen.getByLabelText("EMAIL ADDRESS"), {
+    target: { value: email },
+  });
 }
 
 function submit() {
@@ -44,8 +52,12 @@ describe("WaitlistForm", () => {
     expect(name.getAttribute("aria-invalid")).toBe("true");
     expect(email.getAttribute("aria-invalid")).toBe("true");
 
-    const nameError = document.getElementById(name.getAttribute("aria-describedby") ?? "");
-    const emailError = document.getElementById(email.getAttribute("aria-describedby") ?? "");
+    const nameError = document.getElementById(
+      name.getAttribute("aria-describedby") ?? "",
+    );
+    const emailError = document.getElementById(
+      email.getAttribute("aria-describedby") ?? "",
+    );
     expect(nameError?.textContent).toBe("Please enter your real name.");
     expect(emailError?.textContent).toBe("Please enter a valid email address.");
     expect(name.parentElement?.contains(nameError)).toBe(true);
@@ -58,8 +70,12 @@ describe("WaitlistForm", () => {
     submit();
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(screen.getByLabelText("NAME").getAttribute("aria-invalid")).toBeNull();
-    expect(screen.getByLabelText("EMAIL ADDRESS").getAttribute("aria-invalid")).toBe("true");
+    expect(
+      screen.getByLabelText("NAME").getAttribute("aria-invalid"),
+    ).toBeNull();
+    expect(
+      screen.getByLabelText("EMAIL ADDRESS").getAttribute("aria-invalid"),
+    ).toBe("true");
   });
 
   it("moves focus to the first invalid field", () => {
@@ -74,11 +90,17 @@ describe("WaitlistForm", () => {
     render(<WaitlistForm onSuccess={vi.fn()} />);
     submit();
 
-    fireEvent.change(screen.getByLabelText("NAME"), { target: { value: "Priya" } });
+    fireEvent.change(screen.getByLabelText("NAME"), {
+      target: { value: "Priya" },
+    });
 
-    expect(screen.getByLabelText("NAME").getAttribute("aria-invalid")).toBeNull();
+    expect(
+      screen.getByLabelText("NAME").getAttribute("aria-invalid"),
+    ).toBeNull();
     expect(screen.queryByText("Please enter your real name.")).toBeNull();
-    expect(screen.getByText("Please enter a valid email address.")).toBeTruthy();
+    expect(
+      screen.getByText("Please enter a valid email address."),
+    ).toBeTruthy();
   });
 
   it("posts the trimmed signup and reports success", async () => {
@@ -92,7 +114,10 @@ describe("WaitlistForm", () => {
 
     const [url, init] = fetchMock.mock.calls[0];
     expect(String(url)).toMatch(/\/waitlist$/);
-    expect(JSON.parse(init.body)).toEqual({ name: "Priya Sharma", email: "priya@example.com" });
+    expect(JSON.parse(init.body)).toEqual({
+      name: "Priya Sharma",
+      email: "priya@example.com",
+    });
   });
 
   it("treats a duplicate signup as success", async () => {
@@ -112,9 +137,15 @@ describe("WaitlistForm", () => {
     fill("Priya Sharma", "priya@example.com");
     submit();
 
-    expect(await screen.findByText("Something went wrong. Please try again.")).toBeTruthy();
+    expect(
+      await screen.findByText("Something went wrong. Please try again."),
+    ).toBeTruthy();
     expect(onSuccess).not.toHaveBeenCalled();
-    expect(screen.getByLabelText("NAME").getAttribute("aria-invalid")).toBeNull();
-    expect(screen.getByLabelText("EMAIL ADDRESS").getAttribute("aria-invalid")).toBeNull();
+    expect(
+      screen.getByLabelText("NAME").getAttribute("aria-invalid"),
+    ).toBeNull();
+    expect(
+      screen.getByLabelText("EMAIL ADDRESS").getAttribute("aria-invalid"),
+    ).toBeNull();
   });
 });

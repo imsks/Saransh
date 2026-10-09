@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import type { Story, Topic } from "@/constants/stories";
 
-import StoryCard from "./StoryCard";
+import StoryCard from "@/components/stories/StoryCard";
 
 afterEach(cleanup);
 
@@ -74,12 +74,29 @@ describe("StoryCard", () => {
     expect(container.querySelector("[data-official-tick]")).toBeNull();
   });
 
-  it("colours the time line by topic and nothing else", () => {
-    render(<StoryCard story={story({ topic: "sports" })} />);
+  it.each([
+    ["politics", "Politics"],
+    ["civic", "Civic"],
+    ["education", "Education"],
+    ["crime", "Crime"],
+    ["business", "Business & Economy"],
+    ["entertainment", "Entertainment"],
+    ["sports", "Sports"],
+  ] as const)("renders the %s topic as a text label", (topic, label) => {
+    render(<StoryCard story={story({ topic })} />);
 
-    expect(screen.getByText("2 hrs ago").className).toContain("text-topic-sports");
-    expect(screen.getByText("Parliament passes data bill").className).not.toContain("topic");
-    expect(screen.getByRole("link", { name: /^Read story/ }).className).not.toContain("topic");
+    const topicLabel = screen.getByText(label);
+    expect(topicLabel.tagName).toBe("SPAN");
+    expect(topicLabel.className).toContain(`text-topic-${topic}`);
+    expect(topicLabel.className).toContain("text-[12px]");
+    expect(topicLabel.className).toContain("font-bold");
+    expect(topicLabel.parentElement?.className).toContain("h-[26px]");
+    expect(topicLabel.parentElement?.children[1]?.className).toContain("w-[26px]");
+
+    const time = screen.getByText("2 hrs ago");
+    expect(time.className).toContain("text-muted");
+    expect(time.className).toContain("font-medium");
+    expect(time.className).not.toContain(`text-topic-${topic}`);
   });
 
   it("uses the topic wash behind the image only when there is no photo", () => {
