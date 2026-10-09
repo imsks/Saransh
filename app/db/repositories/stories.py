@@ -16,7 +16,6 @@ def list_stories(
     offset: int,
     category: Optional[str] = None,
     state: Optional[str] = None,
-    district: Optional[str] = None,
     status: Optional[str] = None,
 ) -> List[Story]:
     """Return stories newest-first, filtered by any supplied criteria."""
@@ -25,8 +24,6 @@ def list_stories(
         query = query.filter(Story.category == category)
     if state is not None:
         query = query.filter(Story.state == state)
-    if district is not None:
-        query = query.filter(Story.district == district)
     if status is not None:
         query = query.filter(Story.status == status)
     return query.order_by(Story.created_at.desc()).offset(offset).limit(limit).all()
@@ -49,7 +46,6 @@ def create_story(db: Session, payload: StoryIn) -> Story:
             source_url=str(payload.source_url) if payload.source_url else None,
             category=payload.category,
             state=payload.state,
-            district=payload.district,
             status=STATUS_PUBLISHED,
         )
         db.add(story)
