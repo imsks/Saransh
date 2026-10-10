@@ -9,7 +9,7 @@ export default function HeroContent() {
         </span>
       </h1>
       <p className="max-w-[44ch] border-l-2 border-red pl-4 font-sans text-[17px] leading-[1.68] text-muted">
-        Whether you are tracking national headlines, Saransh filters out the sensationalism, pulling directly from verified publishers to give you a concise, attributed summary of what actually happened. Every single claim traces back to a trusted, official source you can verify yourself.
+        Saransh pulls from approved sources and gives you a short summary with the source named and linked.
       </p>
     </div>
   );

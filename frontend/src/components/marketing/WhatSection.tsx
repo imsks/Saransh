@@ -75,10 +75,10 @@ export default function WhatSection() {
               <DocIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  VERIFIED SOURCES
+                  SOURCED, WITH A LINK
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Government portals, PIB, registered outlets. Nothing unattributed.
+                  Government portals, PIB, registered outlets. Every story names and links its source.
                 </p>
               </div>
             </div>
@@ -86,10 +86,10 @@ export default function WhatSection() {
               <CodeIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  OPEN-SOURCE PIPELINE
+                  OPEN SOURCE
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Prompts, ranking logic, deduplication rules — all public on GitHub.
+                  Prompts, source list and deduplication rules — public on GitHub as they are written.
                 </p>
               </div>
             </div>
@@ -97,10 +97,10 @@ export default function WhatSection() {
               <PersonIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  HUMAN REVIEWED
+                  HUMAN REVIEW: BEING BUILT
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Every AI-drafted story is reviewed by a person before it goes live.
+                  Every AI-drafted story will be approved by a person before it goes live. We are building the review step now.
                 </p>
               </div>
             </div>
