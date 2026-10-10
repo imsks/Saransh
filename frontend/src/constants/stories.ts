@@ -24,34 +24,38 @@ export interface Story {
   sourceUrl?: string;
 }
 
+/**
+ * Illustrative cards for the landing page: one National, one State and one
+ * India-relevant International. They stand in for a story, they do not report
+ * one, so they are always shown under a "Sample story" label.
+ */
 export const STORIES: Story[] = [
   {
-    category: "National · Parliament",
-    time: "2 hrs ago",
-    topic: "civic",
-    credit: "Lok Sabha · PTI",
-    headline: "Parliament passes Digital Personal Data Protection Amendment Bill",
-    body: "The Lok Sabha passed the Amendment Bill by voice vote, per the MoS IT. The Bill revises consent requirements for minors and creates a new appeals tribunal. It now goes to the Rajya Sabha.",
-    source: "PTI · Official",
+    category: "National",
+    time: "Sample",
+    topic: "politics",
+    credit: "Illustration · Saransh",
+    headline: "A ministry announces a national scheme",
+    body: "This is a sample card. When a ministry announces a scheme, Saransh gives you what changed, who it covers and when it starts — and nothing else. The green tick means the summary came from the ministry itself.",
+    source: "Ministry statement · Official",
     official: true,
   },
   {
-    category: "State · Uttar Pradesh",
-    time: "4 hrs ago",
+    category: "State",
+    time: "Sample",
     topic: "civic",
-    credit: "© PWD Barabanki · CC BY",
-    headline: "Deva Road widening stalls again; contractor served 15-day notice",
-    body: "The PWD said the Deva Road widening has stalled a third time over a payment dispute. It served the contractor a 15-day notice. The project was to finish by March 2026; 60% of work is complete.",
-    source: "Amar Ujala · Barabanki",
+    credit: "Illustration · Saransh",
+    headline: "A state clears a public transport plan",
+    body: "This is a sample card. When a state clears civic work, Saransh carries the scope, the cost and the deadline, then the source it was written from. No adjectives, no panel shouting, no guess about what happens next.",
+    source: "Saransh · Sample",
   },
   {
-    category: "Regional · Barabanki",
-    time: "6 hrs ago",
-    topic: "education",
-    credit: "BSA Office · Press note",
-    headline: "12 council schools receive smart classrooms in first phase",
-    body: "Per the BSA office, 12 council-run primary schools in Barabanki now have smart classrooms. Phase one covers 3,400 students across four blocks. Phase two is proposed for October.",
-    source: "BSA press note · Official",
-    official: true,
+    category: "International",
+    time: "Sample",
+    topic: "business",
+    credit: "Illustration · Saransh",
+    headline: "A trade decision abroad reaches Indian exporters",
+    body: "This is a sample card. When a decision abroad touches Indian exporters, students or travellers, Saransh explains only the part that reaches India, with the source attached and the speculation left out.",
+    source: "Saransh · Sample",
   },
 ];
