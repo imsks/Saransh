@@ -15,7 +15,6 @@ export interface ApiStory {
   source_url?: string | null;
   category: string;
   state?: string | null;
-  district?: string | null;
   status: string;
   sources: ApiStorySource[];
   created_at: string;
@@ -24,7 +23,6 @@ export interface ApiStory {
 function categoryLabel(story: ApiStory): string {
   const parts = [story.category];
   if (story.state) parts.push(story.state);
-  if (story.district) parts.push(story.district);
   return parts.join(" · ");
 }
 

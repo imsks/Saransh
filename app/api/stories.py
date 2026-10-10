@@ -20,7 +20,6 @@ def list_stories(
     offset: int = Query(0, ge=0),
     category: Optional[str] = Query(None),
     state: Optional[str] = Query(None),
-    district: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
@@ -31,7 +30,6 @@ def list_stories(
         offset=offset,
         category=category,
         state=state,
-        district=district,
         status=status,
     )
 

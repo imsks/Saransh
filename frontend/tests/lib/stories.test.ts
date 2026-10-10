@@ -12,7 +12,6 @@ function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
     source_url: "https://example.com/canonical",
     category: "National",
     state: "Parliament",
-    district: null,
     status: "published",
     sources: [{ outlet: "PTI", url: "https://example.com/story" }],
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
