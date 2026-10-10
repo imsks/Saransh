@@ -40,6 +40,37 @@ config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 # migration chains from overwriting each other.
 VERSION_TABLE = "alembic_version_saransh"
 
+# ADR-0006: every table has exactly one owning product.  Autogenerate compares
+# our metadata against the *whole* shared database, so without this allowlist it
+# would faithfully propose dropping every Rajniti-owned table (`users`, ...).
+#
+# Adding a new Saransh-owned table?  Register its name here as well as declaring
+# the model - a table missing from this set is invisible to autogenerate and no
+# migration will ever be generated for it.
+SARANSH_OWNED_TABLES = frozenset(
+    {
+        "stories",
+        "sources",
+        "waitlist",
+    }
+)
+
+
+def include_object(object_, name, type_, reflected, compare_to) -> bool:
+    """Restrict autogenerate to the tables Saransh owns.
+
+    Anything attached to a table (columns, indexes, constraints) inherits that
+    table's ownership; objects we cannot attribute are left to Alembic.
+    """
+    if type_ == "table":
+        return name in SARANSH_OWNED_TABLES
+
+    parent = getattr(object_, "table", None)
+    if parent is not None:
+        return parent.name in SARANSH_OWNED_TABLES
+
+    return True
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -59,6 +90,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
         version_table=VERSION_TABLE,
     )
 
@@ -83,6 +115,7 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
+            include_object=include_object,
             version_table=VERSION_TABLE,
         )
 
