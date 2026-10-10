@@ -5,6 +5,8 @@ import type { Story } from "@/constants/stories";
 
 interface StoryCarouselClientProps {
   stories: Story[];
+  /** True when the cards are the local samples, not live stories from the API. */
+  isSample?: boolean;
 }
 
 /** Design system: a drag shorter than this is not a swipe. */
@@ -35,7 +37,10 @@ function Chevron({ direction }: { direction: "back" | "next" }) {
  * The landing-page preview of the app's story screen: one card with Back and
  * Next. It moves only when the reader asks it to.
  */
-export default function StoryCarouselClient({ stories }: StoryCarouselClientProps) {
+export default function StoryCarouselClient({
+  stories,
+  isSample = false,
+}: StoryCarouselClientProps) {
   const [index, setIndex] = useState(0);
   const touchStartRef = useRef<number | null>(null);
 
@@ -69,9 +74,14 @@ export default function StoryCarouselClient({ stories }: StoryCarouselClientProp
       className="mx-auto w-full max-w-[496px]"
     >
       <div className="mb-3 flex items-baseline justify-between">
-        <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
-          LIVE FEED PREVIEW
-        </span>
+        {/* Samples say so. Live stories carry no label at all. */}
+        {isSample ? (
+          <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
+            Sample story
+          </span>
+        ) : (
+          <span aria-hidden="true" />
+        )}
         <span className="font-sans text-[13px] font-semibold text-muted">
           {current + 1} / {stories.length}
         </span>

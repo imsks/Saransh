@@ -20,7 +20,7 @@ function story(headline: string): Story {
     credit: "PTI",
     headline,
     body: "Body copy.",
-    source: "PTI · Verified",
+    source: "PTI",
   };
 }
 
@@ -99,5 +99,18 @@ describe("StoryCarouselClient", () => {
   it("renders nothing when there are no stories", () => {
     const { container } = render(<StoryCarouselClient stories={[]} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  it("labels samples as Sample story", () => {
+    render(<StoryCarouselClient stories={stories} isSample />);
+
+    expect(screen.getByText("Sample story")).toBeTruthy();
+  });
+
+  it("shows no sample label for live stories", () => {
+    render(<StoryCarouselClient stories={stories} />);
+
+    expect(screen.queryByText("Sample story")).toBeNull();
+    expect(screen.queryByText(/Live feed/i)).toBeNull();
   });
 });

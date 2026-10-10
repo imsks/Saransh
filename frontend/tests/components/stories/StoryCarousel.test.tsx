@@ -7,14 +7,45 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("StoryCarousel", () => {
-  it("uses local sample stories without fetching from the backend", () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+function apiStory(id: string) {
+  return {
+    id,
+    title_en: "Live headline",
+    summary_en: "Live summary.",
+    image_url: "https://example.com/cover.jpg",
+    source_url: "https://example.com/story",
+    category: "National",
+    state: null,
+    district: null,
+    status: "published",
+    sources: [{ outlet: "PTI", url: "https://example.com/story" }],
+    created_at: new Date().toISOString(),
+  };
+}
 
-    const carousel = StoryCarousel();
+describe("StoryCarousel", () => {
+  it("falls back to the labelled samples when the API has no stories", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [] }),
+    );
+
+    const carousel = await StoryCarousel();
 
     expect(carousel.props.stories).toBe(STORIES);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(carousel.props.isSample).toBe(true);
+  });
+
+  it("shows live stories without the sample label", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [apiStory("1")] }),
+    );
+
+    const carousel = await StoryCarousel();
+
+    expect(carousel.props.stories).toHaveLength(1);
+    expect(carousel.props.stories[0].headline).toBe("Live headline");
+    expect(carousel.props.isSample).toBe(false);
   });
 });

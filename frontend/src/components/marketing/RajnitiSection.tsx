@@ -35,7 +35,13 @@ export default function RajnitiSection() {
                   Illustration
                 </span>
               </div>
-              <p className="mb-3 font-sans text-[16px] font-bold text-ink">Minister · [Name]</p>
+              <p className="mb-2 font-sans text-[16px] font-bold text-ink">
+                MLA · Your constituency
+              </p>
+              <p className="mb-3 font-sans text-[13.5px] italic leading-[1.6] text-muted">
+                Promise: &quot;Road widening complete within two years&quot; · Status:{" "}
+                <span className="not-italic font-semibold text-amber">Delayed, 60% complete</span>
+              </p>
               <a
                 href="https://rajniti-app.vercel.app"
                 target="_blank"

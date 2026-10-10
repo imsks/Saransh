@@ -82,7 +82,9 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
     credit: primarySource?.outlet ?? "Saransh",
     headline: story.title_en,
     body: story.summary_en,
-    source: primarySource ? `${primarySource.outlet} · Verified` : "Saransh",
+    // No "Verified" and no tick: the API has no `official` field, so nothing
+    // from it may claim verification.
+    source: primarySource?.outlet ?? "Saransh",
     // Stories ingested before source_url existed fall back to their first source.
     sourceUrl: story.source_url || primarySource?.url || undefined,
   };
