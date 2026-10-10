@@ -27,7 +27,8 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.headline).toBe("Parliament passes data bill");
     expect(story.body).toContain("Lok Sabha");
     expect(story.category).toBe("National · Parliament");
-    expect(story.source).toBe("PTI · Verified");
+    expect(story.source).toBe("PTI");
+    expect(story.official).toBeUndefined();
     expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
   });
@@ -69,7 +70,7 @@ describe("mapApiStoryToCarousel", () => {
     );
 
     expect(story.sourceUrl).toBe("https://example.com/canonical");
-    expect(story.source).toBe("Source A · Verified");
+    expect(story.source).toBe("Source A");
   });
 
   it("falls back to the first source when source_url is null", () => {
