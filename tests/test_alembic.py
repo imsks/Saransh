@@ -7,10 +7,13 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, inspect, text
 
+from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
 from alembic.script import ScriptDirectory
+from app.db.models import Base
+from app.db.ownership import SARANSH_OWNED_TABLES, include_name, include_object
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ENV_PY = REPO_ROOT / "alembic" / "env.py"
@@ -25,6 +28,46 @@ def test_alembic_uses_a_saransh_specific_version_table():
     text = ENV_PY.read_text()
     assert 'VERSION_TABLE = "alembic_version_saransh"' in text
     assert text.count("version_table=VERSION_TABLE") == 2
+
+
+def test_alembic_only_looks_at_saransh_owned_tables():
+    text = ENV_PY.read_text()
+    assert text.count("include_name=include_name") == 2
+    assert text.count("include_object=include_object") == 2
+
+
+def test_every_model_table_is_registered_as_saransh_owned():
+    # A new table must be added to SARANSH_OWNED_TABLES on purpose, or
+    # autogenerate will silently ignore it. A model mapped over a table another
+    # product owns (Rajniti's `users`) must not be registered: exempt it here.
+    assert set(Base.metadata.tables) == set(SARANSH_OWNED_TABLES)
+
+
+def _dropped_tables(connection, **filters) -> set[str]:
+    context = MigrationContext.configure(connection, opts=filters)
+    return {
+        diff[1].name
+        for diff in compare_metadata(context, Base.metadata)
+        if diff[0] == "remove_table"
+    }
+
+
+def test_autogenerate_never_proposes_dropping_another_products_table():
+    """Production Postgres is shared with Rajniti; its tables are not ours to drop."""
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        connection.execute(text("CREATE TABLE alembic_version (version_num TEXT)"))
+
+        # Without the filters this is exactly what autogenerate would write.
+        assert "users" in _dropped_tables(connection)
+
+        assert (
+            _dropped_tables(
+                connection, include_name=include_name, include_object=include_object
+            )
+            == set()
+        )
 
 
 def test_suite_never_points_at_a_real_database():

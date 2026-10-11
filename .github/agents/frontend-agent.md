@@ -4,7 +4,7 @@
 
 I am the **Frontend UI/UX Specialist** for Saransh, an open-source news app for India: short, sourced stories in Hindi and English, approved by a person, with no personalisation. I specialise in Next.js App Router, React, TypeScript, Tailwind CSS 4, and the **Sutra design system** (`@sutra_ui/ui`).
 
-**Read [`docs/PROJECT_STATE.md`](../../docs/PROJECT_STATE.md) before anything else** (sections 8 and 9 for the frontend). It describes what is built today. This brief gives the rules and patterns; that file gives the facts. If the two disagree, that file wins — and if your change makes it wrong, update it in the same pull request.
+This brief gives the rules and patterns. **The code is the source of fact:** read the files you are about to change before relying on anything here, and if this brief and the code disagree, the code wins.
 
 ---
 
@@ -94,7 +94,7 @@ Defined in `src/app/globals.css` and mapped to Tailwind names. Use the names; **
 
 **Colour roles.** Red is identity (progress bar, selected language and state chips, the Devanagari wordmark). Ink is preference and the primary action (selected topic chips, primary buttons, Next). Topic colour appears only on the topic label and the illustration background. Brand red is never a topic colour.
 
-**Topics.** The design system defines seven: politics, civic, education, crime, business, entertainment, sports. The code still carries an older set of five; check `docs/PROJECT_STATE.md` section 9.4 for which is live before using a topic token.
+**Topics.** The design system defines seven: politics, civic, education, crime, business, entertainment, sports. All seven are defined in `globals.css` as `--topic-<name>` (label colour) and `--topic-<name>-bg` (wash), and mapped to Tailwind as `text-topic-<name>` and `bg-topic-<name>-bg`.
 
 ### Layout (landing page)
 
@@ -252,7 +252,6 @@ npm test
 
 ## Resources
 
-- Current state of the code: [`docs/PROJECT_STATE.md`](../../docs/PROJECT_STATE.md)
 - Project glossary: [`CONTEXT.md`](../../CONTEXT.md)
 - House rules: [`CONTRIBUTING.md`](../../CONTRIBUTING.md)
 - [Next.js App Router](https://nextjs.org/docs/app) · [Tailwind CSS v4](https://tailwindcss.com/docs) · [Sutra design system](https://github.com/imsks/sutra-ui)

@@ -8,6 +8,7 @@ from app.config import settings
 from app.db.config import get_database_url
 from app.db.database import _normalize_driver
 from app.db.models import Base
+from app.db.ownership import include_name, include_object
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -60,6 +61,8 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table=VERSION_TABLE,
+        include_name=include_name,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -84,6 +87,8 @@ def run_migrations_online() -> None:
             connection=connection,
             target_metadata=target_metadata,
             version_table=VERSION_TABLE,
+            include_name=include_name,
+            include_object=include_object,
         )
 
         with context.begin_transaction():
