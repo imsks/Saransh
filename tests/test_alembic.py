@@ -101,3 +101,49 @@ def test_drop_story_published_at_migration_round_trips():
             text("SELECT published_at FROM stories WHERE id = 'a'")
         ).scalar_one()
         assert str(restored).startswith("2026-09-30 10:00:00")
+
+
+def test_add_waitlist_signup_token_migration_round_trips():
+    """The migration backfills a distinct Signup Token on every existing row."""
+    revision = _script_directory().get_revision("a7b8c9d0e1f2")
+    module = revision.module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE waitlist ("
+                "  id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                "  name TEXT NOT NULL,"
+                "  email TEXT NOT NULL UNIQUE"
+                ")"
+            )
+        )
+        connection.execute(
+            text(
+                "INSERT INTO waitlist (name, email) VALUES"
+                " ('Priya', 'priya@example.com'), ('Arjun', 'arjun@example.com')"
+            )
+        )
+        migration_context = MigrationContext.configure(connection)
+
+        with Operations.context(migration_context):
+            module.upgrade()
+        column = {c["name"]: c for c in inspect(connection).get_columns("waitlist")}[
+            "signup_token"
+        ]
+        assert column["nullable"] is False
+        tokens = [
+            row[0]
+            for row in connection.execute(
+                text("SELECT signup_token FROM waitlist")
+            ).fetchall()
+        ]
+        assert len(tokens) == 2
+        assert all(tokens)
+        assert len(set(tokens)) == 2
+
+        with Operations.context(migration_context):
+            module.downgrade()
+        remaining = {c["name"] for c in inspect(connection).get_columns("waitlist")}
+        assert "signup_token" not in remaining
