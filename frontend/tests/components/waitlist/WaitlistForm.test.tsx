@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import {
   cleanup,
   fireEvent,
@@ -6,20 +5,27 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 import WaitlistForm from "@/components/waitlist/WaitlistForm";
 
-const fetchMock = vi.fn();
+const fetchMock = jest.fn();
 
 beforeEach(() => {
   fetchMock.mockReset();
-  vi.stubGlobal("fetch", fetchMock);
+  global.fetch = fetchMock as typeof fetch;
 });
 
 afterEach(() => {
   cleanup();
-  vi.unstubAllGlobals();
+  jest.restoreAllMocks();
 });
 
 function respond(status: number, body: unknown) {
@@ -43,7 +49,7 @@ function submit() {
 
 describe("WaitlistForm", () => {
   it("marks each invalid field and puts its message under it", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     submit();
 
     const name = screen.getByLabelText("NAME");
@@ -65,7 +71,7 @@ describe("WaitlistForm", () => {
   });
 
   it("does not call the API while a field is invalid", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "not-an-email");
     submit();
 
@@ -79,7 +85,7 @@ describe("WaitlistForm", () => {
   });
 
   it("moves focus to the first invalid field", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "nope");
     submit();
 
@@ -87,7 +93,7 @@ describe("WaitlistForm", () => {
   });
 
   it("clears a field's error as soon as that field is edited", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     submit();
 
     fireEvent.change(screen.getByLabelText("NAME"), {
@@ -104,7 +110,7 @@ describe("WaitlistForm", () => {
   });
 
   it("posts the trimmed signup and reports success", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(201, { ok: true });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("  Priya Sharma ", " priya@example.com ");
@@ -121,7 +127,7 @@ describe("WaitlistForm", () => {
   });
 
   it("treats a duplicate signup as success", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(200, { ok: true, duplicate: true });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");
@@ -131,7 +137,7 @@ describe("WaitlistForm", () => {
   });
 
   it("shows a form-level error when the API fails, without blaming a field", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(500, { detail: "Unable to save your waitlist signup right now." });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");

@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import {
   act,
   cleanup,
@@ -6,7 +5,7 @@ import {
   render,
   screen,
 } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, jest } from "@jest/globals";
 
 import type { Story } from "@/constants/stories";
 
@@ -15,7 +14,6 @@ import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
 function story(headline: string): Story {
   return {
     category: "National",
-    time: "2 hrs ago",
     topic: "civic",
     credit: "PTI",
     headline,
@@ -32,7 +30,7 @@ const stories = [
 
 afterEach(() => {
   cleanup();
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe("StoryCarouselClient", () => {
@@ -70,14 +68,28 @@ describe("StoryCarouselClient", () => {
     expect(next.hasAttribute("disabled")).toBe(true);
   });
 
-  it("never advances on its own", () => {
-    vi.useFakeTimers();
+  it("auto-advances every 3 seconds and wraps to the first story", () => {
+    jest.useFakeTimers();
     render(<StoryCarouselClient stories={stories} />);
 
     act(() => {
-      vi.advanceTimersByTime(60_000);
+      jest.advanceTimersByTime(2_999);
     });
+    expect(screen.getByText("First story")).toBeTruthy();
 
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(screen.getByText("Second story")).toBeTruthy();
+
+    act(() => {
+      jest.advanceTimersByTime(3_000);
+    });
+    expect(screen.getByText("Third story")).toBeTruthy();
+
+    act(() => {
+      jest.advanceTimersByTime(3_000);
+    });
     expect(screen.getByText("First story")).toBeTruthy();
   });
 

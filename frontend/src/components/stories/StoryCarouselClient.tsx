@@ -11,6 +11,7 @@ interface StoryCarouselClientProps {
 
 /** Design system: a drag shorter than this is not a swipe. */
 const SWIPE_THRESHOLD_PX = 80;
+const AUTO_ADVANCE_MS = 3_000;
 
 const circleClass =
   "inline-flex size-14 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red disabled:cursor-not-allowed disabled:opacity-35";
@@ -35,25 +36,45 @@ function Chevron({ direction }: { direction: "back" | "next" }) {
 
 /**
  * The landing-page preview of the app's story screen: one card with Back and
- * Next. It moves only when the reader asks it to.
+ * Next. It advances automatically and also supports manual navigation.
  */
 export default function StoryCarouselClient({
   stories,
   isSample = false,
 }: StoryCarouselClientProps) {
   const [index, setIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "left",
+  );
   const touchStartRef = useRef<number | null>(null);
+  const last = stories.length - 1;
+  const current = Math.min(index, last);
 
   useEffect(() => {
     setIndex(0);
   }, [stories]);
 
+  useEffect(() => {
+    if (stories.length < 2) return;
+
+    const timeout = window.setTimeout(() => {
+      setSlideDirection("left");
+      setIndex((currentIndex) => (currentIndex + 1) % stories.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [current, stories.length]);
+
   if (stories.length === 0) return null;
 
-  const last = stories.length - 1;
-  const current = Math.min(index, last);
-  const goBack = () => setIndex((i) => Math.max(0, i - 1));
-  const goNext = () => setIndex((i) => Math.min(last, i + 1));
+  const goBack = () => {
+    setSlideDirection("right");
+    setIndex((i) => Math.max(0, i - 1));
+  };
+  const goNext = () => {
+    setSlideDirection("left");
+    setIndex((i) => Math.min(last, i + 1));
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartRef.current = e.touches[0].clientX;
@@ -87,13 +108,21 @@ export default function StoryCarouselClient({
         </span>
       </div>
       <div
-        key={current}
-        aria-live="polite"
-        className="animate-card-in"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        className="overflow-hidden rounded-[24px]"
       >
-        <StoryCard story={stories[current]} />
+        <div
+          key={current}
+          aria-live="polite"
+          className={
+            slideDirection === "left"
+              ? "animate-story-slide-left"
+              : "animate-story-slide-right"
+          }
+        >
+          <StoryCard story={stories[current]} />
+        </div>
       </div>
       <div className="mt-4 flex items-center justify-between">
         <button

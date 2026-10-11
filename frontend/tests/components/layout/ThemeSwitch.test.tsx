@@ -1,26 +1,47 @@
-// @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
-import { renderToString } from "react-dom/server";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+const { TextEncoder, TextDecoder } = require("node:util");
 
-import { ThemeProvider } from "@sutra_ui/ui";
+Object.defineProperty(globalThis, "TextEncoder", {
+  value: TextEncoder,
+  configurable: true,
+});
+Object.defineProperty(globalThis, "TextDecoder", {
+  value: TextDecoder,
+  configurable: true,
+});
+
+const { cleanup, render, screen } = require("@testing-library/react");
+const { renderToString } = require("react-dom/server");
+const {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} = require("@jest/globals");
+
+const { ThemeProvider } = require("@sutra_ui/ui");
 
 import ThemeSwitch from "@/components/layout/ThemeSwitch";
 
 beforeEach(() => {
-  vi.stubGlobal(
-    "matchMedia",
-    vi.fn().mockReturnValue({
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
       matches: false,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    }),
-  );
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
 });
 
 afterEach(() => {
   cleanup();
-  vi.unstubAllGlobals();
+  jest.restoreAllMocks();
 });
 
 describe("ThemeSwitch", () => {
@@ -42,6 +63,8 @@ describe("ThemeSwitch", () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByRole("button", { name: /switch to (dark|light) theme/i })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /switch to (dark|light) theme/i }),
+    ).toBeTruthy();
   });
 });

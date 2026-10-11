@@ -10,7 +10,6 @@ export type Topic =
 
 export interface Story {
   category: string;
-  time: string;
   topic: Topic;
   /** Real cover photo. When absent, the topic's illustration wash is shown instead. */
   imageUrl?: string;
@@ -32,30 +31,27 @@ export interface Story {
 export const STORIES: Story[] = [
   {
     category: "National",
-    time: "Sample",
     topic: "politics",
     credit: "Illustration · Saransh",
     headline: "A ministry announces a national scheme",
-    body: "This is a sample card. When a ministry announces a scheme, Saransh gives you what changed, who it covers and when it starts — and nothing else. The green tick means the summary came from the ministry itself.",
+    body: "When a ministry announces a scheme, Saransh explains who qualifies, which benefits are included, when applications open, and what changes for people already receiving support. It separates confirmed details from questions the ministry has not answered yet, so readers can see what to do next and what remains unclear. The green tick marks a summary checked against the ministry's own statement.",
     source: "Ministry statement · Official",
     official: true,
   },
   {
     category: "State",
-    time: "Sample",
     topic: "civic",
     credit: "Illustration · Saransh",
     headline: "A state clears a public transport plan",
-    body: "This is a sample card. When a state clears civic work, Saransh carries the scope, the cost and the deadline, then the source it was written from. No adjectives, no panel shouting, no guess about what happens next.",
+    body: "When a state clears a public transport plan, Saransh lays out the routes included, the approved cost, and the agency responsible for delivery. It highlights the project timeline, planned service changes, and any decisions that still need public or budget approval. Readers get the practical details first, with the source attached and no prediction about whether the plan will meet its deadlines.",
     source: "Saransh · Sample",
   },
   {
     category: "International",
-    time: "Sample",
     topic: "business",
     credit: "Illustration · Saransh",
     headline: "A trade decision abroad reaches Indian exporters",
-    body: "This is a sample card. When a decision abroad touches Indian exporters, students or travellers, Saransh explains only the part that reaches India, with the source attached and the speculation left out.",
+    body: "When a decision abroad affects Indian exporters, students, or travellers, Saransh explains the specific rule or change and who it reaches. The summary gives the effective date, any stated transition period, and the next step people may need to take. It separates confirmed effects on India from wider speculation, and links the underlying source so readers can check the original announcement themselves.",
     source: "Saransh · Sample",
   },
 ];

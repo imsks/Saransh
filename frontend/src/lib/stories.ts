@@ -1,6 +1,4 @@
 import type { Story, Topic } from "@/constants/stories";
-import { getApiBaseUrl } from "@/lib/api-base";
-import { logger } from "@/lib/logger";
 
 export interface ApiStorySource {
   outlet: string;
@@ -26,14 +24,6 @@ function categoryLabel(story: ApiStory): string {
   return parts.join(" · ");
 }
 
-function relativeTime(iso: string): string {
-  const deltaMs = Date.now() - new Date(iso).getTime();
-  if (!Number.isFinite(deltaMs) || deltaMs < 1000 * 60 * 60) return "Just now";
-
-  const hours = Math.min(12, Math.floor(deltaMs / (1000 * 60 * 60)));
-  return `${hours} hr${hours === 1 ? "" : "s"} ago`;
-}
-
 const TOPICS: Topic[] = [
   "politics",
   "civic",
@@ -51,7 +41,7 @@ const TOPIC_KEYWORDS: [Topic, string[]][] = [
   ["business", ["business", "economy", "market", "trade", "job", "employment"]],
   ["entertainment", ["entertainment", "film", "cinema", "music", "bollywood"]],
   ["sports", ["sport", "cricket", "football", "olympic", "match"]],
-  ["civic", ["civic", "road", "transport", "health", "hospital", "infrastructure"]],
+  ["civic",["civic", "road", "transport", "health", "hospital", "infrastructure"],],
 ];
 
 /**
@@ -64,7 +54,9 @@ export function topicFor(category: string): Topic {
   const exact = TOPICS.find((topic) => topic === lowered);
   if (exact) return exact;
 
-  const match = TOPIC_KEYWORDS.find(([, keywords]) => keywords.some((k) => lowered.includes(k)));
+  const match = TOPIC_KEYWORDS.find(([, keywords]) =>
+    keywords.some((k) => lowered.includes(k)),
+  );
   return match ? match[0] : "civic";
 }
 
@@ -74,7 +66,6 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
 
   return {
     category: categoryLabel(story),
-    time: relativeTime(story.created_at),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
     credit: primarySource?.outlet ?? "Saransh",
@@ -86,26 +77,4 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
     // Stories ingested before source_url existed fall back to their first source.
     sourceUrl: story.source_url || primarySource?.url || undefined,
   };
-}
-
-/** Fetch published stories for the landing-page carousel. Falls back to an empty list on error. */
-export async function fetchPublishedStories(limit = 3): Promise<Story[]> {
-  const base = getApiBaseUrl({ forServer: true });
-  const url = `${base}/stories?status=published&limit=${limit}`;
-
-  try {
-    const response = await fetch(url, { next: { revalidate: 60 } });
-    if (!response.ok) {
-      logger.warn({ url, status: response.status }, "stories.fetch_failed");
-      return [];
-    }
-
-    const payload = (await response.json()) as ApiStory[];
-    if (!Array.isArray(payload) || payload.length === 0) return [];
-
-    return payload.map(mapApiStoryToCarousel);
-  } catch (err) {
-    logger.error({ err, url }, "stories.fetch_error");
-    return [];
-  }
 }

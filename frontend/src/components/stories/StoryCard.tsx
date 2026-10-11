@@ -1,26 +1,44 @@
 import type { Story, Topic } from "@/constants/stories";
 
-/** Topic colour is allowed in exactly two places: the topic label and the illustration wash. */
-const topicClass: Record<Topic, { label: string; wash: string }> = {
-  politics: { label: "text-topic-politics", wash: "bg-topic-politics-bg" },
-  civic: { label: "text-topic-civic", wash: "bg-topic-civic-bg" },
-  education: { label: "text-topic-education", wash: "bg-topic-education-bg" },
-  crime: { label: "text-topic-crime", wash: "bg-topic-crime-bg" },
-  business: { label: "text-topic-business", wash: "bg-topic-business-bg" },
-  entertainment: { label: "text-topic-entertainment", wash: "bg-topic-entertainment-bg" },
-  sports: { label: "text-topic-sports", wash: "bg-topic-sports-bg" },
-};
-
-/** English display names. Hindi labels (Civic is "सिविक") arrive with language support. */
-const topicLabel: Record<Topic, string> = {
-  politics: "Politics",
-  civic: "Civic",
-  education: "Education",
-  crime: "Crime",
-  business: "Business & Economy",
-  entertainment: "Entertainment",
-  sports: "Sports",
-};
+/** Topic colour is reserved for the label and the illustration wash. */
+const topicClass: Record<Topic, { label: string; name: string; wash: string }> =
+  {
+    politics: {
+      label: "text-topic-politics",
+      name: "Politics",
+      wash: "bg-topic-politics-bg",
+    },
+    civic: {
+      label: "text-topic-civic",
+      name: "Civic",
+      wash: "bg-topic-civic-bg",
+    },
+    education: {
+      label: "text-topic-education",
+      name: "Education",
+      wash: "bg-topic-education-bg",
+    },
+    crime: {
+      label: "text-topic-crime",
+      name: "Crime",
+      wash: "bg-topic-crime-bg",
+    },
+    business: {
+      label: "text-topic-business",
+      name: "Business & Economy",
+      wash: "bg-topic-business-bg",
+    },
+    entertainment: {
+      label: "text-topic-entertainment",
+      name: "Entertainment",
+      wash: "bg-topic-entertainment-bg",
+    },
+    sports: {
+      label: "text-topic-sports",
+      name: "Sports",
+      wash: "bg-topic-sports-bg",
+    },
+  };
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
@@ -77,14 +95,14 @@ function SourceLine({ story }: { story: Story }) {
   );
 }
 
-/** The app story card from design system v1.2: one handheld card per screen. */
+/** The app story card from design system v1.3: one handheld card per screen. */
 export default function StoryCard({ story }: { story: Story }) {
   const topic = topicClass[story.topic];
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-[24px] border border-edge bg-card text-ink shadow-app-card">
+    <article className="flex h-148 w-full flex-col overflow-hidden rounded-[24px] border border-edge bg-card text-ink shadow-app-card max-[560px]:h-[640px] max-[360px]:h-[700px]">
       <div
-        className={`relative h-[168px] ${story.imageUrl ? "bg-img-bg" : topic.wash}`}
+        className={`relative h-55 w-full shrink-0 ${story.imageUrl ? "bg-img-bg" : topic.wash}`}
         data-topic={story.topic}
       >
         {story.imageUrl ? (
@@ -100,20 +118,28 @@ export default function StoryCard({ story }: { story: Story }) {
           {story.credit}
         </span>
       </div>
-      <div className="px-[18px] pb-4 pt-[18px]">
-        <div className="mb-1.5 flex h-[26px] items-center justify-between gap-3">
-          <span className={`font-sans text-[12px] font-bold leading-none ${topic.label}`}>
-            {topicLabel[story.topic]}
+
+      <div className="flex flex-1 flex-col px-[18px] pb-4 pt-[18px]">
+        {/* Topic Label */}
+        <div className="mb-2 flex h-[26px] items-center justify-between">
+          <span className={`font-sans text-[12px] font-bold ${topic.label}`}>
+            {topic.name}
           </span>
-          {/* Room for the ⋮ menu, which lands in a later change. */}
           <span aria-hidden="true" className="h-[26px] w-[26px] shrink-0" />
         </div>
-        <h2 className="mb-2 font-sans text-[22px] font-extrabold leading-[1.27] tracking-[-0.015em] text-ink">
-          {story.headline}
-        </h2>
-        <p className="font-sans text-[14.5px] leading-[1.55] text-body">{story.body}</p>
-        <p className="mt-3.5 font-sans text-[12.5px] font-medium text-muted">{story.time}</p>
-        <div className="mt-[18px] flex items-center justify-between gap-3">
+
+        <div className="flex-1">
+          <h2 className="mb-2 font-sans text-[22px] font-extrabold leading-[1.27] tracking-[-0.015em] text-ink max-[560px]:text-[20px]">
+            {story.headline}
+          </h2>
+
+          <p className="font-sans text-[14.5px] leading-[1.55] text-body">
+            {story.body}
+          </p>
+
+        </div>
+
+        <div className="mt-5 flex shrink-0 items-center justify-between gap-3">
           <SourceLine story={story} />
           {story.sourceUrl ? (
             <a
@@ -126,8 +152,10 @@ export default function StoryCard({ story }: { story: Story }) {
               Read story
             </a>
           ) : (
-            // Sample stories have no article behind them: the button is shown, not live.
-            <span aria-hidden="true" className={`${readStoryClass} cursor-default select-none`}>
+            <span
+              aria-hidden="true"
+              className={`${readStoryClass} cursor-default select-none`}
+            >
               Read story
             </span>
           )}

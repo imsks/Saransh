@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 
 import type { ApiStory } from "@/lib/stories";
 import { mapApiStoryToCarousel, topicFor } from "@/lib/stories";
@@ -30,23 +30,6 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.official).toBeUndefined();
     expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
-  });
-
-  it.each([
-    [0, "Just now"],
-    [65_000, "Just now"],
-    [59 * 60 * 1000, "Just now"],
-    [60 * 60 * 1000, "1 hr ago"],
-    [10.5 * 60 * 60 * 1000, "10 hrs ago"],
-    [12 * 60 * 60 * 1000, "12 hrs ago"],
-    [200 * 60 * 60 * 1000, "12 hrs ago"],
-    [-60 * 60 * 1000, "Just now"],
-  ])("formats a story created %i ms ago as %s", (ageMs, expected) => {
-    const story = mapApiStoryToCarousel(
-      apiStory({ created_at: new Date(Date.now() - ageMs).toISOString() }),
-    );
-
-    expect(story.time).toBe(expected);
   });
 
   it("leaves imageUrl undefined when the API sends an empty image_url", () => {

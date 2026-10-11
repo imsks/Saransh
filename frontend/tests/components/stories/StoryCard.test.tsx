@@ -1,6 +1,5 @@
-// @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "@jest/globals";
 
 import type { Story, Topic } from "@/constants/stories";
 
@@ -11,7 +10,6 @@ afterEach(cleanup);
 function story(overrides: Partial<Story> = {}): Story {
   return {
     category: "National · Parliament",
-    time: "2 hrs ago",
     topic: "civic",
     credit: "PTI",
     headline: "Parliament passes data bill",
@@ -48,7 +46,11 @@ describe("StoryCard", () => {
   });
 
   it("renders the credit as plain text when there is no citation link", () => {
-    render(<StoryCard story={story({ sourceUrl: undefined, credit: "PTI Photo" })} />);
+    render(
+      <StoryCard
+        story={story({ sourceUrl: undefined, credit: "PTI Photo" })}
+      />,
+    );
 
     expect(screen.queryByRole("link")).toBeNull();
     expect(screen.getByText("PTI")).toBeTruthy();
@@ -67,7 +69,9 @@ describe("StoryCard", () => {
   });
 
   it("shows the tick for official sources only", () => {
-    const { container, rerender } = render(<StoryCard story={story({ official: true })} />);
+    const { container, rerender } = render(
+      <StoryCard story={story({ official: true })} />,
+    );
     expect(container.querySelector("[data-official-tick]")).not.toBeNull();
 
     rerender(<StoryCard story={story({ official: false })} />);
@@ -91,21 +95,25 @@ describe("StoryCard", () => {
     expect(topicLabel.className).toContain("text-[12px]");
     expect(topicLabel.className).toContain("font-bold");
     expect(topicLabel.parentElement?.className).toContain("h-[26px]");
-    expect(topicLabel.parentElement?.children[1]?.className).toContain("w-[26px]");
-
-    const time = screen.getByText("2 hrs ago");
-    expect(time.className).toContain("text-muted");
-    expect(time.className).toContain("font-medium");
-    expect(time.className).not.toContain(`text-topic-${topic}`);
+    expect(topicLabel.parentElement?.children[1]?.className).toContain(
+      "w-[26px]",
+    );
   });
 
   it("uses the topic wash behind the image only when there is no photo", () => {
-    const { container, rerender } = render(<StoryCard story={story({ topic: "education" })} />);
-    expect(container.querySelector("[data-topic]")?.className).toContain("bg-topic-education-bg");
+    const { container, rerender } = render(
+      <StoryCard story={story({ topic: "education" })} />,
+    );
+    expect(container.querySelector("[data-topic]")?.className).toContain(
+      "bg-topic-education-bg",
+    );
 
     rerender(
       <StoryCard
-        story={story({ topic: "education", imageUrl: "https://example.com/cover.jpg" })}
+        story={story({
+          topic: "education",
+          imageUrl: "https://example.com/cover.jpg",
+        })}
       />,
     );
     expect(container.querySelector("[data-topic]")?.className).not.toContain(
@@ -135,11 +143,31 @@ describe("StoryCard", () => {
   });
 
   it("still renders headline, body and cover image alongside the link", () => {
-    render(<StoryCard story={story({ imageUrl: "https://example.com/cover.jpg" })} />);
+    render(
+      <StoryCard
+        story={story({ imageUrl: "https://example.com/cover.jpg" })}
+      />,
+    );
 
     expect(screen.getByText("Parliament passes data bill")).toBeTruthy();
     expect(screen.getByText(/voice vote/)).toBeTruthy();
     const image = screen.getByAltText("Parliament passes data bill");
     expect(image.getAttribute("src")).toBe("https://example.com/cover.jpg");
+  });
+
+  it("keeps card dimensions fixed without scrolling or truncating story copy", () => {
+    const { container } = render(
+      <StoryCard story={story({ body: "Details ".repeat(500) })} />,
+    );
+
+    const card = container.querySelector("article");
+    expect(card?.className).toContain("h-148");
+    expect(card?.className).toContain("w-full");
+    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
+      "overflow-y-auto",
+    );
+    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
+      "line-clamp",
+    );
   });
 });
