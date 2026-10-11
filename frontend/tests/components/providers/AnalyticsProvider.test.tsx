@@ -1,28 +1,36 @@
-// @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
-import { renderToString } from "react-dom/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { TextEncoder } from "util";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
+import type AnalyticsProviderComponent from "@/components/providers/AnalyticsProvider";
+import { analytics } from "@/lib/analytics";
 
-vi.mock("next/navigation", () => ({
+// Outside the App Router there is no pathname; stand one in. The provider is
+// loaded after this, so it picks up the stand-in.
+jest.mock("next/navigation", () => ({
   usePathname: () => "/",
   useSearchParams: () => new URLSearchParams("ref=hn"),
 }));
 
-const analytics = vi.hoisted(() => ({
-  init: vi.fn(),
-  capture: vi.fn(),
-  identify: vi.fn(),
-  reset: vi.fn(),
-}));
+let AnalyticsProvider: typeof AnalyticsProviderComponent;
+beforeAll(async () => {
+  ({ default: AnalyticsProvider } = await import("@/components/providers/AnalyticsProvider"));
+});
 
-vi.mock("@/lib/analytics", () => ({ analytics }));
+// Spy on the real client: no SDK boots, and every call lands here.
+let init: jest.SpiedFunction<typeof analytics.init>;
+let capture: jest.SpiedFunction<typeof analytics.capture>;
+beforeEach(() => {
+  init = jest.spyOn(analytics, "init").mockImplementation(() => {});
+  capture = jest.spyOn(analytics, "capture").mockImplementation(() => {});
+});
+
+const realRequestAnimationFrame = window.requestAnimationFrame;
 
 afterEach(() => {
   cleanup();
-  vi.unstubAllGlobals();
-  vi.clearAllMocks();
+  window.requestAnimationFrame = realRequestAnimationFrame;
+  jest.restoreAllMocks();
 });
 
 function setPageGeometry(scrollY: number, innerHeight: number, scrollHeight: number) {
@@ -35,7 +43,10 @@ function setPageGeometry(scrollY: number, innerHeight: number, scrollHeight: num
 }
 
 describe("AnalyticsProvider", () => {
-  it("renders children on the server without booting analytics", () => {
+  it("renders children on the server without booting analytics", async () => {
+    // jsdom lacks TextEncoder, which React's server renderer needs to load.
+    Object.assign(globalThis, { TextEncoder });
+    const { renderToString } = await import("react-dom/server");
     const html = renderToString(
       <AnalyticsProvider>
         <p>hello</p>
@@ -43,7 +54,7 @@ describe("AnalyticsProvider", () => {
     );
 
     expect(html).toContain("hello");
-    expect(analytics.init).not.toHaveBeenCalled();
+    expect(init).not.toHaveBeenCalled();
   });
 
   it("boots analytics and captures the pageview with its query string", () => {
@@ -54,8 +65,8 @@ describe("AnalyticsProvider", () => {
     );
 
     expect(screen.getByText("hello")).toBeDefined();
-    expect(analytics.init).toHaveBeenCalledTimes(1);
-    expect(analytics.capture).toHaveBeenCalledWith("$pageview", {
+    expect(init).toHaveBeenCalledTimes(1);
+    expect(capture).toHaveBeenCalledWith("$pageview", {
       $current_url: `${window.location.origin}/?ref=hn`,
     });
   });
@@ -63,7 +74,7 @@ describe("AnalyticsProvider", () => {
   it("reports each scroll milestone once per page view", () => {
     // Frames run when the test says so, as the browser runs them after the scroll.
     let frames: FrameRequestCallback[] = [];
-    vi.stubGlobal("requestAnimationFrame", (run: FrameRequestCallback) => frames.push(run));
+    window.requestAnimationFrame = (run: FrameRequestCallback) => frames.push(run);
     const nextFrame = () => {
       const due = frames;
       frames = [];
@@ -85,9 +96,9 @@ describe("AnalyticsProvider", () => {
     window.dispatchEvent(new Event("scroll"));
     nextFrame();
 
-    const depths = analytics.capture.mock.calls
+    const depths = capture.mock.calls
       .filter(([event]) => event === "scroll_depth_reached")
-      .map(([, properties]) => properties.depth);
+      .map(([, properties]) => (properties as { depth: number }).depth);
     expect(depths).toEqual([25, 50, 75, 100]);
   });
 });

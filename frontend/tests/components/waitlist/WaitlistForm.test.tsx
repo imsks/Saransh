@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import {
   cleanup,
   fireEvent,
@@ -6,27 +5,37 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 import WaitlistForm from "@/components/waitlist/WaitlistForm";
 
-const analytics = vi.hoisted(() => ({ capture: vi.fn(), identify: vi.fn() }));
-vi.mock("@/lib/analytics", () => ({ analytics }));
+import { analytics } from "@/lib/analytics";
 
-const fetchMock = vi.fn();
+// Spy on the real client: the form calls it at event time, so every call lands here.
+let capture: jest.SpiedFunction<typeof analytics.capture>;
+let identify: jest.SpiedFunction<typeof analytics.identify>;
+
+const fetchMock = jest.fn<typeof fetch>();
 
 beforeEach(() => {
+  capture = jest.spyOn(analytics, "capture").mockImplementation(() => {});
+  identify = jest.spyOn(analytics, "identify").mockImplementation(() => {});
   fetchMock.mockReset();
-  vi.stubGlobal("fetch", fetchMock);
+  global.fetch = fetchMock as typeof fetch;
 });
 
 afterEach(() => {
   cleanup();
-  vi.unstubAllGlobals();
-  vi.clearAllMocks();
-  analytics.capture.mockReset();
-  analytics.identify.mockReset();
+  jest.restoreAllMocks();
   window.sessionStorage.clear();
+  delete (window as { IntersectionObserver?: unknown }).IntersectionObserver;
 });
 
 function respond(status: number, body: unknown) {
@@ -34,7 +43,7 @@ function respond(status: number, body: unknown) {
     ok: status >= 200 && status < 300,
     status,
     json: async () => body,
-  });
+  } as Response);
 }
 
 function fill(name: string, email: string) {
@@ -50,7 +59,7 @@ function submit() {
 
 describe("WaitlistForm", () => {
   it("marks each invalid field and puts its message under it", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     submit();
 
     const name = screen.getByLabelText("NAME");
@@ -72,7 +81,7 @@ describe("WaitlistForm", () => {
   });
 
   it("does not call the API while a field is invalid", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "not-an-email");
     submit();
 
@@ -86,7 +95,7 @@ describe("WaitlistForm", () => {
   });
 
   it("moves focus to the first invalid field", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "nope");
     submit();
 
@@ -94,7 +103,7 @@ describe("WaitlistForm", () => {
   });
 
   it("clears a field's error as soon as that field is edited", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     submit();
 
     fireEvent.change(screen.getByLabelText("NAME"), {
@@ -111,7 +120,7 @@ describe("WaitlistForm", () => {
   });
 
   it("posts the trimmed signup and reports success", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(201, { ok: true });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("  Priya Sharma ", " priya@example.com ");
@@ -121,14 +130,14 @@ describe("WaitlistForm", () => {
 
     const [url, init] = fetchMock.mock.calls[0];
     expect(String(url)).toMatch(/\/waitlist$/);
-    expect(JSON.parse(init.body)).toEqual({
+    expect(JSON.parse(String(init?.body))).toEqual({
       name: "Priya Sharma",
       email: "priya@example.com",
     });
   });
 
   it("treats a duplicate signup as success", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(200, { ok: true, duplicate: true });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");
@@ -138,7 +147,7 @@ describe("WaitlistForm", () => {
   });
 
   it("shows a form-level error when the API fails, without blaming a field", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(500, { detail: "Unable to save your waitlist signup right now." });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");
@@ -161,7 +170,7 @@ describe("WaitlistForm analytics", () => {
   const TOKEN = "3f2b8a52-7c1d-4e0b-9a77-1f5e2c9d4b10";
 
   function captured(event: string) {
-    return analytics.capture.mock.calls
+    return capture.mock.calls
       .filter(([name]) => name === event)
       .map(([, properties]) => properties);
   }
@@ -169,23 +178,20 @@ describe("WaitlistForm analytics", () => {
   /** An IntersectionObserver the test drives by hand. */
   function stubIntersectionObserver() {
     const observers: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
-    vi.stubGlobal(
-      "IntersectionObserver",
-      class {
-        constructor(callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
-          observers.push(callback);
-        }
-        observe() {}
-        disconnect() {}
-      },
-    );
+    (window as { IntersectionObserver?: unknown }).IntersectionObserver = class {
+      constructor(callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
+        observers.push(callback);
+      }
+      observe() {}
+      disconnect() {}
+    };
     return (isIntersecting: boolean) =>
       observers.forEach((notify) => notify([{ isIntersecting }]));
   }
 
   it("reports the form as viewed only once it scrolls into view", () => {
     const intersect = stubIntersectionObserver();
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
 
     intersect(false);
     expect(captured("waitlist_form_viewed")).toEqual([]);
@@ -195,19 +201,19 @@ describe("WaitlistForm analytics", () => {
   });
 
   it("reports the first field touched, once per session", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
 
     fireEvent.focus(screen.getByLabelText("EMAIL ADDRESS"));
     fireEvent.focus(screen.getByLabelText("NAME"));
     cleanup();
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fireEvent.focus(screen.getByLabelText("NAME"));
 
     expect(captured("waitlist_form_started")).toEqual([{ field: "email" }]);
   });
 
   it("does not report a client-side validation error as a submission", () => {
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "not-an-email");
     submit();
 
@@ -215,7 +221,7 @@ describe("WaitlistForm analytics", () => {
   });
 
   it("reports a new signup and identifies the Visitor by its Signup Token", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(201, { ok: true, signup_token: TOKEN });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");
@@ -223,12 +229,12 @@ describe("WaitlistForm analytics", () => {
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
     expect(captured("waitlist_submitted")).toEqual([{ outcome: "created" }]);
-    expect(analytics.identify).toHaveBeenCalledTimes(1);
-    expect(analytics.identify.mock.calls[0]).toEqual([TOKEN]);
+    expect(identify).toHaveBeenCalledTimes(1);
+    expect(identify.mock.calls[0]).toEqual([TOKEN]);
   });
 
   it("reports a re-submitted email as a duplicate, under the same Token", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(200, { ok: true, duplicate: true, signup_token: TOKEN });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fill("Priya Sharma", "priya@example.com");
@@ -236,24 +242,48 @@ describe("WaitlistForm analytics", () => {
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
     expect(captured("waitlist_submitted")).toEqual([{ outcome: "duplicate" }]);
-    expect(analytics.identify.mock.calls[0]).toEqual([TOKEN]);
+    expect(identify.mock.calls[0]).toEqual([TOKEN]);
   });
 
   it("reports a backend failure with its status, and identifies no one", async () => {
     respond(500, { detail: "Unable to save your waitlist signup right now." });
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "priya@example.com");
     submit();
 
     await screen.findByText("Something went wrong. Please try again.");
     expect(captured("waitlist_submitted")).toEqual([{ outcome: "failed", status: 500 }]);
-    expect(analytics.identify).not.toHaveBeenCalled();
+    expect(identify).not.toHaveBeenCalled();
+  });
+
+  it("reports a 2xx response that is not a signup as a failure", async () => {
+    respond(202, {});
+    render(<WaitlistForm onSuccess={jest.fn()} />);
+    fill("Priya Sharma", "priya@example.com");
+    submit();
+
+    await screen.findByText("Something went wrong. Please try again.");
+    expect(captured("waitlist_submitted")).toEqual([{ outcome: "failed", status: 202 }]);
+  });
+
+  it("still reports the first interaction when the browser refuses storage", () => {
+    jest.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("SecurityError");
+    });
+    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("SecurityError");
+    });
+    render(<WaitlistForm onSuccess={jest.fn()} />);
+
+    fireEvent.focus(screen.getByLabelText("NAME"));
+
+    expect(captured("waitlist_form_started")).toEqual([{ field: "name" }]);
   });
 
   it("reports a network failure", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
     fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
-    render(<WaitlistForm onSuccess={vi.fn()} />);
+    render(<WaitlistForm onSuccess={jest.fn()} />);
     fill("Priya Sharma", "priya@example.com");
     submit();
 
@@ -262,7 +292,7 @@ describe("WaitlistForm analytics", () => {
   });
 
   it("never sends the name or email to analytics", async () => {
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(201, { ok: true, signup_token: TOKEN });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fireEvent.focus(screen.getByLabelText("NAME"));
@@ -271,22 +301,22 @@ describe("WaitlistForm analytics", () => {
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled());
     const sent = JSON.stringify([
-      analytics.capture.mock.calls,
-      analytics.identify.mock.calls,
+      capture.mock.calls,
+      identify.mock.calls,
     ]);
     expect(sent).not.toContain("priya");
     expect(sent).not.toContain("Priya");
   });
 
   it("completes the signup even when analytics throws", async () => {
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    analytics.capture.mockImplementation(() => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    capture.mockImplementation(() => {
       throw new Error("analytics down");
     });
-    analytics.identify.mockImplementation(() => {
+    identify.mockImplementation(() => {
       throw new Error("analytics down");
     });
-    const onSuccess = vi.fn();
+    const onSuccess = jest.fn();
     respond(201, { ok: true, signup_token: TOKEN });
     render(<WaitlistForm onSuccess={onSuccess} />);
     fireEvent.focus(screen.getByLabelText("NAME"));

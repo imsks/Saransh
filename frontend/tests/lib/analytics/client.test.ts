@@ -1,4 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+/**
+ * @jest-environment node
+ */
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import {
   createAnalyticsClient,
@@ -18,11 +21,11 @@ const DISABLED: AnalyticsConfig = { ...ENABLED, enabled: false, key: "" };
 /** Stand-in for the PostHog SDK: no browser, no network, no vendor code. */
 function createFakeTransport() {
   return {
-    init: vi.fn(),
-    capture: vi.fn(),
-    identify: vi.fn(),
-    reset: vi.fn(),
-    startSessionRecording: vi.fn(),
+    init: jest.fn<AnalyticsTransport["init"]>(),
+    capture: jest.fn<AnalyticsTransport["capture"]>(),
+    identify: jest.fn<AnalyticsTransport["identify"]>(),
+    reset: jest.fn<AnalyticsTransport["reset"]>(),
+    startSessionRecording: jest.fn<AnalyticsTransport["startSessionRecording"]>(),
   } satisfies AnalyticsTransport;
 }
 
@@ -35,8 +38,9 @@ function memoryStore(initial: Record<string, string> = {}): SessionStore {
 }
 
 // These tests run in the node environment, so `window` is absent unless stubbed.
+const globals = globalThis as { window?: unknown };
 function withBrowser() {
-  vi.stubGlobal("window", { location: { origin: "https://saransh.app" } });
+  globals.window = { location: { origin: "https://saransh.app" } };
 }
 
 function booted(config: AnalyticsConfig = ENABLED, extra = {}) {
@@ -51,8 +55,8 @@ function booted(config: AnalyticsConfig = ENABLED, extra = {}) {
 }
 
 afterEach(() => {
-  vi.unstubAllGlobals();
-  vi.restoreAllMocks();
+  delete globals.window;
+  jest.restoreAllMocks();
 });
 
 describe("createAnalyticsClient", () => {
@@ -119,6 +123,14 @@ describe("createAnalyticsClient", () => {
       expect(transport.identify.mock.calls[0]).toEqual(["5b8f0c1e-signup-token"]);
     });
 
+    it("forwards a reset", () => {
+      const { transport, analytics } = booted();
+
+      analytics.reset();
+
+      expect(transport.reset).toHaveBeenCalledTimes(1);
+    });
+
     it("does not identify with an empty token", () => {
       const { transport, analytics } = booted();
 
@@ -138,7 +150,7 @@ describe("createAnalyticsClient", () => {
 
     it("swallows transport failures", () => {
       const { transport, analytics } = booted();
-      vi.spyOn(console, "warn").mockImplementation(() => {});
+      jest.spyOn(console, "warn").mockImplementation(() => {});
       transport.capture.mockImplementation(() => {
         throw new Error("sdk exploded");
       });
@@ -184,6 +196,48 @@ describe("createAnalyticsClient", () => {
       const { transport } = booted({ ...ENABLED, replaySampleRate: 0 }, { sessionStore });
 
       expect(transport.startSessionRecording).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("the browser's session storage", () => {
+    function withStorage(storage: Partial<Storage>) {
+      globals.window = { location: { origin: "https://saransh.app" }, sessionStorage: storage };
+    }
+
+    it("remembers the sampling decision there by default", () => {
+      const saved = new Map<string, string>();
+      withStorage({
+        getItem: (key) => saved.get(key) ?? null,
+        setItem: (key, value) => void saved.set(key, value),
+      });
+      const transport = createFakeTransport();
+      createAnalyticsClient(transport, {
+        config: { ...ENABLED, replaySampleRate: 0.5 },
+        random: () => 0.1,
+      }).init();
+
+      expect(saved.get("saransh.analytics.replay")).toBe("1");
+      expect(transport.startSessionRecording).toHaveBeenCalledTimes(1);
+    });
+
+    it("still samples when the browser refuses storage", () => {
+      withStorage({
+        getItem: () => {
+          throw new Error("SecurityError");
+        },
+        setItem: () => {
+          throw new Error("SecurityError");
+        },
+      });
+      const transport = createFakeTransport();
+
+      expect(() =>
+        createAnalyticsClient(transport, {
+          config: { ...ENABLED, replaySampleRate: 1 },
+          random: () => 0.5,
+        }).init(),
+      ).not.toThrow();
+      expect(transport.startSessionRecording).toHaveBeenCalledTimes(1);
     });
   });
 

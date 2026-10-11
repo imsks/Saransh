@@ -1,6 +1,5 @@
-// @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
@@ -9,22 +8,27 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import ThankYou from "@/components/waitlist/ThankYou";
 
-const analytics = vi.hoisted(() => ({ capture: vi.fn() }));
-vi.mock("@/lib/analytics", () => ({ analytics }));
+import { analytics } from "@/lib/analytics";
+
+// Spy on the real client: components call it at event time, so every capture lands here.
+let capture: jest.SpiedFunction<typeof analytics.capture>;
 
 // jsdom cannot navigate; the click still runs every handler before this.
 const stayOnPage = (e: Event) => e.preventDefault();
-beforeEach(() => document.addEventListener("click", stayOnPage));
+beforeEach(() => {
+  capture = jest.spyOn(analytics, "capture").mockImplementation(() => {});
+  document.addEventListener("click", stayOnPage);
+});
 
 afterEach(() => {
   document.removeEventListener("click", stayOnPage);
   cleanup();
-  vi.clearAllMocks();
+  jest.restoreAllMocks();
 });
 
 describe("TrackedLink", () => {
   it("reports its event by beacon and still behaves as a link", () => {
-    const onClick = vi.fn();
+    const onClick = jest.fn();
     render(
       <TrackedLink
         event="outbound_link_clicked"
@@ -41,7 +45,7 @@ describe("TrackedLink", () => {
 
     expect(link.getAttribute("href")).toBe("https://github.com/imsks/Saransh");
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(analytics.capture).toHaveBeenCalledWith(
+    expect(capture).toHaveBeenCalledWith(
       "outbound_link_clicked",
       { destination: "github", placement: "navbar" },
       { beacon: true },
@@ -64,14 +68,14 @@ describe("TrackedLink", () => {
       new MouseEvent("auxclick", { bubbles: true, button: 1 }),
     );
 
-    expect(analytics.capture).toHaveBeenCalledTimes(1);
+    expect(capture).toHaveBeenCalledTimes(1);
   });
 });
 
 describe("outbound links", () => {
   function placementsFor(name: RegExp) {
     fireEvent.click(screen.getByRole("link", { name }));
-    return analytics.capture.mock.calls.at(-1)?.[1];
+    return capture.mock.calls.at(-1)?.[1];
   }
 
   it("tells the navbar GitHub link apart from the footer one", () => {

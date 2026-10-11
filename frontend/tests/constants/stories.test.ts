@@ -1,19 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 
 import { STORIES } from "@/constants/stories";
 
 describe("sample stories", () => {
   it("covers National, State and International, and names no district", () => {
-    expect(STORIES.map((s) => s.category)).toEqual(["National", "State", "International"]);
+    expect(STORIES.map((s) => s.category)).toEqual([
+      "National",
+      "State",
+      "International",
+    ]);
   });
 
   it("picks its topics from the seven", () => {
-    expect(STORIES.map((s) => s.topic)).toEqual(["politics", "civic", "business"]);
+    expect(STORIES.map((s) => s.topic)).toEqual([
+      "politics",
+      "civic",
+      "business",
+    ]);
   });
 
-  it("keeps each English body to 60 words or fewer", () => {
+  it("keeps each English body between 60 and 80 words", () => {
     for (const story of STORIES) {
-      expect(story.body.split(/\s+/).length).toBeLessThanOrEqual(60);
+      expect(story.body.split(/\s+/).length).toBeGreaterThanOrEqual(60);
+      expect(story.body.split(/\s+/).length).toBeLessThanOrEqual(80);
     }
   });
 
@@ -27,9 +36,10 @@ describe("sample stories", () => {
   it("credits an illustration or an official photo, never a publisher", () => {
     for (const story of STORIES) {
       const credit = story.credit;
-      expect(credit === "Illustration · Saransh" || /^Photo: .+ \(official\)$/.test(credit)).toBe(
-        true,
-      );
+      expect(
+        credit === "Illustration · Saransh" ||
+          /^Photo: .+ \(official\)$/.test(credit),
+      ).toBe(true);
     }
   });
 

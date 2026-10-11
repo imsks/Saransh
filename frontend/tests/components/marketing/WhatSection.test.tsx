@@ -1,10 +1,9 @@
-// @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, jest } from "@jest/globals";
 
 import WhatSection from "@/components/marketing/WhatSection";
 
-vi.mock("@/components/stories/StoryCarousel", () => ({
+jest.mock("@/components/stories/StoryCarousel", () => ({
   default: () => <div data-testid="story-carousel" />,
 }));
 

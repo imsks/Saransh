@@ -1,9 +1,12 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 
-const css = readFileSync(path.resolve(__dirname, "../../src/app/globals.css"), "utf8");
+const css = readFileSync(
+  path.resolve(__dirname, "../../src/app/globals.css"),
+  "utf8",
+);
 
 /** Body of the first rule whose selector is exactly `selector`. */
 function block(selector: string): string {
@@ -16,7 +19,9 @@ function block(selector: string): string {
 /** Custom properties declared in a block, as name → value. */
 function tokens(body: string): Map<string, string> {
   const found = new Map<string, string>();
-  for (const [, name, value] of Array.from(body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g))) {
+  for (const [, name, value] of Array.from(
+    body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g),
+  )) {
     found.set(name, value.trim());
   }
   return found;
@@ -43,10 +48,14 @@ describe("globals.css tokens", () => {
 
   it("defines every palette token in both themes", () => {
     const palette = Array.from(light.keys()).filter(
-      (name) => !name.startsWith("--sutra-") && !["--background", "--foreground"].includes(name),
+      (name) =>
+        !name.startsWith("--sutra-") &&
+        !["--background", "--foreground"].includes(name),
     );
     expect(palette.filter((name) => !dark.has(name))).toEqual([]);
-    expect(Array.from(dark.keys()).filter((name) => !light.has(name))).toEqual([]);
+    expect(Array.from(dark.keys()).filter((name) => !light.has(name))).toEqual(
+      [],
+    );
   });
 
   it("carries the v1.2 app tokens with the design-system values", () => {
@@ -72,19 +81,26 @@ describe("globals.css tokens", () => {
       expect(light.get(`--topic-${topic}`)).toBe(lightValue);
       expect(dark.get(`--topic-${topic}`)).toBe(darkValue);
       expect(light.get(`--topic-${topic}-bg`)).toMatch(/^#[0-9a-f]{6}$/);
-      expect(dark.get(`--topic-${topic}-bg`)).toBe(
-        `color-mix(in srgb, var(--topic-${topic}) 18%, var(--card))`,
+      const darkBg = (dark.get(`--topic-${topic}-bg`) ?? "")
+        .replace(/\s+/g, " ")
+        .trim();
+      expect(darkBg).toMatch(
+        new RegExp(
+          `^color-mix\\s*\\(\\s*in srgb, var\\(--topic-${topic}\\) 18%, var\\(--card\\)\\s*\\)$`,
+        ),
       );
     }
 
-    expect(Array.from(light.keys()).filter((name) => name.startsWith("--topic-"))).toHaveLength(
-      accents.length * 2,
-    );
+    expect(
+      Array.from(light.keys()).filter((name) => name.startsWith("--topic-")),
+    ).toHaveLength(accents.length * 2);
   });
 
   it("keeps the retired v1.2 topic tokens out", () => {
     for (const retired of ["edu", "health", "jobs", "transport"]) {
-      expect(css).not.toMatch(new RegExp(`--(?:color-)?topic-${retired}(?![\\w])`));
+      expect(css).not.toMatch(
+        new RegExp(`--(?:color-)?topic-${retired}(?![\\w])`),
+      );
     }
   });
 

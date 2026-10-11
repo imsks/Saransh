@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 
 import { getSiteUrl, SITE_TAGLINE } from "@/lib/seo/site";
 

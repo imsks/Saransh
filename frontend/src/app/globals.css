@@ -142,12 +142,28 @@
   --topic-entertainment: #e59bef;
   --topic-sports: #a9d46a;
   /* Dark illustration wash: the accent mixed 18% into the card colour. */
-  --topic-politics-bg: color-mix(in srgb, var(--topic-politics) 18%, var(--card));
+  --topic-politics-bg: color-mix(
+    in srgb,
+    var(--topic-politics) 18%,
+    var(--card)
+  );
   --topic-civic-bg: color-mix(in srgb, var(--topic-civic) 18%, var(--card));
-  --topic-education-bg: color-mix(in srgb, var(--topic-education) 18%, var(--card));
+  --topic-education-bg: color-mix(
+    in srgb,
+    var(--topic-education) 18%,
+    var(--card)
+  );
   --topic-crime-bg: color-mix(in srgb, var(--topic-crime) 18%, var(--card));
-  --topic-business-bg: color-mix(in srgb, var(--topic-business) 18%, var(--card));
-  --topic-entertainment-bg: color-mix(in srgb, var(--topic-entertainment) 18%, var(--card));
+  --topic-business-bg: color-mix(
+    in srgb,
+    var(--topic-business) 18%,
+    var(--card)
+  );
+  --topic-entertainment-bg: color-mix(
+    in srgb,
+    var(--topic-entertainment) 18%,
+    var(--card)
+  );
   --topic-sports-bg: color-mix(in srgb, var(--topic-sports) 18%, var(--card));
 
   --sutra-color-surface: var(--card);
@@ -244,6 +260,32 @@ body {
 
 .animate-card-in {
   animation: card-in 0.3s ease forwards;
+}
+
+@keyframes story-slide-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes story-slide-right {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-story-slide-left {
+  animation: story-slide-left 0.35s ease-out both;
+}
+
+.animate-story-slide-right {
+  animation: story-slide-right 0.35s ease-out both;
 }
 
 .animate-fade-in {

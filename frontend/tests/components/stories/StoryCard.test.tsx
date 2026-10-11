@@ -1,23 +1,27 @@
-// @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import type { Story, Topic } from "@/constants/stories";
 
 import StoryCard from "@/components/stories/StoryCard";
 
-const analytics = vi.hoisted(() => ({ capture: vi.fn() }));
-vi.mock("@/lib/analytics", () => ({ analytics }));
+import { analytics } from "@/lib/analytics";
+
+// Spy on the real client: components call it at event time, so every capture lands here.
+let capture: jest.SpiedFunction<typeof analytics.capture>;
+
+beforeEach(() => {
+  capture = jest.spyOn(analytics, "capture").mockImplementation(() => {});
+});
 
 afterEach(() => {
   cleanup();
-  vi.clearAllMocks();
+  jest.restoreAllMocks();
 });
 
 function story(overrides: Partial<Story> = {}): Story {
   return {
     category: "National · Parliament",
-    time: "2 hrs ago",
     topic: "civic",
     credit: "PTI",
     headline: "Parliament passes data bill",
@@ -29,6 +33,16 @@ function story(overrides: Partial<Story> = {}): Story {
 }
 
 describe("StoryCard", () => {
+  const topicCases: [Topic, string][] = [
+    ["politics", "Politics"],
+    ["civic", "Civic"],
+    ["education", "Education"],
+    ["crime", "Crime"],
+    ["business", "Business & Economy"],
+    ["entertainment", "Entertainment"],
+    ["sports", "Sports"],
+  ];
+
   it("links the source credit to the citation link", () => {
     render(<StoryCard story={story()} />);
 
@@ -54,7 +68,11 @@ describe("StoryCard", () => {
   });
 
   it("renders the credit as plain text when there is no citation link", () => {
-    render(<StoryCard story={story({ sourceUrl: undefined, credit: "PTI Photo" })} />);
+    render(
+      <StoryCard
+        story={story({ sourceUrl: undefined, credit: "PTI Photo" })}
+      />,
+    );
 
     expect(screen.queryByRole("link")).toBeNull();
     expect(screen.getByText("PTI")).toBeTruthy();
@@ -73,45 +91,46 @@ describe("StoryCard", () => {
   });
 
   it("shows the tick for official sources only", () => {
-    const { container, rerender } = render(<StoryCard story={story({ official: true })} />);
+    const { container, rerender } = render(
+      <StoryCard story={story({ official: true })} />,
+    );
     expect(container.querySelector("[data-official-tick]")).not.toBeNull();
 
     rerender(<StoryCard story={story({ official: false })} />);
     expect(container.querySelector("[data-official-tick]")).toBeNull();
   });
 
-  it.each([
-    ["politics", "Politics"],
-    ["civic", "Civic"],
-    ["education", "Education"],
-    ["crime", "Crime"],
-    ["business", "Business & Economy"],
-    ["entertainment", "Entertainment"],
-    ["sports", "Sports"],
-  ] as const)("renders the %s topic as a text label", (topic, label) => {
-    render(<StoryCard story={story({ topic })} />);
+  it.each(topicCases)(
+    "renders the %s topic as a text label",
+    (topic, label) => {
+      render(<StoryCard story={story({ topic })} />);
 
-    const topicLabel = screen.getByText(label);
-    expect(topicLabel.tagName).toBe("SPAN");
-    expect(topicLabel.className).toContain(`text-topic-${topic}`);
-    expect(topicLabel.className).toContain("text-[12px]");
-    expect(topicLabel.className).toContain("font-bold");
-    expect(topicLabel.parentElement?.className).toContain("h-[26px]");
-    expect(topicLabel.parentElement?.children[1]?.className).toContain("w-[26px]");
-
-    const time = screen.getByText("2 hrs ago");
-    expect(time.className).toContain("text-muted");
-    expect(time.className).toContain("font-medium");
-    expect(time.className).not.toContain(`text-topic-${topic}`);
-  });
+      const topicLabel = screen.getByText(label);
+      expect(topicLabel.tagName).toBe("SPAN");
+      expect(topicLabel.className).toContain(`text-topic-${topic}`);
+      expect(topicLabel.className).toContain("text-[12px]");
+      expect(topicLabel.className).toContain("font-bold");
+      expect(topicLabel.parentElement?.className).toContain("h-[26px]");
+      expect(topicLabel.parentElement?.children[1]?.className).toContain(
+        "w-[26px]",
+      );
+    },
+  );
 
   it("uses the topic wash behind the image only when there is no photo", () => {
-    const { container, rerender } = render(<StoryCard story={story({ topic: "education" })} />);
-    expect(container.querySelector("[data-topic]")?.className).toContain("bg-topic-education-bg");
+    const { container, rerender } = render(
+      <StoryCard story={story({ topic: "education" })} />,
+    );
+    expect(container.querySelector("[data-topic]")?.className).toContain(
+      "bg-topic-education-bg",
+    );
 
     rerender(
       <StoryCard
-        story={story({ topic: "education", imageUrl: "https://example.com/cover.jpg" })}
+        story={story({
+          topic: "education",
+          imageUrl: "https://example.com/cover.jpg",
+        })}
       />,
     );
     expect(container.querySelector("[data-topic]")?.className).not.toContain(
@@ -141,12 +160,32 @@ describe("StoryCard", () => {
   });
 
   it("still renders headline, body and cover image alongside the link", () => {
-    render(<StoryCard story={story({ imageUrl: "https://example.com/cover.jpg" })} />);
+    render(
+      <StoryCard
+        story={story({ imageUrl: "https://example.com/cover.jpg" })}
+      />,
+    );
 
     expect(screen.getByText("Parliament passes data bill")).toBeTruthy();
     expect(screen.getByText(/voice vote/)).toBeTruthy();
     const image = screen.getByAltText("Parliament passes data bill");
     expect(image.getAttribute("src")).toBe("https://example.com/cover.jpg");
+  });
+
+  it("keeps card dimensions fixed without scrolling or truncating story copy", () => {
+    const { container } = render(
+      <StoryCard story={story({ body: "Details ".repeat(500) })} />,
+    );
+
+    const card = container.querySelector("article");
+    expect(card?.className).toContain("h-148");
+    expect(card?.className).toContain("w-full");
+    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
+      "overflow-y-auto",
+    );
+    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
+      "line-clamp",
+    );
   });
 });
 
@@ -157,7 +196,7 @@ describe("StoryCard Citation Links", () => {
     fireEvent.click(screen.getByRole("link", { name: /source article/ }));
     fireEvent.click(screen.getByRole("link", { name: /^Read story/ }));
 
-    expect(analytics.capture.mock.calls).toEqual([
+    expect(capture.mock.calls).toEqual([
       [
         "citation_link_clicked",
         { source: "PTI", headline: "Parliament passes data bill", link: "source_line" },

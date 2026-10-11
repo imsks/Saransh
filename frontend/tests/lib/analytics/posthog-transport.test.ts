@@ -1,23 +1,30 @@
+/**
+ * @jest-environment node
+ */
 import type { PostHog } from "posthog-js";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, jest } from "@jest/globals";
 
 import { createPostHogTransport } from "@/lib/analytics/posthog-transport";
 
 function fakeSdk() {
   return {
-    init: vi.fn(),
-    capture: vi.fn(),
-    identify: vi.fn(),
-    reset: vi.fn(),
-    startSessionRecording: vi.fn(),
+    init: jest.fn<(...args: unknown[]) => void>(),
+    capture: jest.fn<(event: string, ...rest: unknown[]) => void>(),
+    identify: jest.fn<(...args: unknown[]) => void>(),
+    reset: jest.fn<() => void>(),
+    startSessionRecording: jest.fn<() => void>(),
   };
 }
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("createPostHogTransport", () => {
   it("does not load the SDK until init", async () => {
-    const load = vi.fn(async () => fakeSdk() as unknown as PostHog);
+    const load = jest.fn(async () => fakeSdk() as unknown as PostHog);
     const transport = createPostHogTransport(load);
 
     transport.capture("waitlist_form_viewed", {});
@@ -42,8 +49,36 @@ describe("createPostHogTransport", () => {
     expect(order).toEqual(["init", "waitlist_form_viewed"]);
   });
 
+  it("forwards identify, reset and recording once loaded", async () => {
+    const sdk = fakeSdk();
+    const transport = createPostHogTransport(async () => sdk as unknown as PostHog);
+    transport.init("phc_test", {} as never);
+    await flush();
+
+    transport.identify("signup-token");
+    transport.startSessionRecording();
+    transport.reset();
+
+    expect(sdk.identify).toHaveBeenCalledWith("signup-token");
+    expect(sdk.startSessionRecording).toHaveBeenCalledTimes(1);
+    expect(sdk.reset).toHaveBeenCalledTimes(1);
+  });
+
+  it("swallows a call the SDK throws on", async () => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    const sdk = fakeSdk();
+    sdk.capture.mockImplementation(() => {
+      throw new Error("sdk exploded");
+    });
+    const transport = createPostHogTransport(async () => sdk as unknown as PostHog);
+    transport.init("phc_test", {} as never);
+    await flush();
+
+    expect(() => transport.capture("waitlist_form_viewed", {})).not.toThrow();
+  });
+
   it("drops calls quietly when the SDK is blocked", async () => {
-    vi.spyOn(console, "warn").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
     const transport = createPostHogTransport(() => Promise.reject(new Error("blocked")));
 
     transport.init("phc_test", {} as never);

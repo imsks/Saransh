@@ -1,4 +1,7 @@
-import { describe, expect, it } from "vitest";
+/**
+ * @jest-environment node
+ */
+import { describe, expect, it } from "@jest/globals";
 
 import {
   DEFAULT_POSTHOG_HOST,

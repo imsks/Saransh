@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -55,7 +55,7 @@ services:
       - ./frontend/next.config.mjs:/app/next.config.mjs
       - ./frontend/postcss.config.mjs:/app/postcss.config.mjs
       - ./frontend/tsconfig.json:/app/tsconfig.json
-      - ./frontend/vitest.config.ts:/app/vitest.config.ts
+      - ./frontend/jest.config.js:/app/jest.config.js
       - ./frontend/.eslintrc.json:/app/.eslintrc.json
       - ./frontend/package.json:/app/package.json
       - ./frontend/package-lock.json:/app/package-lock.json
