@@ -16,7 +16,7 @@ import {
 
 import WaitlistForm from "@/components/waitlist/WaitlistForm";
 
-const fetchMock = jest.fn();
+const fetchMock = jest.fn<typeof fetch>();
 
 beforeEach(() => {
   fetchMock.mockReset();
@@ -33,7 +33,7 @@ function respond(status: number, body: unknown) {
     ok: status >= 200 && status < 300,
     status,
     json: async () => body,
-  });
+  } as Response);
 }
 
 function fill(name: string, email: string) {
@@ -120,7 +120,7 @@ describe("WaitlistForm", () => {
 
     const [url, init] = fetchMock.mock.calls[0];
     expect(String(url)).toMatch(/\/waitlist$/);
-    expect(JSON.parse(init.body)).toEqual({
+    expect(JSON.parse(String(init?.body))).toEqual({
       name: "Priya Sharma",
       email: "priya@example.com",
     });

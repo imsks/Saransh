@@ -21,6 +21,16 @@ function story(overrides: Partial<Story> = {}): Story {
 }
 
 describe("StoryCard", () => {
+  const topicCases: [Topic, string][] = [
+    ["politics", "Politics"],
+    ["civic", "Civic"],
+    ["education", "Education"],
+    ["crime", "Crime"],
+    ["business", "Business & Economy"],
+    ["entertainment", "Entertainment"],
+    ["sports", "Sports"],
+  ];
+
   it("links the source credit to the citation link", () => {
     render(<StoryCard story={story()} />);
 
@@ -78,27 +88,22 @@ describe("StoryCard", () => {
     expect(container.querySelector("[data-official-tick]")).toBeNull();
   });
 
-  it.each([
-    ["politics", "Politics"],
-    ["civic", "Civic"],
-    ["education", "Education"],
-    ["crime", "Crime"],
-    ["business", "Business & Economy"],
-    ["entertainment", "Entertainment"],
-    ["sports", "Sports"],
-  ] as const)("renders the %s topic as a text label", (topic, label) => {
-    render(<StoryCard story={story({ topic })} />);
+  it.each(topicCases)(
+    "renders the %s topic as a text label",
+    (topic, label) => {
+      render(<StoryCard story={story({ topic })} />);
 
-    const topicLabel = screen.getByText(label);
-    expect(topicLabel.tagName).toBe("SPAN");
-    expect(topicLabel.className).toContain(`text-topic-${topic}`);
-    expect(topicLabel.className).toContain("text-[12px]");
-    expect(topicLabel.className).toContain("font-bold");
-    expect(topicLabel.parentElement?.className).toContain("h-[26px]");
-    expect(topicLabel.parentElement?.children[1]?.className).toContain(
-      "w-[26px]",
-    );
-  });
+      const topicLabel = screen.getByText(label);
+      expect(topicLabel.tagName).toBe("SPAN");
+      expect(topicLabel.className).toContain(`text-topic-${topic}`);
+      expect(topicLabel.className).toContain("text-[12px]");
+      expect(topicLabel.className).toContain("font-bold");
+      expect(topicLabel.parentElement?.className).toContain("h-[26px]");
+      expect(topicLabel.parentElement?.children[1]?.className).toContain(
+        "w-[26px]",
+      );
+    },
+  );
 
   it("uses the topic wash behind the image only when there is no photo", () => {
     const { container, rerender } = render(
