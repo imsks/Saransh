@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, IBM_Plex_Mono, Inter, Noto_Sans_Devanagari } from "next/font/google";
 
 import JsonLd from "@/components/seo/JsonLd";
-import { ThemeProvider } from "@/components/providers";
+import { AnalyticsProvider, ThemeProvider } from "@/components/providers";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/json-ld";
 import {
   buildDefaultOg,
@@ -111,7 +111,9 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />
-        <ThemeProvider>{children}</ThemeProvider>
+        <AnalyticsProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AnalyticsProvider>
       </body>
     </html>
   );
