@@ -4,7 +4,7 @@
 
 Saransh is an open-source news app for India: up to 50 short, sourced stories a day, in Hindi or English, approved by a person, with no personalisation and no algorithm.
 
-This file is the project's vocabulary. Use these words in code, commits, issues and reviews. It defines what the words mean; for what is actually built, read [`docs/PROJECT_STATE.md`](./docs/PROJECT_STATE.md). Where a term describes something planned and not yet in the code, it says so.
+This file is the project's vocabulary. Use these words in code, commits, issues and reviews. It defines what the words mean; for what is actually built, see the status section of the [README](./readme.md). Where a term describes something planned and not yet in the code, it says so.
 
 ## Language
 

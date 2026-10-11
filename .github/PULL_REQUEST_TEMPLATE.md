@@ -42,7 +42,6 @@
 ## Checklist
 
 - [ ] I have **not** committed `.env`, API keys, or any secrets
-- [ ] I have updated **`docs/PROJECT_STATE.md`** to match this change (or it changes nothing about how the project works — say so above)
 - [ ] I have reviewed the diff and it only contains intended changes
 - [ ] Tests pass locally (`pytest tests/ -v` and `cd frontend && npm test`)
 - [ ] UI changes look right in **both light and dark mode** and at 360px

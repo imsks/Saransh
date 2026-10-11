@@ -2,8 +2,6 @@
 
 The Next.js frontend for Saransh: today the landing page, the waitlist and the privacy page. The reader app (a swipeable story deck with Google sign-in) is planned and not built.
 
-What is built, how it works and what is planned: [`docs/PROJECT_STATE.md`](../docs/PROJECT_STATE.md), sections 8, 9 and 14. If your change makes that file wrong, update it in the same pull request.
-
 ## Development
 
 From the repo root, the whole stack runs in Docker:

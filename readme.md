@@ -67,8 +67,6 @@ Saransh has not launched. This section is kept honest on purpose.
 - There is no word-limit check yet (rule 1).
 - The landing page still carries older wording, including claims about human review and a public pipeline that are ahead of the product.
 
-The full, current picture of the code is in **[docs/PROJECT_STATE.md](docs/PROJECT_STATE.md)**: what exists, how it works, what will surprise you, and what is planned. Read it before you build anything.
-
 **Next:** a 4-week pilot with real stories across all three tiers, every one approved by a person. Later phases: politician-wise news on Rajniti profiles (V2), then citizen reporting (V3).
 
 ---
@@ -250,7 +248,7 @@ saransh/
 │   ├── agents/           # empty today; the planned pipeline goes here
 │   └── utils/            # logging
 ├── alembic/              # database migrations
-├── docs/                 # PROJECT_STATE.md, DEPLOYMENT.md, ADRs
+├── docs/                 # DEPLOYMENT.md, ADRs, ingest routine
 ├── frontend/             # Next.js frontend
 ├── scripts/              # DB init, Cloud Run deploy
 ├── tests/
@@ -306,11 +304,9 @@ If a component is generic enough for Rajniti to want it too, it belongs in Sutra
 ## 🤝 Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) first — it covers branching, house rules, the PR
-template, and the two rules that matter most: **never publish an unsourced Summary**, and
-**update [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) in the same pull request as your change.**
+template, and the one rule that matters most: **never publish an unsourced Summary.**
 
 - [Good first issues](https://github.com/imsks/Saransh/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-- Current state of the code: [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md)
 - Decisions and their reasons: [docs/adr/](docs/adr/)
 - Found a wrong story or a wrong attribution? [Open an issue](https://github.com/imsks/Saransh/issues/new). Corrections and grievances are handled in public.
 

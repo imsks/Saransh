@@ -8,7 +8,9 @@ different ports and service names.
 Rajniti owns `users`; Saransh owns `stories`, `sources` and `waitlist`. A Saransh migration must
 never create, alter or drop a table Saransh does not own — read every migration before you deploy
 it. Saransh keeps its place in its own version table, `alembic_version_saransh`, so the two
-migration histories do not overwrite each other.
+migration histories do not overwrite each other. Autogenerate (`make revision`) only looks at the
+tables listed in `SARANSH_OWNED_TABLES` in `app/db/ownership.py`, so it cannot propose dropping a
+Rajniti table; a hand-written migration is not covered by that filter.
 
 Deploys are triggered by a human running a committed script — there is no CI deploy job. That is
 a deliberate choice (decision D6); promoting it to GitHub Actions with Workload Identity

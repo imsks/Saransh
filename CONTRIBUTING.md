@@ -18,19 +18,6 @@ Everything else in this guide is negotiable style. This rule is not.
 
 ---
 
-## Keep `docs/PROJECT_STATE.md` current
-
-**Every pull request that changes how the project works must update [`docs/PROJECT_STATE.md`](./docs/PROJECT_STATE.md) in the same pull request.** That file is the one description of what is built and how. Contributors, reviewers and AI assistants all start from it, so a change that is not recorded there is a trap for the next person.
-
-- **Before you start:** read it, especially section 11 (known gaps) and section 14 (product direction).
-- **When you change something:** update the matching section. Section 13 of the file lists which section goes with which kind of change (an endpoint, a table or migration, a page or component, an env var, a fix to a known gap).
-- **When you finish:** update the "Last verified" date and commit hash at the top.
-- **If you notice the file is wrong** about something you did not change, fix it or add it to section 11.
-
-A pull request that changes behaviour without touching this file will be sent back. Changes with nothing to record (a typo, a dependency bump, a refactor with no behaviour change) are exempt; say so in the PR description.
-
----
-
 ## The vocabulary
 
 Saransh has a settled domain language — use it in code, commits, and reviews. The full glossary is in [CONTEXT.md](./CONTEXT.md); the short version:
@@ -52,7 +39,7 @@ Saransh has a settled domain language — use it in code, commits, and reviews. 
 ## Ways to contribute
 
 - **Code — frontend or backend:** pick an issue from the backlog and ship it.
-- **Pipeline:** the planned pipeline (section 14.5 of `docs/PROJECT_STATE.md`) is not built yet. Pick up an issue for one of its steps.
+- **Pipeline:** the planned pipeline (see the [README](./readme.md)) is not built yet. Pick up an issue for one of its steps.
 - **Corrections:** report a wrong Story or a wrong attribution (see the end of this guide).
 - **Design system:** shared UI lives in [Sutra](https://github.com/imsks/sutra-ui) (`@sutra_ui/ui`). If a component is generic enough for Rajniti to want it too, contribute it there, not here.
 - **Bug reports & feature ideas:** open an issue.
@@ -173,8 +160,7 @@ cd frontend && npm test
 3. **Link the issue:** put `Closes #<issue-number>` in the description so it auto-closes on merge.
 4. **UI changes:** attach before/after screenshots in **both light and dark mode**, and a mobile (360px) shot.
 5. **Never commit** `.env`, API keys, or secrets.
-6. **Update `docs/PROJECT_STATE.md`** if your change alters how the project works (see above).
-7. Keep the diff to intended changes only; review it yourself first.
+6. Keep the diff to intended changes only; review it yourself first.
 
 Map your work back to the issue's **acceptance criteria** — a reviewer will check each box against your PR.
 
@@ -182,7 +168,7 @@ Map your work back to the issue's **acceptance criteria** — a reviewer will ch
 
 ## Review & merge
 
-- A maintainer reviews for correctness, the house rules above, tests, green CI, and an updated `docs/PROJECT_STATE.md`.
+- A maintainer reviews for correctness, the house rules above, tests, and green CI.
 - Respond to feedback with follow-up commits (don't force-push over the review history unless asked).
 - Once approved and CI is green, a maintainer merges. The version-bump label drives the automatic release bump.
 - Be patient and kind — reviewers are volunteers too.
