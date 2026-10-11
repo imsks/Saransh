@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import StoryCard from "./StoryCard";
 import type { Story } from "@/constants/stories";
+import { analytics } from "@/lib/analytics";
 
 interface StoryCarouselClientProps {
   stories: Story[];
@@ -52,8 +53,20 @@ export default function StoryCarouselClient({
 
   const last = stories.length - 1;
   const current = Math.min(index, last);
-  const goBack = () => setIndex((i) => Math.max(0, i - 1));
-  const goNext = () => setIndex((i) => Math.min(last, i + 1));
+
+  /** Only a move the reader made, that actually moved the card, is reported. */
+  const move = (direction: "next" | "back", method: "button" | "swipe") => {
+    const target = direction === "next" ? Math.min(last, current + 1) : Math.max(0, current - 1);
+    if (target === current) return;
+    setIndex(target);
+    analytics.capture("story_carousel_advanced", {
+      direction,
+      method,
+      position: target + 1,
+      total: stories.length,
+      sample: isSample,
+    });
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartRef.current = e.touches[0].clientX;
@@ -62,8 +75,8 @@ export default function StoryCarouselClient({
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (touchStartRef.current === null) return;
     const delta = touchStartRef.current - e.changedTouches[0].clientX;
-    if (delta > SWIPE_THRESHOLD_PX) goNext();
-    else if (delta < -SWIPE_THRESHOLD_PX) goBack();
+    if (delta > SWIPE_THRESHOLD_PX) move("next", "swipe");
+    else if (delta < -SWIPE_THRESHOLD_PX) move("back", "swipe");
     touchStartRef.current = null;
   };
 
@@ -98,7 +111,7 @@ export default function StoryCarouselClient({
       <div className="mt-4 flex items-center justify-between">
         <button
           type="button"
-          onClick={goBack}
+          onClick={() => move("back", "button")}
           disabled={current === 0}
           aria-label="Previous story"
           className={`${circleClass} border-2 border-ink bg-transparent text-ink`}
@@ -107,7 +120,7 @@ export default function StoryCarouselClient({
         </button>
         <button
           type="button"
-          onClick={goNext}
+          onClick={() => move("next", "button")}
           disabled={current === last}
           aria-label="Next story"
           className={`${circleClass} border-2 border-ink bg-ink text-paper`}

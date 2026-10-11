@@ -12,7 +12,25 @@ function resolveApiRewriteOrigin() {
 
 const apiRewriteOrigin = resolveApiRewriteOrigin();
 
+/**
+ * PostHog Cloud US, behind Saransh's own origin (ADR 0004): `*.posthog.com` sits
+ * on the default ad-blocker lists, and a Visitor blocked there would vanish from
+ * the funnel. Disclosed on /privacy. Both targets are overridable, for another
+ * region or a self-hosted instance.
+ */
+function resolvePostHogProxyTargets() {
+  const trim = (url) => url.replace(/\/$/, "");
+  return {
+    ingest: trim(process.env.POSTHOG_PROXY_INGEST_HOST || "https://us.i.posthog.com"),
+    assets: trim(process.env.POSTHOG_PROXY_ASSETS_HOST || "https://us-assets.i.posthog.com"),
+  };
+}
+
+const posthogProxy = resolvePostHogProxyTargets();
+
 const nextConfig = {
+  // PostHog's API paths end in a slash; redirecting them would break ingestion.
+  skipTrailingSlashRedirect: true,
   env: {
     NEXT_PUBLIC_API_URL:
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001/api/v1",
@@ -22,6 +40,16 @@ const nextConfig = {
       {
         source: "/api/v1/:path*",
         destination: `${apiRewriteOrigin}/api/v1/:path*`,
+      },
+      // Assets (the SDK's lazy-loaded session recorder) first: the broader
+      // ingest rule below would otherwise swallow them.
+      {
+        source: "/ingest/static/:path*",
+        destination: `${posthogProxy.assets}/static/:path*`,
+      },
+      {
+        source: "/ingest/:path*",
+        destination: `${posthogProxy.ingest}/:path*`,
       },
     ];
   },

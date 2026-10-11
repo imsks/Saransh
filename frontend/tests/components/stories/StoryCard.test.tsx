@@ -1,12 +1,18 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Story, Topic } from "@/constants/stories";
 
 import StoryCard from "@/components/stories/StoryCard";
 
-afterEach(cleanup);
+const analytics = vi.hoisted(() => ({ capture: vi.fn() }));
+vi.mock("@/lib/analytics", () => ({ analytics }));
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 function story(overrides: Partial<Story> = {}): Story {
   return {
@@ -141,5 +147,27 @@ describe("StoryCard", () => {
     expect(screen.getByText(/voice vote/)).toBeTruthy();
     const image = screen.getByAltText("Parliament passes data bill");
     expect(image.getAttribute("src")).toBe("https://example.com/cover.jpg");
+  });
+});
+
+describe("StoryCard Citation Links", () => {
+  it("reports which Story's Citation Link was followed, and from where", () => {
+    render(<StoryCard story={story()} />);
+
+    fireEvent.click(screen.getByRole("link", { name: /source article/ }));
+    fireEvent.click(screen.getByRole("link", { name: /^Read story/ }));
+
+    expect(analytics.capture.mock.calls).toEqual([
+      [
+        "citation_link_clicked",
+        { source: "PTI", headline: "Parliament passes data bill", link: "source_line" },
+        { beacon: true },
+      ],
+      [
+        "citation_link_clicked",
+        { source: "PTI", headline: "Parliament passes data bill", link: "read_story" },
+        { beacon: true },
+      ],
+    ]);
   });
 });

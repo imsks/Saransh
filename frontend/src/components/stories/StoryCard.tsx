@@ -1,3 +1,4 @@
+import TrackedLink from "@/components/analytics/TrackedLink";
 import type { Story, Topic } from "@/constants/stories";
 
 /** Topic colour is allowed in exactly two places: the topic label and the illustration wash. */
@@ -65,7 +66,9 @@ function SourceLine({ story }: { story: Story }) {
   }
 
   return (
-    <a
+    <TrackedLink
+      event="citation_link_clicked"
+      properties={{ source: story.source, headline: story.headline, link: "source_line" }}
       href={story.sourceUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -73,7 +76,7 @@ function SourceLine({ story }: { story: Story }) {
       className={`${lineClass} underline-offset-2 hover:underline ${focusRing}`}
     >
       {content}
-    </a>
+    </TrackedLink>
   );
 }
 
@@ -116,7 +119,9 @@ export default function StoryCard({ story }: { story: Story }) {
         <div className="mt-[18px] flex items-center justify-between gap-3">
           <SourceLine story={story} />
           {story.sourceUrl ? (
-            <a
+            <TrackedLink
+              event="citation_link_clicked"
+              properties={{ source: story.source, headline: story.headline, link: "read_story" }}
               href={story.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -124,7 +129,7 @@ export default function StoryCard({ story }: { story: Story }) {
               className={`${readStoryClass} ${focusRing}`}
             >
               Read story
-            </a>
+            </TrackedLink>
           ) : (
             // Sample stories have no article behind them: the button is shown, not live.
             <span aria-hidden="true" className={`${readStoryClass} cursor-default select-none`}>

@@ -12,6 +12,9 @@ import type { Story } from "@/constants/stories";
 
 import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
 
+const analytics = vi.hoisted(() => ({ capture: vi.fn() }));
+vi.mock("@/lib/analytics", () => ({ analytics }));
+
 function story(headline: string): Story {
   return {
     category: "National",
@@ -33,6 +36,7 @@ const stories = [
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
+  vi.clearAllMocks();
 });
 
 describe("StoryCarouselClient", () => {
@@ -112,5 +116,46 @@ describe("StoryCarouselClient", () => {
 
     expect(screen.queryByText("Sample story")).toBeNull();
     expect(screen.queryByText(/Live feed/i)).toBeNull();
+  });
+});
+describe("StoryCarouselClient analytics", () => {
+  const advances = () =>
+    analytics.capture.mock.calls
+      .filter(([event]) => event === "story_carousel_advanced")
+      .map(([, properties]) => properties);
+
+  it("reports a button press with where it landed", () => {
+    render(<StoryCarouselClient stories={stories} isSample />);
+    fireEvent.click(screen.getByRole("button", { name: "Next story" }));
+    fireEvent.click(screen.getByRole("button", { name: "Previous story" }));
+
+    expect(advances()).toEqual([
+      { direction: "next", method: "button", position: 2, total: 3, sample: true },
+      { direction: "back", method: "button", position: 1, total: 3, sample: true },
+    ]);
+  });
+
+  it("reports a swipe, and not a drag too short to be one", () => {
+    render(<StoryCarouselClient stories={stories} />);
+    const card = screen.getByText("First story").closest("[aria-live]") as HTMLElement;
+
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 260 }] });
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 100 }] });
+
+    expect(advances()).toEqual([
+      { direction: "next", method: "swipe", position: 2, total: 3, sample: false },
+    ]);
+  });
+
+  it("reports nothing when the reader is already at the end", () => {
+    render(<StoryCarouselClient stories={[story("Only story")]} />);
+    const card = screen.getByText("Only story").closest("[aria-live]") as HTMLElement;
+
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 100 }] });
+
+    expect(advances()).toEqual([]);
   });
 });
