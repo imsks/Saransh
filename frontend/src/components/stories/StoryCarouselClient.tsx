@@ -106,16 +106,11 @@ export default function StoryCarouselClient({
     >
       <div className="mb-3 flex items-baseline justify-between">
         {/* Samples say so. Live stories carry no label at all. */}
-        {isSample ? (
+        {isSample && (
           <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
             Sample story
           </span>
-        ) : (
-          <span aria-hidden="true" />
         )}
-        <span className="font-sans text-[13px] font-semibold text-muted">
-          {current + 1} / {stories.length}
-        </span>
       </div>
       <div
         onTouchStart={handleTouchStart}
@@ -144,6 +139,9 @@ export default function StoryCarouselClient({
         >
           <Chevron direction="back" />
         </button>
+        <span className="font-sans text-[13px] font-semibold text-muted">
+          {current + 1} / {stories.length}
+        </span>
         <button
           type="button"
           onClick={() => move("next", "button")}
