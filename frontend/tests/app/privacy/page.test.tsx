@@ -69,7 +69,7 @@ describe("PrivacyPage", () => {
     const text = body();
     for (const heading of [
       "Joining the waitlist",
-      "Anonymous usage analytics",
+      "Usage analytics",
       "How a signup is linked to usage",
       "Session recording",
       "Analytics served from our own domain",
