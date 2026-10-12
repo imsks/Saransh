@@ -57,7 +57,7 @@ function PersonIcon() {
       className="shrink-0 text-red"
       aria-hidden="true"
     >
-      <circle cx="11" cy="7" r="3.2"/>
+      <circle cx="11" cy="7" r="3.2" />
       <path d="M4 19c0-3.5 3.2-6 7-6s7 2.5 7 6" />
     </svg>
   );
@@ -67,10 +67,10 @@ export default function WhatSection() {
   return (
     <section className="border-t border-line py-20">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
-        <div className="grid grid-cols-1 items-center gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
+        <div className="grid grid-cols-1 items-start gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
           <StoryCarousel />
 
-          <div>
+          <div className="min-[860px]:pt-8">
             <div className="flex items-start gap-3.5 pb-5 pt-0 pl-[18px]">
               <DocIcon />
               <div>
@@ -78,7 +78,8 @@ export default function WhatSection() {
                   SOURCED, WITH A LINK
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Government portals, PIB, registered outlets. Every story names and links its source.
+                  Government portals, PIB, registered outlets. Every story names
+                  and links its source.
                 </p>
               </div>
             </div>
@@ -89,7 +90,8 @@ export default function WhatSection() {
                   OPEN SOURCE
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Prompts, source list and deduplication rules — public on GitHub as they are written.
+                  Prompts, source list and deduplication rules — public on
+                  GitHub as they are written.
                 </p>
               </div>
             </div>
@@ -100,7 +102,8 @@ export default function WhatSection() {
                   HUMAN REVIEW: BEING BUILT
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Every AI-drafted story will be approved by a person before it goes live. We are building the review step now.
+                  Every AI-drafted story will be approved by a person before it
+                  goes live. We are building the review step now.
                 </p>
               </div>
             </div>
