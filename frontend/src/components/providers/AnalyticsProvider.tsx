@@ -18,6 +18,8 @@ import { newMilestones, scrollFraction } from "@/lib/analytics/scroll";
 function AnalyticsPageviews() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const query = searchParams?.toString();
+  const pageKey = `${pathname ?? ""}${query ? `?${query}` : ""}`;
 
   useEffect(() => {
     analytics.init();
@@ -25,13 +27,12 @@ function AnalyticsPageviews() {
 
   useEffect(() => {
     if (!pathname) return;
-    const query = searchParams?.toString();
     analytics.capture("$pageview", {
-      $current_url: `${window.location.origin}${pathname}${query ? `?${query}` : ""}`,
+      $current_url: `${window.location.origin}${pageKey}`,
     });
-  }, [pathname, searchParams]);
+  }, [pathname, pageKey]);
 
-  useScrollDepth(pathname);
+  useScrollDepth(pageKey);
 
   return null;
 }
@@ -40,7 +41,7 @@ function AnalyticsPageviews() {
  * Reports each scroll milestone once per page view. The listener is passive
  * and does its work at most once a frame, so it never holds up scrolling.
  */
-function useScrollDepth(pathname: string | null) {
+function useScrollDepth(pageKey: string) {
   useEffect(() => {
     const reported = new Set<ScrollDepth>();
     let frame: number | null = null;
@@ -67,7 +68,7 @@ function useScrollDepth(pathname: string | null) {
       window.removeEventListener("scroll", onScroll);
       if (frame !== null) window.cancelAnimationFrame(frame);
     };
-  }, [pathname]);
+  }, [pageKey]);
 }
 
 export default function AnalyticsProvider({ children }: { children: ReactNode }) {

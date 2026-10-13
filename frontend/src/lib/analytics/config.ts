@@ -8,14 +8,11 @@ export const DEFAULT_POSTHOG_HOST = "/ingest";
 /** PostHog's app, for links the SDK renders (the toolbar). Never receives events. */
 export const POSTHOG_UI_HOST = "https://us.posthog.com";
 
-/** Fraction of sessions recorded when no rate is configured. */
-export const DEFAULT_REPLAY_SAMPLE_RATE = 0.1;
-
 /** The environment variables analytics reads. */
 export interface AnalyticsEnv {
   NEXT_PUBLIC_POSTHOG_KEY?: string;
+  NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN?: string;
   NEXT_PUBLIC_POSTHOG_HOST?: string;
-  NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE?: string;
 }
 
 export interface AnalyticsConfig {
@@ -23,8 +20,6 @@ export interface AnalyticsConfig {
   enabled: boolean;
   key: string;
   host: string;
-  /** Fraction of sessions to record, from 0 (never) to 1 (always). */
-  replaySampleRate: number;
 }
 
 /**
@@ -35,19 +30,10 @@ export interface AnalyticsConfig {
 function readEnv(): AnalyticsEnv {
   return {
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:
+      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE:
-      process.env.NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE,
   };
-}
-
-/** A blank or unparseable rate falls back to the default; anything else is clamped to [0, 1]. */
-function parseSampleRate(raw: string | undefined): number {
-  const trimmed = (raw ?? "").trim();
-  if (!trimmed) return DEFAULT_REPLAY_SAMPLE_RATE;
-  const rate = Number(trimmed);
-  if (!Number.isFinite(rate)) return DEFAULT_REPLAY_SAMPLE_RATE;
-  return Math.min(1, Math.max(0, rate));
 }
 
 /**
@@ -59,7 +45,9 @@ function parseSampleRate(raw: string | undefined): number {
 export function readAnalyticsConfig(
   env: AnalyticsEnv = readEnv(),
 ): AnalyticsConfig {
-  const key = (env.NEXT_PUBLIC_POSTHOG_KEY ?? "").trim();
+  const key =
+    (env.NEXT_PUBLIC_POSTHOG_KEY ?? "").trim() ||
+    (env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN ?? "").trim();
   const host = (env.NEXT_PUBLIC_POSTHOG_HOST ?? "").trim();
   const enabled = key.length > 0;
 
@@ -67,16 +55,5 @@ export function readAnalyticsConfig(
     enabled,
     key,
     host: (host || DEFAULT_POSTHOG_HOST).replace(/\/$/, ""),
-    replaySampleRate: enabled
-      ? parseSampleRate(env.NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE)
-      : 0,
   };
-}
-
-/**
- * Whether this session is recorded. `roll` is a uniform draw in [0, 1), so a
- * rate of 0 never records and a rate of 1 always does.
- */
-export function isSessionSampled(rate: number, roll: number): boolean {
-  return roll < rate;
 }

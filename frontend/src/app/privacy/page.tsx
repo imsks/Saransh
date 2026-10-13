@@ -109,14 +109,9 @@ export default function PrivacyPage() {
 
             <Section heading="Session recording">
               <p className={paragraphClass}>
-                A sample of visits is recorded as a replay of what happened on
-                screen — scrolling, clicks, and page changes — so we can see
-                where the page confuses people.
-              </p>
-              <p className={paragraphClass}>
-                Recordings never capture what you type into form fields. Your
-                name and email are masked before the recording leaves your
-                browser, so they are not in the replay at all.
+                We do not record sessions or capture what you type into form
+                fields. We measure page visits and interactions to understand
+                how people reach and complete the waitlist form.
               </p>
             </Section>
 
@@ -134,7 +129,7 @@ export default function PrivacyPage() {
 
             <Section heading="Who holds the data">
               <p className={paragraphClass}>
-                Analytics and session recordings are handled by{" "}
+                Analytics is handled by{" "}
                 <a
                   href="https://posthog.com"
                   target="_blank"

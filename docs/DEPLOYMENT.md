@@ -215,5 +215,7 @@ Do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` on Vercel �
 falls back to `VERCEL_URL` for canonical/OG URLs. The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are
 placeholders for parity with Rajniti and stay unused until sign-in ships.
 Analytics: set `NEXT_PUBLIC_POSTHOG_KEY` on Vercel to turn PostHog on (optionally
-`NEXT_PUBLIC_POSTHOG_HOST`, which defaults to PostHog Cloud US). With no key — local development and
-CI — analytics is disabled and makes no requests.
+`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, the name shown in PostHog's dashboard, instead).
+No host settings are required for US projects: the browser defaults to `/ingest`, which
+Next.js proxies to PostHog Cloud US. Session replay is disabled. With no key, analytics
+is disabled and makes no requests. Redeploy after changing any `NEXT_PUBLIC_*` value.

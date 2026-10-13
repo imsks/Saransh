@@ -12,7 +12,6 @@ function fakeSdk() {
     capture: jest.fn<(event: string, ...rest: unknown[]) => void>(),
     identify: jest.fn<(...args: unknown[]) => void>(),
     reset: jest.fn<() => void>(),
-    startSessionRecording: jest.fn<() => void>(),
   };
 }
 
@@ -49,18 +48,16 @@ describe("createPostHogTransport", () => {
     expect(order).toEqual(["init", "waitlist_form_viewed"]);
   });
 
-  it("forwards identify, reset and recording once loaded", async () => {
+  it("forwards identify and reset once loaded", async () => {
     const sdk = fakeSdk();
     const transport = createPostHogTransport(async () => sdk as unknown as PostHog);
     transport.init("phc_test", {} as never);
     await flush();
 
     transport.identify("signup-token");
-    transport.startSessionRecording();
     transport.reset();
 
     expect(sdk.identify).toHaveBeenCalledWith("signup-token");
-    expect(sdk.startSessionRecording).toHaveBeenCalledTimes(1);
     expect(sdk.reset).toHaveBeenCalledTimes(1);
   });
 

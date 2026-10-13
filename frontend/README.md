@@ -35,6 +35,8 @@ The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders: Saransh has no sig
 
 Analytics is PostHog ([ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md)) and is off unless `NEXT_PUBLIC_POSTHOG_KEY` is set — local development and CI send nothing. Events go to `/ingest`, which `next.config.mjs` proxies to PostHog Cloud US. Every event is declared in [`src/lib/analytics/events.ts`](src/lib/analytics/events.ts); capture through `analytics` from `@/lib/analytics`, never `posthog-js` directly.
 
+Only the project's public token is required. `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` (PostHog's dashboard name) is also accepted; use one name, not both. Host and proxy overrides are optional, and session replay is disabled. Rebuild/redeploy after changing public environment values. The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` -> `waitlist_submitted`, filtered to `outcome = created` for new signups.
+
 ## Rules worth knowing before you touch the UI
 
 - All data calls go through FastAPI on `:8001`; there are no Next.js API routes today.

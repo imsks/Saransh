@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals
 import {
   createAnalyticsClient,
   type AnalyticsTransport,
-  type SessionStore,
 } from "@/lib/analytics/client";
 import type { AnalyticsConfig } from "@/lib/analytics/config";
 
@@ -14,7 +13,6 @@ const ENABLED: AnalyticsConfig = {
   enabled: true,
   key: "phc_test",
   host: "/ingest",
-  replaySampleRate: 0,
 };
 const DISABLED: AnalyticsConfig = { ...ENABLED, enabled: false, key: "" };
 
@@ -25,16 +23,7 @@ function createFakeTransport() {
     capture: jest.fn<AnalyticsTransport["capture"]>(),
     identify: jest.fn<AnalyticsTransport["identify"]>(),
     reset: jest.fn<AnalyticsTransport["reset"]>(),
-    startSessionRecording: jest.fn<AnalyticsTransport["startSessionRecording"]>(),
   } satisfies AnalyticsTransport;
-}
-
-function memoryStore(initial: Record<string, string> = {}): SessionStore {
-  const values = new Map(Object.entries(initial));
-  return {
-    get: (key) => values.get(key) ?? null,
-    set: (key, value) => void values.set(key, value),
-  };
 }
 
 // These tests run in the node environment, so `window` is absent unless stubbed.
@@ -43,12 +32,10 @@ function withBrowser() {
   globals.window = { location: { origin: "https://saransh.app" } };
 }
 
-function booted(config: AnalyticsConfig = ENABLED, extra = {}) {
+function booted(config: AnalyticsConfig = ENABLED) {
   const transport = createFakeTransport();
   const analytics = createAnalyticsClient(transport, {
     config,
-    sessionStore: memoryStore(),
-    ...extra,
   });
   analytics.init();
   return { transport, analytics };
@@ -162,82 +149,13 @@ describe("createAnalyticsClient", () => {
   describe("session replay", () => {
     beforeEach(withBrowser);
 
-    it("records a session whose roll falls under the rate", () => {
-      const { transport } = booted({ ...ENABLED, replaySampleRate: 0.25 }, { random: () => 0.1 });
+    it("always disables recording", () => {
+      const { transport } = booted();
 
-      expect(transport.startSessionRecording).toHaveBeenCalledTimes(1);
-    });
-
-    it("does not record a session whose roll falls over the rate", () => {
-      const { transport } = booted({ ...ENABLED, replaySampleRate: 0.25 }, { random: () => 0.9 });
-
-      expect(transport.startSessionRecording).not.toHaveBeenCalled();
-    });
-
-    it("never records at a rate of 0", () => {
-      const { transport } = booted({ ...ENABLED, replaySampleRate: 0 }, { random: () => 0 });
-
-      expect(transport.startSessionRecording).not.toHaveBeenCalled();
-    });
-
-    it("keeps the session's decision across page loads", () => {
-      const sessionStore = memoryStore();
-      const config = { ...ENABLED, replaySampleRate: 0.5 };
-
-      const first = booted(config, { sessionStore, random: () => 0.1 });
-      const reload = booted(config, { sessionStore, random: () => 0.9 });
-
-      expect(first.transport.startSessionRecording).toHaveBeenCalledTimes(1);
-      expect(reload.transport.startSessionRecording).toHaveBeenCalledTimes(1);
-    });
-
-    it("stops recording a remembered session once the rate drops to 0", () => {
-      const sessionStore = memoryStore({ "saransh.analytics.replay": "1" });
-      const { transport } = booted({ ...ENABLED, replaySampleRate: 0 }, { sessionStore });
-
-      expect(transport.startSessionRecording).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("the browser's session storage", () => {
-    function withStorage(storage: Partial<Storage>) {
-      globals.window = { location: { origin: "https://saransh.app" }, sessionStorage: storage };
-    }
-
-    it("remembers the sampling decision there by default", () => {
-      const saved = new Map<string, string>();
-      withStorage({
-        getItem: (key) => saved.get(key) ?? null,
-        setItem: (key, value) => void saved.set(key, value),
-      });
-      const transport = createFakeTransport();
-      createAnalyticsClient(transport, {
-        config: { ...ENABLED, replaySampleRate: 0.5 },
-        random: () => 0.1,
-      }).init();
-
-      expect(saved.get("saransh.analytics.replay")).toBe("1");
-      expect(transport.startSessionRecording).toHaveBeenCalledTimes(1);
-    });
-
-    it("still samples when the browser refuses storage", () => {
-      withStorage({
-        getItem: () => {
-          throw new Error("SecurityError");
-        },
-        setItem: () => {
-          throw new Error("SecurityError");
-        },
-      });
-      const transport = createFakeTransport();
-
-      expect(() =>
-        createAnalyticsClient(transport, {
-          config: { ...ENABLED, replaySampleRate: 1 },
-          random: () => 0.5,
-        }).init(),
-      ).not.toThrow();
-      expect(transport.startSessionRecording).toHaveBeenCalledTimes(1);
+      expect(transport.init).toHaveBeenCalledWith(
+        "phc_test",
+        expect.objectContaining({ disable_session_recording: true }),
+      );
     });
   });
 
@@ -257,7 +175,7 @@ describe("createAnalyticsClient", () => {
   describe("with no key configured", () => {
     it("makes every entry point a no-op", () => {
       withBrowser();
-      const { transport, analytics } = booted(DISABLED, { random: () => 0 });
+      const { transport, analytics } = booted(DISABLED);
 
       analytics.capture("waitlist_form_viewed", {});
       analytics.identify("signup-token");
@@ -267,7 +185,6 @@ describe("createAnalyticsClient", () => {
       expect(transport.capture).not.toHaveBeenCalled();
       expect(transport.identify).not.toHaveBeenCalled();
       expect(transport.reset).not.toHaveBeenCalled();
-      expect(transport.startSessionRecording).not.toHaveBeenCalled();
     });
   });
 

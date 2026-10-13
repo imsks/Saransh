@@ -84,7 +84,7 @@ describe("PrivacyPage", () => {
     expect(text).toContain("one email when Saransh launches");
     expect(text).toContain("opaque token");
     expect(text).toContain(
-      "Recordings never capture what you type into form fields.",
+      "We do not record sessions or capture what you type into form fields.",
     );
     expect(text).toContain("PostHog");
     expect(text).toContain("United States");

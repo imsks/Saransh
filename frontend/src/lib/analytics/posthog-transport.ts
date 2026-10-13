@@ -65,8 +65,5 @@ export function createPostHogTransport(
     reset() {
       run((posthog) => posthog.reset());
     },
-    startSessionRecording() {
-      run((posthog) => posthog.startSessionRecording());
-    },
   };
 }
