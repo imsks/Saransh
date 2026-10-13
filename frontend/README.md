@@ -1,48 +1,43 @@
-# Saransh Frontend
+# Frontend
 
-The Next.js frontend for Saransh: today the landing page, the waitlist and the privacy page. The reader app (a swipeable story deck with Google sign-in) is planned and not built.
+Next.js 14 and React 18. The landing page renders static sample stories; the
+waitlist submits to FastAPI. There is no sign-in or live reader feed.
 
-## Development
-
-From the repo root, the whole stack runs in Docker:
-
-```bash
-make setup   # copies .env.example → .env and frontend/.env.example → frontend/.env
-make up      # API :8001 + frontend :3001 + Postgres :5433
-```
-
-Or run the frontend alone from this directory (the API must be reachable at `NEXT_PUBLIC_API_URL`):
-
-```bash
-npm ci
-npm run dev        # http://localhost:3001
-```
-
-## Checks
-
-```bash
-npm test
-npm run lint
-npm run typecheck
-npm run build
-```
+Use `make up` from the repository root for the full local stack. For a host-only
+frontend, copy `.env.example` to `.env`, run `npm ci`, then `npm run dev`.
+The API must be reachable at the configured URL. See [CONTRIBUTING.md](../CONTRIBUTING.md)
+for host-only backend setup and required checks.
 
 ## Environment
 
-Copy `frontend/.env.example` → `frontend/.env` (or run `make setup` from the repo root).
+[.env.example](.env.example) documents the available settings.
 
-The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders: Saransh has no sign-in yet. On Vercel, do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` — `getSiteUrl()` falls back to `VERCEL_URL`. Vercel should carry only the production `NEXT_PUBLIC_API_URL`, plus `NEXT_PUBLIC_POSTHOG_KEY` if analytics should run.
+- `NEXT_PUBLIC_API_URL`: browser API base URL, including `/api/v1`.
+- `API_URL`: optional server-side API base URL.
+- `API_REWRITE_TARGET`: optional server-only origin for Next.js API rewrites; Docker uses the API service hostname.
+- `NEXT_PUBLIC_SITE_URL`: canonical site origin. In production omit localhost values; the resolver can fall back to `VERCEL_URL`.
+- `NEXT_PUBLIC_LOG_LEVEL`: frontend logging level.
 
-Analytics is PostHog ([ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md)) and is off unless `NEXT_PUBLIC_POSTHOG_KEY` is set — local development and CI send nothing. Events go to `/ingest`, which `next.config.mjs` proxies to PostHog Cloud US. Every event is declared in [`src/lib/analytics/events.ts`](src/lib/analytics/events.ts); capture through `analytics` from `@/lib/analytics`, never `posthog-js` directly.
+## Analytics
 
-Only the project's public token is required. `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` (PostHog's dashboard name) is also accepted; use one name, not both. Host and proxy overrides are optional, and session replay is disabled. Rebuild/redeploy after changing public environment values. The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` -> `waitlist_submitted`, filtered to `outcome = created` for new signups.
+Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog. The dashboard's
+`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` alias is also supported; choose one.
+With no token the SDK is not loaded and no analytics requests are sent.
+Rebuild or redeploy after changing public environment values.
 
-## Rules worth knowing before you touch the UI
+Events go through the first-party `/ingest` proxy to PostHog Cloud US by default.
+Host/proxy overrides are optional. Session replay is disabled. Never send names,
+emails or other personal data to analytics, and never use events to personalize stories.
 
-- All data calls go through FastAPI on `:8001`; there are no Next.js API routes today.
-- Style with the theme colour names (`bg-paper`, `text-ink`, `border-line`), never a hex value.
-- Reach for a [Sutra](https://github.com/imsks/sutra-ui) component before hand-writing one.
-- Anything a reader sees must work in both Hindi and English, and in light and dark.
-- Never send a name, an email, or other personal data to analytics. A new text input also needs a fresh look at session replay's masking.
+Use `analytics` from `@/lib/analytics`, not the SDK directly. Event definitions
+are in [events.ts](src/lib/analytics/events.ts).
+The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` ->
+`waitlist_submitted`, filtered to `outcome = created` for new signups.
+See [ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md).
 
-House rules in full: [`CONTRIBUTING.md`](../CONTRIBUTING.md). Agent brief: [`.github/agents/frontend-agent.md`](../.github/agents/frontend-agent.md).
+## UI
+
+Use the existing light/dark theme tokens and Sutra primitives where they fit.
+Keep source links visible, keyboard controls usable and mobile layouts intact.
+Shared components belong in [Sutra](https://github.com/imsks/sutra-ui), not a local copy.
+The full contribution rules live in [CONTRIBUTING.md](../CONTRIBUTING.md).

@@ -36,13 +36,6 @@ class WaitlistIn(BaseModel):
         return value
 
 
-class WaitlistOut(BaseModel):
-    ok: bool
-    # Opaque public identifier of the Signup — stable across repeat signups.
-    signup_token: str
-    duplicate: bool = False
-
-
 @router.post("/waitlist")
 def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
     """Add an email to the Saransh launch waitlist."""

@@ -54,14 +54,13 @@ command -v docker >/dev/null 2>&1 || die "docker is not installed."
 
 cd "$(dirname "$0")/.."
 
-# The image ships app/ only, so migrations run from here, not from the container.
 if [[ "$SKIP_MIGRATIONS" != "1" ]]; then
-    if [[ -x venv/bin/alembic ]]; then
-        alembic_cmd=(venv/bin/alembic)
-    elif command -v alembic >/dev/null 2>&1; then
-        alembic_cmd=(alembic)
+    if [[ -x venv/bin/python ]]; then
+        python_cmd=(venv/bin/python)
+    elif command -v python3 >/dev/null 2>&1; then
+        python_cmd=(python3)
     else
-        die "alembic is not installed. Activate the venv, or set SKIP_MIGRATIONS=1 to deploy code only."
+        die "Python is not installed. Install backend requirements, or set SKIP_MIGRATIONS=1 to deploy code only."
     fi
 fi
 
@@ -95,7 +94,7 @@ if [[ "$SKIP_MIGRATIONS" == "1" ]]; then
     echo "==> Skipping migrations (SKIP_MIGRATIONS=1)"
 else
     echo "==> Applying database migrations"
-    DATABASE_URL="$DATABASE_URL" "${alembic_cmd[@]}" upgrade head
+    DATABASE_URL="$DATABASE_URL" CONFIRM_PROD=1 "${python_cmd[@]}" -m scripts.init_db --production
 fi
 
 echo "==> Deploying revision"

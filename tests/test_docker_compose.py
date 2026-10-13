@@ -1,4 +1,4 @@
-"""docker-compose contract: API + web + Postgres."""
+"""Container contracts: API, frontend and PostgreSQL in development/production."""
 
 from __future__ import annotations
 
@@ -9,6 +9,9 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ROOT / "docker-compose.yml"
 COMPOSE_PROD = ROOT / "docker-compose.prod.yml"
+DOCKERFILE = ROOT / "Dockerfile"
+DOCKERIGNORE = ROOT / ".dockerignore"
+FRONTEND = ROOT / "frontend"
 
 
 def test_compose_exposes_api_web_and_postgres():
@@ -86,3 +89,55 @@ def test_prod_compose_follows_the_injected_port():
     healthcheck = " ".join(service["healthcheck"]["test"])
     assert "$${PORT:-8080}" in healthcheck
     assert "8001" not in healthcheck
+
+
+def test_dockerfile_has_development_and_production_stages():
+    text = DOCKERFILE.read_text()
+    assert "FROM base AS development" in text
+    assert "FROM base AS production" in text
+
+
+def test_dockerfile_uses_uvicorn_for_dev_and_gunicorn_for_prod():
+    text = DOCKERFILE.read_text()
+    assert "uvicorn" in text
+    assert "gunicorn" in text
+    assert "UvicornWorker" in text
+
+
+def test_dockerfile_builds_without_buildkit():
+    text = DOCKERFILE.read_text()
+    assert "--mount" not in text
+    assert "# syntax=" not in text
+
+
+def test_production_stage_serves_the_cloud_run_port():
+    production = DOCKERFILE.read_text().split("FROM base AS production", 1)[1]
+    assert "PORT=8080" in production
+    assert "EXPOSE 8080" in production
+    assert "--bind 0.0.0.0:${PORT}" in production
+
+
+def test_dockerignore_excludes_frontend_and_env_files():
+    text = DOCKERIGNORE.read_text()
+    assert "frontend/" in text
+    assert ".env" in text
+    assert "tests/" in text
+
+
+def test_frontend_dockerfile_installs_dependencies_at_build_time():
+    dockerfile = (FRONTEND / "Dockerfile.dev").read_text()
+    assert "RUN npm ci" in dockerfile
+    assert ".saransh-lock-hash" in dockerfile
+
+
+def test_frontend_dockerfile_dev_serves_on_3001():
+    dockerfile = (FRONTEND / "Dockerfile.dev").read_text()
+    assert "node:20-alpine" in dockerfile
+    assert "3001" in dockerfile
+    assert "docker-entrypoint.sh" in dockerfile
+
+
+def test_frontend_entrypoint_only_syncs_on_lock_change():
+    entrypoint = (FRONTEND / "docker-entrypoint.sh").read_text()
+    assert "package-lock.json changed" in entrypoint
+    assert ".saransh-lock-hash" in entrypoint

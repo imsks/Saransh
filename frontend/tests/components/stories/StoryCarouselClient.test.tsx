@@ -7,7 +7,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-import type { Story } from "@/constants/stories";
+import { STORIES, type Story } from "@/constants/stories";
 
 import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
 
@@ -44,6 +44,13 @@ afterEach(() => {
 });
 
 describe("StoryCarouselClient", () => {
+  it("shows the carousel counter without a sample label in live mode", () => {
+    render(<StoryCarouselClient stories={STORIES.slice(0, 2)} isSample={false} />);
+
+    expect(screen.getByText("1 / 2")).toBeTruthy();
+    expect(screen.queryByText("Sample story")).toBeNull();
+  });
+
   it("starts on the first story with Back disabled", () => {
     render(<StoryCarouselClient stories={stories} />);
 

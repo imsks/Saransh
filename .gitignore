@@ -61,6 +61,4 @@ frontend/tsconfig.tsbuildinfo
 
 # docs
 /docs/PROJECT_STATE.md
-# /docs/design-audit-pr.md
-# /docs/design-audit.mdnode_modules/
 node_modules/
