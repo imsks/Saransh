@@ -1,208 +1,111 @@
-# Contributing to Saransh
+# Contributing
 
-Thanks for helping make India's news legible. Saransh is an open-source news app for India: short, sourced stories in Hindi and English, approved by a person, with no personalisation. It is community-driven, and every contribution — a corrected attribution, a bug fix, or a clearer doc — matters.
+Read [readme.md](readme.md) for current scope and Docker commands,
+[CONTEXT.md](CONTEXT.md) for domain terminology and product decisions,
+and [docs/adr](docs/adr) for architectural decisions.
+Do not describe planned features as shipped.
 
-This guide covers **how to contribute**. For **how to run the project** (setup, Makefile, env vars, API endpoints, structure), see the [README](./readme.md) and [`frontend/README.md`](./frontend/README.md). We won't repeat that here.
+## Before writing code
 
----
+Claim an issue before starting and check for existing work. Use its current
+behavior, expected behavior and acceptance criteria to define the change.
+Discuss large or unclear changes first. Report bugs with reproduction steps,
+environment and logs; report accuracy problems with Story and Source links.
+Corrections and grievances are handled publicly through
+[GitHub Issues](https://github.com/imsks/Saransh/issues).
 
-## The one rule that matters most
+Branch from the default branch and target it in your PR. Prefixes:
+`feat/`, `fix/`, `source/`, `refactor/`, `docs/`, `chore/`.
+Use focused commits with imperative descriptions and conventional scopes.
 
-**Never publish an unsourced or fabricated Summary.** Saransh's entire value is trust. A single invented quote, misattributed claim, or hallucinated detail permanently breaks the "verified sources" positioning for every reader.
+## Host-only development
 
-- Every Summary must trace back to one or more real, citable Articles.
-- If a fact isn't in a Source, it doesn't go in the Summary — don't fill gaps from the model's memory.
-- AI output is a draft for human review. A person approves every Story before it is published; an agent may flag problems but never approves.
-
-Everything else in this guide is negotiable style. This rule is not.
-
----
-
-## The vocabulary
-
-Saransh has a settled domain language — use it in code, commits, and reviews. The full glossary is in [CONTEXT.md](./CONTEXT.md); the short version:
-
-| Term | Means | Don't say |
-| --- | --- | --- |
-| **Story** | A news event: headline, summary, sources, metadata | Article, news item, post |
-| **Article** | One source document from an outlet | Story, news piece |
-| **Source** | An approved outlet or official body a Story is drawn from | Publisher, feed |
-| **Summary** | AI-drafted, human-approved Story text, attributed | Excerpt, blurb, digest |
-| **Tier** | National, State or International | Level, scope |
-| **Topic** | The one primary subject of a Story (Politics, Civic, Education, Business & Economy, Crime) | Category, tag |
-| **Edition** | One batch of cards a reader gets (15, 15, 10 and 10 in a day) | Session, batch |
-| **Pipeline** | fetch → summarise → translate → tag → agent check → human review → publish | Workflow, flow |
-| **Agent** | An automated first-pass checker or drafter; it never approves | Bot, worker |
-
----
-
-## Ways to contribute
-
-- **Code — frontend or backend:** pick an issue from the backlog and ship it.
-- **Pipeline:** the planned pipeline (see the [README](./readme.md)) is not built yet. Pick up an issue for one of its steps.
-- **Corrections:** report a wrong Story or a wrong attribution (see the end of this guide).
-- **Design system:** shared UI lives in [Sutra](https://github.com/imsks/sutra-ui) (`@sutra_ui/ui`). If a component is generic enough for Rajniti to want it too, contribute it there, not here.
-- **Bug reports & feature ideas:** open an issue.
-- **Docs:** improve the README, this guide, or the ADRs in `docs/adr/`.
-
-New here? Look for issues labelled **`good first issue`**.
-
----
-
-## Before you start: claim an issue
-
-1. Browse the [Issues](https://github.com/imsks/Saransh/issues) and the project backlog.
-2. Read the issue fully — the description, **current behaviour**, **expected behaviour**, and **acceptance criteria** define "done."
-3. Check nobody else is already on it (open PRs / recent comments).
-4. **Comment to get assigned** before writing code, so effort isn't duplicated.
-5. If anything is unclear, ask in the issue or in [Discussions](https://github.com/imsks/Saransh/discussions) first. A two-line question saves a rejected PR.
-
-Please don't open large unsolicited PRs that aren't tied to an issue — start a discussion so we can align on approach.
-
----
-
-## Setup (quick pointer)
-
-Full instructions are in the [README](./readme.md). The short version:
+Docker setup is in the README. Without Docker, install Python 3.11+, Node 20+
+and PostgreSQL, then from the repository root:
 
 ```bash
-git clone https://github.com/imsks/Saransh.git && cd Saransh
-make setup            # copies .env templates
-make up               # full stack (API :8001 + Next.js :3001 + Postgres :5433)
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt -r requirements-test.txt
 ```
 
-> **Port note:** Saransh runs on `:8001` / `:3001` so it can sit beside Rajniti on `:8000` / `:3000`.
-
----
-
-## Branching
-
-Branch off the default branch and target it in your PR.
+Set `DATABASE_URL` in `.env` to your local PostgreSQL database before continuing.
+If using Compose's PostgreSQL with a host API, use `127.0.0.1:5433`, not `postgres`.
+The copy commands above are first-time setup; do not overwrite existing settings.
 
 ```bash
-git checkout master && git pull
-git checkout -b <type>/<short-scope>
+python -m scripts.init_db
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
-Branch prefixes:
+In another terminal: `cd frontend && npm ci && npm run dev`.
+For commit hooks: `pre-commit install` after installing the test requirements.
 
-| Prefix | Use for |
-| --- | --- |
-| `feat/` | New feature or enhancement |
-| `fix/` | Bug fix |
-| `source/` | New or corrected Source |
-| `refactor/` | Code cleanup, no behaviour change |
-| `docs/` | Documentation only |
-| `chore/` | Tooling, CI, deps |
+## Code rules
 
-Example: `feat/story-carousel-keyboard-nav`, `fix/waitlist-duplicate-email`.
+- Never publish fabricated or unsourced summaries. Every claim must trace to a citable Article.
+- Use the glossary in CONTEXT: Story, Article, Source, Summary, Tier, Topic, Edition, Pipeline and Agent have distinct meanings.
+- Routers handle HTTP, schemas validate data and repositories handle persistence. Read existing code before adding a layer.
+- Configure through `app/config.py`; document new settings in the relevant environment template.
+- Keep API endpoints under `/api/v1`, validate input and preserve existing error/status contracts.
+- Ingest writes require `SARANSH_INGEST_API_KEY`; CORS is an explicit allow-list. Never log credentials, full database URLs or reader emails.
+- Production shares PostgreSQL with Rajniti. Migrations may touch only Saransh-owned tables. Register new tables in `app/db/ownership.py`, review generated SQL and never rewrite applied revisions.
+- Server Components are the default. Add client boundaries only for state, effects or browser APIs.
+- Use theme tokens, not color literals, and check both light and dark. No inversion hacks.
+- Use Sutra where it fits. Existing editorial controls are an intentional exception, recorded in [design-audit.md](docs/design-audit.md); shared primitives belong upstream rather than in a local copy.
+- Keep source links visible. Use keyboard-operable controls, visible focus, appropriate ARIA, Hindi `lang` attributes, AA contrast, 44px tap targets and no overflow at 360px.
+- Treat Hindi and English equally in reader features. Analytics must not personalize the feed or contain names/emails.
+- Keep diffs focused; do not reformat unrelated files or introduce abstractions only to reduce line count.
 
----
+## Planned pipeline rules
 
-## Project house rules (read before touching the UI)
+The full review pipeline is not built. Its requirements are hard word limits
+(English <= 60, Hindi <= 70), attribution, official photos or illustrations,
+and human approval before publication. The current
+[stopgap routine](docs/story-ingest-routine.md) is a documented exception:
+it publishes immediately, may use publisher images and has no enforced word limit.
+Do not silently extend that exception to new pipeline work.
 
-These are settled architectural decisions. Work within them — a PR that violates one will be sent back.
+Use RSS, licensed feeds and official sources, not scraped article pages; check
+reuse terms before adding a Source. PTI/ANI are licensed products. Source-list
+approval belongs to the founder. Planned AI uses local Ollama, not paid services.
+Version prompts, attribute claims, avoid opinion adjectives and fail per Story,
+not per batch. An Agent drafts or flags; a person approves. Test validators,
+deduplication and tagging with saved fixtures, never live news feeds.
 
-- **Use Sutra first.** Import `@sutra_ui/ui` for Button, Card, Input, Badge, Text, Link, Modal, Toast, Skeleton, Avatar, Theme. Don't hand-roll a local twin. Re-skin via `--sutra-color-accent-*` overrides, never by forking the component.
-- **Style with theme token names, never hex.** Use `bg-paper`, `text-ink`, `border-line` and the other names mapped in `globals.css`; they follow the active theme on their own. Reach for a `dark:` class only where a token cannot express the difference. **No `filter: invert()` hacks.** Every UI change must look right in **both** light and dark.
-- **Attribution is visible.** A Summary rendered without its Source link is a bug, not a layout choice.
-- **No personalisation.** Nothing is learned from clicks, reading time or analytics. Topics are a filter the reader sets and can see. Analytics and read records must never feed ranking or suggestions.
-- **Hindi and English are equal.** A feature that works in one language and not the other is not done.
-- **Word limits are hard.** English ≤ 60 words, Hindi ≤ 70. Reject, never warn.
-- **No publisher images.** Story images are an official photo or a Saransh illustration.
-- **The production database is shared with Rajniti.** Rajniti owns `users`. A Saransh migration never creates or alters a table Saransh does not own ([ADR 0006](./docs/adr/0006-shared-database-and-users.md)).
-- **Accessibility baseline:** keyboard-navigable, correct ARIA roles, visible focus, contrast that passes AA, tap targets ≥ 44px, and no horizontal overflow at 360px.
-- **Server components by default.** Reach for `"use client"` only when you need state, effects, or browser APIs.
-
----
-
-## Code style & linting
-
-- **Python:** `black` + `isort` formatting, `flake8` linting, `mypy` types. Run `black app tests scripts && isort app tests scripts`, then `flake8 app tests scripts` / `mypy app`.
-- **Frontend:** ESLint + TypeScript typecheck (`cd frontend && npm run lint && npm run typecheck`).
-- **Pre-commit hooks:** `pip install -r requirements-test.txt && pre-commit install` — formats Python on commit and runs React Doctor over staged frontend files.
-- Keep changes focused; don't reformat unrelated files in the same PR.
-
----
-
-## Testing
-
-Your PR must keep the suite green.
+## Required checks
 
 ```bash
-pip install -r requirements-test.txt   # first time
 pytest tests/ -v
-cd frontend && npm test
+black --check app tests scripts
+isort --check-only app tests scripts
+flake8 app tests scripts
+cd frontend
+npm test
+npm run lint
+npm run typecheck
+npm run build
 ```
 
-- Add or update tests for new behaviour and bug fixes.
-- Paste the command(s) you ran into the PR's "How was this tested?" section.
+Python uses Black (88 columns), isort's Black profile, flake8 and type hints.
+`mypy app` is advisory in CI. Frontend tests use Jest and Testing Library under
+`frontend/tests`; backend fixtures are in `tests/conftest.py`.
+Add tests for changed behavior. Preserve coverage thresholds and include both
+languages when a rule applies to both. CI checks are in
+[ci.yml](.github/workflows/ci.yml).
 
-**Required CI checks (all must pass):** `Backend — tests`, `Frontend — tests`, `Backend — lint`, `Frontend — lint & typecheck`, `Frontend — production build`.
+## Pull requests
 
----
+Fill in the [PR template](.github/PULL_REQUEST_TEMPLATE.md), link the issue with
+`Closes #...`, map the result to acceptance criteria and include commands/results.
+Choose one version label: `patch` for fixes, `minor` for features, `major` for
+breaking changes. No label defaults to `patch`.
 
-## Commit messages
+UI changes need before/after screenshots in light/dark and at 360px.
+Never commit secrets. Respond to review with follow-up commits; do not force-push
+review history unless asked. A maintainer merges after review and green CI.
 
-- Imperative mood, present tense: "Add story carousel", not "Added" / "Adds".
-- One logical change per commit where practical; a scope helps: `feat(stories): add source attribution row`.
-- Reference the issue in the body when useful.
-
----
-
-## Opening a pull request
-
-1. Push your branch and open a PR into the default branch.
-2. **Fill in the PR template** — it's pre-loaded. In particular:
-   - Tick the correct **Type of change**.
-   - Add **exactly one version-bump label** — `patch` (fixes/tweaks), `minor` (features/enhancements), or `major` (breaking). No label defaults to `patch`.
-   - Describe **how you tested** (paste the command).
-3. **Link the issue:** put `Closes #<issue-number>` in the description so it auto-closes on merge.
-4. **UI changes:** attach before/after screenshots in **both light and dark mode**, and a mobile (360px) shot.
-5. **Never commit** `.env`, API keys, or secrets.
-6. Keep the diff to intended changes only; review it yourself first.
-
-Map your work back to the issue's **acceptance criteria** — a reviewer will check each box against your PR.
-
----
-
-## Review & merge
-
-- A maintainer reviews for correctness, the house rules above, tests, and green CI.
-- Respond to feedback with follow-up commits (don't force-push over the review history unless asked).
-- Once approved and CI is green, a maintainer merges. The version-bump label drives the automatic release bump.
-- Be patient and kind — reviewers are volunteers too.
-
----
-
-## Source & pipeline contributions
-
-The pipeline is planned, not built, so these are the rules any pipeline work must follow:
-
-- **Sources:** RSS feeds, licensed feeds and official sources only. No scraping of article pages. An outlet's reuse terms are checked before it is added, and the source list is the founder's call.
-- **AI:** local models only (Ollama), so no API key is needed and the cost stays at zero. Do not add a paid AI service.
-- **Prompts:** fact-only, attributed claims ("according to police…"), no opinion adjectives. Every prompt is versioned and public.
-- **Failure:** fail per Story, not per batch. Validator, dedupe and tagger changes come with tests.
-- No secrets in commits, and the test suite must be green before you push.
-
----
-
-## Reporting bugs & requesting features
-
-- **Bug:** open an issue ([new issue](https://github.com/imsks/Saransh/issues/new)). Include steps to reproduce, expected vs actual, environment, and a screenshot/log.
-- **Bad Summary, wrong attribution, or a grievance about a Story:** open an issue with the Story, the Source links, and what's wrong. Corrections and grievances are handled in public, as GitHub Issues, and accuracy bugs are our highest-priority class.
-- **Feature idea:** start a [Discussion](https://github.com/imsks/Saransh/discussions) or open a feature issue so we can align before code.
-
----
-
-## Code of Conduct
-
-Be respectful, assume good intent, and keep discussion focused on the work. Harassment or discrimination isn't tolerated. Saransh reports on real people and real events — treat both with accuracy and care.
-
-## License
-
-By contributing, you agree that your contributions are licensed under the project's [MIT License](./LICENSE).
-
----
-
-**Built with ❤️ in 🇮🇳 — thank you for contributing.**
+Be respectful and keep discussion focused on the work. Harassment and
+discrimination are not tolerated. Contributions use the [MIT License](LICENSE).

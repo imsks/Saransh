@@ -46,17 +46,18 @@ Database limits the request schema does not enforce ([`app/db/models.py`](../app
 | `source_type`                    | ≤ 30 chars              |
 | `url`, `image_url`, `source_url` | absolute `http`/`https` |
 
-The landing carousel ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) shows the
-Story's `image_url` as the card image and its first source's outlet name as the credit and source
-line. `category` holds the story's topic key, not a tier string. Old tier strings are invalid for
+The tested API-story adapter ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) maps
+`image_url` to the card image and the first source's outlet to its credit and source line.
+The landing carousel currently uses static samples, not this adapter or the API feed.
+`category` holds the story's topic key, not a tier string. Old tier strings are invalid for
 the live topic set. The card topic label is built from the current topic keys: `politics | civic | education | crime | business`.
 
 `state` is geography only: the Indian state or union territory a State-tier Story is about, and
 `null` for National and International Stories. There is no obsolete location field beyond `state`.
 
-The card's outlet badge is a link to `source_url`, falling back to the first `sources[].url` for
-Stories that predate the field. A wrong citation link is therefore visible to readers — verify the
-URL loads before you send it.
+The adapter uses `source_url`, falling back to the first `sources[].url` for Stories that
+predate the field. Verify the citation URL loads before sending it, even though API Stories
+are not displayed in the landing preview yet.
 
 Ingest is **not idempotent**: a retry after a timeout can
 insert a duplicate. The routine reads recent Stories first and never retries a POST that may have

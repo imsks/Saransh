@@ -5,11 +5,20 @@ import {
   render,
   screen,
 } from "@testing-library/react";
-import { afterEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-import type { Story } from "@/constants/stories";
+import { STORIES, type Story } from "@/constants/stories";
 
 import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
+
+import { analytics } from "@/lib/analytics";
+
+// Spy on the real client: components call it at event time, so every capture lands here.
+let capture: jest.SpiedFunction<typeof analytics.capture>;
+
+beforeEach(() => {
+  capture = jest.spyOn(analytics, "capture").mockImplementation(() => {});
+});
 
 function story(headline: string): Story {
   return {
@@ -31,9 +40,17 @@ const stories = [
 afterEach(() => {
   cleanup();
   jest.useRealTimers();
+  jest.restoreAllMocks();
 });
 
 describe("StoryCarouselClient", () => {
+  it("shows the carousel counter without a sample label in live mode", () => {
+    render(<StoryCarouselClient stories={STORIES.slice(0, 2)} isSample={false} />);
+
+    expect(screen.getByText("1 / 2")).toBeTruthy();
+    expect(screen.queryByText("Sample story")).toBeNull();
+  });
+
   it("starts on the first story with Back disabled", () => {
     render(<StoryCarouselClient stories={stories} />);
 
@@ -124,5 +141,47 @@ describe("StoryCarouselClient", () => {
 
     expect(screen.queryByText("Sample story")).toBeNull();
     expect(screen.queryByText(/Live feed/i)).toBeNull();
+  });
+});
+
+describe("StoryCarouselClient analytics", () => {
+  const advances = () =>
+    capture.mock.calls
+      .filter(([event]) => event === "story_carousel_advanced")
+      .map(([, properties]) => properties);
+
+  it("reports a button press with where it landed", () => {
+    render(<StoryCarouselClient stories={stories} isSample />);
+    fireEvent.click(screen.getByRole("button", { name: "Next story" }));
+    fireEvent.click(screen.getByRole("button", { name: "Previous story" }));
+
+    expect(advances()).toEqual([
+      { direction: "next", method: "button", position: 2, total: 3, sample: true },
+      { direction: "back", method: "button", position: 1, total: 3, sample: true },
+    ]);
+  });
+
+  it("reports a swipe, and not a drag too short to be one", () => {
+    render(<StoryCarouselClient stories={stories} />);
+    const card = screen.getByText("First story").closest("[aria-live]") as HTMLElement;
+
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 260 }] });
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 100 }] });
+
+    expect(advances()).toEqual([
+      { direction: "next", method: "swipe", position: 2, total: 3, sample: false },
+    ]);
+  });
+
+  it("reports nothing when the reader is already at the end", () => {
+    render(<StoryCarouselClient stories={[story("Only story")]} />);
+    const card = screen.getByText("Only story").closest("[aria-live]") as HTMLElement;
+
+    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] });
+    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 100 }] });
+
+    expect(advances()).toEqual([]);
   });
 });

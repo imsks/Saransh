@@ -1,4 +1,4 @@
-"""Makefile contract: setup, up, stop, migrate, revision, deploy."""
+"""Makefile commands and deployment safeguards."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ MAKEFILE = ROOT / "Makefile"
 DEPLOY_SCRIPT = ROOT / "scripts" / "deploy_cloud_run.sh"
 
 
-TARGETS = ["setup", "up", "stop", "migrate", "revision", "deploy"]
+TARGETS = ["up", "stop", "migrate", "migrate-prod"]
 
 
 def _public_targets(text: str) -> list[str]:
@@ -45,33 +45,37 @@ def test_makefile_up_advertises_api_frontend_and_postgres():
 
 
 def test_migrate_defaults_to_the_local_database():
-    # A real credential here would be committed; the remote URL is passed per run.
-    assert (
-        "MIGRATE_DATABASE_URL ?= postgresql://rajniti:rajniti@127.0.0.1:5433/rajniti"
-        in (MAKEFILE.read_text())
-    )
+    text = MAKEFILE.read_text()
+    assert "up -d --wait postgres" in text
+    assert "saransh-api python -m scripts.init_db" in text
+    assert "MIGRATE_DATABASE_URL" not in text
+    assert "up: migrate" in text
 
 
-@pytest.mark.parametrize("target", ["migrate", "revision"])
-def test_migrate_targets_refuse_a_remote_database_url(target: str):
+@pytest.mark.parametrize(
+    "variables",
+    [
+        {},
+        {"DATABASE_URL": "postgresql://u:p@db.example.com:5432/postgres"},
+        {"CONFIRM_PROD": "1"},
+        {"DATABASE_URL": "postgresql://u:p@db.example.com/db", "CONFIRM_PROD": "0"},
+    ],
+)
+def test_production_migration_requires_url_and_confirmation(variables):
     result = subprocess.run(
-        [
-            "make",
-            target,
-            "m=probe",
-            "MIGRATE_DATABASE_URL=postgresql://u:p@db.example.com:5432/postgres",
-        ],
+        ["make", "migrate-prod"],
         cwd=ROOT,
         capture_output=True,
         text=True,
         check=False,
+        env={"PATH": "/usr/bin:/bin", **variables},
     )
     assert result.returncode != 0
-    assert "CONFIRM_REMOTE" in result.stdout + result.stderr
+    assert "CONFIRM_PROD" in result.stdout + result.stderr
+    assert "u:p" not in result.stdout + result.stderr
 
 
-def test_deploy_target_runs_the_deploy_script():
-    assert "./scripts/deploy_cloud_run.sh" in MAKEFILE.read_text()
+def test_deploy_script_remains_available_without_a_make_target():
     assert DEPLOY_SCRIPT.exists()
 
 
@@ -102,9 +106,12 @@ def test_deploy_script_does_not_set_port():
 
 def test_deploy_script_migrates_before_deploying_the_revision():
     text = DEPLOY_SCRIPT.read_text()
-    assert "upgrade head" in text
+    assert "-m scripts.init_db --production" in text
+    assert "CONFIRM_PROD=1" in text
     assert "SKIP_MIGRATIONS" in text
-    assert text.index("upgrade head") < text.index("gcloud run deploy")
+    assert text.index("-m scripts.init_db --production") < text.index(
+        "gcloud run deploy"
+    )
 
 
 def test_deploy_script_reports_every_missing_variable_at_once(tmp_path):
