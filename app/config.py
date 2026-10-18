@@ -41,6 +41,8 @@ class Settings:
     )
 
     SARANSH_INGEST_API_KEY: Optional[str] = os.getenv("SARANSH_INGEST_API_KEY")
+    # Server-to-server only: the Next.js server sends it with the signed-in User's id.
+    SARANSH_INTERNAL_API_KEY: Optional[str] = os.getenv("SARANSH_INTERNAL_API_KEY")
 
     @property
     def is_development(self) -> bool:

@@ -25,6 +25,11 @@ and writers are retired and rollback to them is disabled. Before that cleanup,
 take a `pg_dump` and repeat the citation backfill for writes made by old revisions
 during the transition. Do not add destructive cleanup to this pre-deploy migration.
 
+Saransh maps Rajniti's `users` table to create Users and fill NULL onboarding
+answers, but never creates or migrates it in production; `make migrate` creates a
+local stand-in only. Before the first production sign-in, compare `\d users` with
+the `User` model in [models.py](../app/db/models.py).
+
 Install backend requirements in `venv` or the Python 3 environment on PATH.
 Export `DATABASE_URL` from a secure source, using Supabase's session-mode pooler
 on port 5432 rather than its IPv6-only direct endpoint, then:
