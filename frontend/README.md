@@ -20,20 +20,14 @@ for host-only backend setup and required checks.
 
 ## Analytics
 
-Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog. The dashboard's
-`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` alias is also supported; choose one.
-With no token the SDK is not loaded and no analytics requests are sent.
-Rebuild or redeploy after changing public environment values.
+Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog; without it the SDK is never
+initialised. Rebuild or redeploy after changing public environment values.
 
-Events go through the first-party `/ingest` proxy to PostHog Cloud US by default.
-Host/proxy overrides are optional. Session replay is disabled. Never send names,
-emails or other personal data to analytics, and never use events to personalize stories.
-
-Use `analytics` from `@/lib/analytics`, not the SDK directly. Event definitions
-are in [events.ts](src/lib/analytics/events.ts).
-The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` ->
-`waitlist_submitted`, filtered to `outcome = created` for new signups.
-See [ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md).
+[AnalyticsProvider](src/components/providers/AnalyticsProvider.tsx) is the whole
+setup: events go through the first-party `/ingest` proxy to PostHog Cloud US,
+pageviews and clicks are captured automatically and session replay is off.
+Call `posthog.capture` directly for the few funnel events. Never send names,
+emails or other personal data, and never use events to personalize stories.
 
 ## UI
 
