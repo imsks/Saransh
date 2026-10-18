@@ -27,7 +27,7 @@ describe("SignInButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
 
     expect(track).toHaveBeenCalledWith("sign_in_clicked", { location: "hero" });
-    expect(signIn).toHaveBeenCalledWith("google", { callbackUrl: "/stories" });
+    expect(signIn).toHaveBeenCalledWith("google", { callbackUrl: "/onboarding" });
   });
 });
 

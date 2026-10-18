@@ -27,6 +27,11 @@ server syncs the User with FastAPI through [server-api.ts](src/lib/server-api.ts
 the only code that holds the internal key. The browser session carries the User's
 id, name, email, image and onboarding state, never a token or key.
 
+Sign-in returns to `/onboarding`, which shows only the questions FastAPI reports
+as unanswered and submits them through a server action. [middleware.ts](src/middleware.ts)
+sends a signed-in User with unanswered questions from `/stories` to `/onboarding`;
+guests read `/stories` freely.
+
 ## Analytics
 
 Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog; without it the SDK is never
