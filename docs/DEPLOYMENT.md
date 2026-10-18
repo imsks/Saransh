@@ -15,6 +15,11 @@ Revision `b8c9d0e1f2a3` drops the `sources` table, the Hindi story columns and t
 waitlist Signup Token. Take a `pg_dump` before running it; the downgrade restores the
 columns, not the data.
 
+Saransh maps Rajniti's `users` table to create Users and fill NULL onboarding
+answers, but never creates or migrates it in production; `make migrate` creates a
+local stand-in only. Before the first production sign-in, compare `\d users` with
+the `User` model in [models.py](../app/db/models.py).
+
 Install backend requirements in `venv` or the Python 3 environment on PATH.
 Export `DATABASE_URL` from a secure source, using Supabase's session-mode pooler
 on port 5432 rather than its IPv6-only direct endpoint, then:

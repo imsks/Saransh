@@ -41,9 +41,8 @@ def test_alembic_only_looks_at_saransh_owned_tables():
 
 def test_every_model_table_is_registered_as_saransh_owned():
     # A new table must be added to SARANSH_OWNED_TABLES on purpose, or
-    # autogenerate will silently ignore it. A model mapped over a table another
-    # product owns (Rajniti's `users`) must not be registered: exempt it here.
-    assert set(Base.metadata.tables) == set(SARANSH_OWNED_TABLES)
+    # autogenerate will silently ignore it. Rajniti's `users` is mapped, never owned.
+    assert set(Base.metadata.tables) == SARANSH_OWNED_TABLES | {"users"}
 
 
 def _dropped_tables(connection, **filters) -> set[str]:
@@ -59,11 +58,11 @@ def test_autogenerate_never_proposes_dropping_another_products_table():
     """Production Postgres is shared with Rajniti; its tables are not ours to drop."""
     engine = create_engine("sqlite:///:memory:")
     with engine.begin() as connection:
-        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        connection.execute(text("CREATE TABLE user_politicians (id TEXT PRIMARY KEY)"))
         connection.execute(text("CREATE TABLE alembic_version (version_num TEXT)"))
 
         # Without the filters this is exactly what autogenerate would write.
-        assert "users" in _dropped_tables(connection)
+        assert "user_politicians" in _dropped_tables(connection)
 
         assert (
             _dropped_tables(
@@ -71,6 +70,36 @@ def test_autogenerate_never_proposes_dropping_another_products_table():
             )
             == set()
         )
+
+
+def test_autogenerate_never_alters_rajnitis_users_table():
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        context = MigrationContext.configure(
+            connection,
+            opts={"include_name": include_name, "include_object": include_object},
+        )
+        diffs = compare_metadata(context, Base.metadata)
+
+        assert diffs
+        assert "users" not in repr(diffs)
+
+
+def test_migration_runner_creates_the_users_stub_only_when_asked():
+    from scripts.init_db import migrate_database
+
+    for users_stub in (False, True):
+        engine = create_engine("sqlite:///:memory:")
+        with engine.begin() as connection:
+            migrate_database(connection, users_stub=users_stub)
+            tables = set(inspect(connection).get_table_names())
+
+            assert SARANSH_OWNED_TABLES <= tables
+            assert ("users" in tables) is users_stub
+            if users_stub:
+                columns = {c["name"] for c in inspect(connection).get_columns("users")}
+                assert columns == set(Base.metadata.tables["users"].columns.keys())
 
 
 def test_suite_never_points_at_a_real_database():

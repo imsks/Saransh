@@ -12,15 +12,21 @@ from alembic import command
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.migration import MigrationContext
-from app.db.models import Base
-from app.db.ownership import include_name, include_object
+from app.db.models import Base, User
+from app.db.ownership import SARANSH_OWNED_TABLES, include_name, include_object
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_TABLE = "alembic_version_saransh"
+OWNED_TABLES = [Base.metadata.tables[name] for name in sorted(SARANSH_OWNED_TABLES)]
 
 
-def migrate_database(connection: Connection) -> None:
-    """Bootstrap an empty schema, adopt an exact match, or upgrade its revision."""
+def migrate_database(connection: Connection, users_stub: bool = False) -> None:
+    """Bootstrap an empty schema, adopt an exact match, or upgrade its revision.
+
+    `users_stub` creates a local stand-in for Rajniti's `users` table; never in production.
+    """
+    if users_stub:
+        User.__table__.create(connection, checkfirst=True)
     config = Config(str(ROOT / "alembic.ini"))
     config.set_main_option("script_location", str(ROOT / "alembic"))
     config.attributes["connection"] = connection
@@ -35,11 +41,9 @@ def migrate_database(connection: Connection) -> None:
     )
 
     if context.get_current_revision() is None:
-        existing = set(inspect(connection).get_table_names()) & set(
-            Base.metadata.tables
-        )
+        existing = set(inspect(connection).get_table_names()) & SARANSH_OWNED_TABLES
         if existing:
-            if existing != set(Base.metadata.tables) or compare_metadata(
+            if existing != SARANSH_OWNED_TABLES or compare_metadata(
                 context, Base.metadata
             ):
                 raise RuntimeError(
@@ -47,7 +51,7 @@ def migrate_database(connection: Connection) -> None:
                     "from the models. Verify its migration baseline before retrying."
                 )
         else:
-            Base.metadata.create_all(bind=connection)
+            Base.metadata.create_all(bind=connection, tables=OWNED_TABLES)
         command.stamp(config, "head")
 
     command.upgrade(config, "head")
@@ -77,7 +81,7 @@ def main() -> None:
     try:
         validate_target(engine.url, arguments.production)
         with engine.begin() as connection:
-            migrate_database(connection)
+            migrate_database(connection, users_stub=not arguments.production)
     except RuntimeError as error:
         parser.exit(1, f"{error}\n")
     print("Saransh database is at the latest migration.")
