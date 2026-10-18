@@ -1,4 +1,6 @@
 import type { Story, Topic } from "@/constants/stories";
+import { getApiBaseUrl } from "@/lib/api-base";
+import { logger } from "@/lib/logger";
 
 export interface ApiStory {
   id: string;
@@ -71,4 +73,23 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
     source: label,
     sourceUrl: story.source_url || undefined,
   };
+}
+
+/** Latest published Stories for server rendering; an unreachable API yields none. */
+export async function fetchStories(limit = 50): Promise<Story[]> {
+  try {
+    const response = await fetch(
+      `${getApiBaseUrl({ forServer: true })}/stories?limit=${limit}`,
+      { next: { revalidate: 60 } },
+    );
+    if (!response.ok) {
+      logger.warn({ status: response.status }, "stories.fetch_failed");
+      return [];
+    }
+    const stories = (await response.json()) as ApiStory[];
+    return stories.map(mapApiStoryToCarousel);
+  } catch (err) {
+    logger.warn({ err }, "stories.fetch_failed");
+    return [];
+  }
 }

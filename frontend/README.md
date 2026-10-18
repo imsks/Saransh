@@ -1,7 +1,7 @@
 # Frontend
 
-Next.js 14 and React 18. The landing page renders static sample stories; the
-waitlist submits to FastAPI. There is no sign-in or live reader feed.
+Next.js 14 and React 18. The landing page renders static sample stories and
+`/stories` server-renders the latest published Stories from FastAPI.
 
 Use `make up` from the repository root for the full local stack. For a host-only
 frontend, copy `.env.example` to `.env`, run `npm ci`, then `npm run dev`.

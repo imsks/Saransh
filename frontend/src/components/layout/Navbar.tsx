@@ -21,6 +21,12 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-5">
+          <Link
+            href={ROUTES.stories}
+            className="inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted no-underline transition-colors hover:text-ink"
+          >
+            Stories
+          </Link>
           <a
             href={EXTERNAL.repo}
             target="_blank"
