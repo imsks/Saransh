@@ -1,8 +1,8 @@
 # Saransh
 
 An open-source news project for India. The deployed site is a landing page with
-static sample stories, Google sign-in, a public `/stories` list of ingested
-stories and a privacy page.
+static sample stories, a public `/stories` list of ingested stories, a waitlist
+and a privacy page.
 
 ## Current scope
 
