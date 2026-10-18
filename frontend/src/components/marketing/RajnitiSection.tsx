@@ -1,4 +1,3 @@
-import TrackedLink from "@/components/analytics/TrackedLink";
 import { EXTERNAL } from "@/lib/routes";
 
 export default function RajnitiSection() {
@@ -19,16 +18,14 @@ export default function RajnitiSection() {
               show that person&apos;s news in one place. None of this is built yet; Rajniti itself is
               live and you can browse it today.
             </p>
-            <TrackedLink
-              event="outbound_link_clicked"
-              properties={{ destination: "rajniti", placement: "rajniti_section" }}
+            <a
               href={EXTERNAL.rajniti}
               target="_blank"
               rel="noopener noreferrer"
               className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
             >
               Explore Rajniti
-            </TrackedLink>
+            </a>
           </div>
           <div>
             <div className="rounded-t-[3px] border-[1.5px] border-blue bg-blue-tint px-[22px] py-5">
@@ -47,16 +44,14 @@ export default function RajnitiSection() {
                 Promise: &quot;Road widening complete within two years&quot; · Status:{" "}
                 <span className="not-italic font-semibold text-amber">Delayed, 60% complete</span>
               </p>
-              <TrackedLink
-                event="outbound_link_clicked"
-                properties={{ destination: "rajniti", placement: "rajniti_section" }}
+              <a
                 href={EXTERNAL.rajniti}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
               >
                 View profile on Rajniti
-              </TrackedLink>
+              </a>
             </div>
             <div className="rounded-b-[3px] border-[1.5px] border-t-0 border-blue bg-paper px-4 py-3 font-mono text-[10px] leading-[1.65] text-muted">
               This chip is illustrative. It shows how a Rajniti profile could carry Saransh stories

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-import TrackedLink from "@/components/analytics/TrackedLink";
 import { primaryButtonClass, secondaryButtonClass } from "@/components/ui/buttonClasses";
 
 export default function ThankYou() {
@@ -50,26 +49,22 @@ export default function ThankYou() {
         We&apos;ll email you once when Saransh launches. That&apos;s all you&apos;ll hear from us.
       </p>
       <div className="flex flex-wrap justify-center gap-3">
-        <TrackedLink
-          event="outbound_link_clicked"
-          properties={{ destination: "github", placement: "thank_you" }}
+        <a
           href="https://github.com/imsks/Saransh"
           target="_blank"
           rel="noopener noreferrer"
           className={primaryButtonClass}
         >
           FOLLOW THE BUILD ON GITHUB
-        </TrackedLink>
-        <TrackedLink
-          event="outbound_link_clicked"
-          properties={{ destination: "rajniti", placement: "thank_you" }}
+        </a>
+        <a
           href="https://rajniti-app.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
           className={secondaryButtonClass}
         >
           EXPLORE RAJNITI
-        </TrackedLink>
+        </a>
       </div>
       <p className="absolute inset-x-0 bottom-6 px-5 text-center font-mono text-[10px] text-muted">
         Saransh{" "}

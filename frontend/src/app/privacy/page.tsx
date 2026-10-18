@@ -85,33 +85,20 @@ export default function PrivacyPage() {
                 page are working. What is measured is page views, clicks and
                 similar interactions, the page you came from, and the coarse
                 technical details your browser sends anyway — approximate
-                location from your IP address, device type, and browser. Your
-                name and email are not part of this.
-              </p>
-            </Section>
-
-            <Section heading="How a signup is linked to usage">
-              <p className={paragraphClass}>
-                When you join the waitlist, your signup is linked to that
-                anonymous usage by an opaque token; pseudonymous — an identifier
-                that cannot be read as your name or email without
-                Saransh&rsquo;s own database. It lets us see that a visit ended
-                in a signup without telling the analytics vendor who signed up.
+                location from your IP address, device type, and browser.
               </p>
               <p className={paragraphClass}>
                 <strong className="font-semibold text-ink">
                   Your email address is never sent to the analytics vendor.
                 </strong>{" "}
-                Neither is your name. Someone holding the analytics data alone
-                sees only opaque tokens.
+                Neither is your name.
               </p>
             </Section>
 
             <Section heading="Session recording">
               <p className={paragraphClass}>
                 We do not record sessions or capture what you type into form
-                fields. We measure page visits and interactions to understand
-                how people reach and complete the waitlist form.
+                fields.
               </p>
             </Section>
 
@@ -146,8 +133,7 @@ export default function PrivacyPage() {
 
             <Section heading="Deleting your data">
               <p className={paragraphClass}>
-                Ask and it is deleted — your waitlist entry and the analytics
-                attached to its token. Message the maintainer on GitHub at{" "}
+                Ask and it is deleted — your waitlist entry and its analytics. Message the maintainer on GitHub at{" "}
                 <a
                   href={EXTERNAL.maintainer}
                   target="_blank"
