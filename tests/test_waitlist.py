@@ -45,6 +45,24 @@ def test_join_waitlist_rejects_short_name(client):
     assert response.status_code == 422
 
 
+def test_join_waitlist_does_not_hide_other_integrity_errors(
+    client, db_session, monkeypatch
+):
+    payload = _payload()
+
+    def fail_commit():
+        raise sa.exc.IntegrityError("INSERT", {}, Exception("primary key collision"))
+
+    monkeypatch.setattr(db_session, "commit", fail_commit)
+    response = client.post(WAITLIST_URL, json=payload)
+
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": "Unable to save your waitlist signup right now."
+    }
+    assert db_session.query(Waitlist).filter_by(email=payload["email"]).count() == 0
+
+
 def test_join_waitlist_rejects_invalid_email(client):
     response = client.post(
         WAITLIST_URL,

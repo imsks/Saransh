@@ -57,6 +57,15 @@ def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
         return JSONResponse(status_code=201, content={"ok": True})
     except IntegrityError:
         db.rollback()
+        existing = (
+            db.query(Waitlist).filter(Waitlist.email == normalized_email).one_or_none()
+        )
+        if existing is None:
+            logger.exception("waitlist.duplicate_lookup_failed")
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to save your waitlist signup right now.",
+            )
         return JSONResponse(status_code=200, content={"ok": True, "duplicate": True})
     except Exception as exc:
         db.rollback()
