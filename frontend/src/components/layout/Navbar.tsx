@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import AccountButton from "@/components/auth/AccountButton";
 import ThemeSwitch from "@/components/layout/ThemeSwitch";
 import { Container } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
@@ -36,10 +37,11 @@ export default function Navbar() {
             href={EXTERNAL.repo}
             target="_blank"
             rel="noopener noreferrer"
-            className={navLinkClass}
+            className={`${navLinkClass} max-[560px]:hidden`}
           >
             GitHub
           </a>
+          <AccountButton />
           <ThemeSwitch />
         </div>
       </Container>
