@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import router as api_router
 from app.config import settings
-from app.db.bootstrap import init_database
 from app.utils import get_logger, setup_logging
 
 # Setup logging
@@ -40,7 +39,6 @@ async def startup_event():
         debug=settings.DEBUG,
         started_at=datetime.now().isoformat(),
     )
-    init_database()
 
 
 @app.on_event("shutdown")
