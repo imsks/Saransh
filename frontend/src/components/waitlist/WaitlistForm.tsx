@@ -1,6 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { primaryButtonClass } from "@/components/ui/buttonClasses";
+import { analytics } from "@/lib/analytics";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
 import { validateWaitlist, type WaitlistField, type WaitlistFieldErrors } from "@/lib/validate";
@@ -17,6 +18,37 @@ const inputClass =
   "min-h-11 w-full rounded-[2px] border-[1.5px] border-line-heavy bg-card px-3 py-2.5 font-sans text-[13.5px] text-ink transition-colors placeholder:text-muted focus:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red aria-[invalid=true]:border-red dark:bg-paper";
 const errorClass = "font-mono text-[10px] tracking-[0.04em] text-red";
 
+/** Remembers, for the tab's session, that the Visitor has started the form. */
+const STARTED_KEY = "saransh.analytics.waitlist_started";
+
+/**
+ * Analytics is never on the signup's critical path: whatever it throws stays
+ * here, and the form carries on as if it weren't there.
+ */
+function report(send: () => void) {
+  try {
+    send();
+  } catch (err) {
+    logger.warn({ err }, "waitlist.analytics_failed");
+  }
+}
+
+function hasStartedThisSession(): boolean {
+  try {
+    return window.sessionStorage.getItem(STARTED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markStartedThisSession() {
+  try {
+    window.sessionStorage.setItem(STARTED_KEY, "1");
+  } catch {
+    // Without storage, "once per session" degrades to once per page load.
+  }
+}
+
 export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   const [values, setValues] = useState<Record<WaitlistField, string>>({ name: "", email: "" });
   const [fieldErrors, setFieldErrors] = useState<WaitlistFieldErrors>({});
@@ -24,6 +56,40 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   const [loading, setLoading] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const startedRef = useRef(false);
+
+  // Funnel step 1: the form scrolled into view. Once per page view.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const viewed = () => report(() => analytics.capture("waitlist_form_viewed", {}));
+
+    if (typeof IntersectionObserver === "undefined") {
+      viewed();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          viewed();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  // Funnel step 2: the first touch of either field. Once per session.
+  function handleFirstInteraction(field: WaitlistField) {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    if (hasStartedThisSession()) return;
+    markStartedThisSession();
+    report(() => analytics.capture("waitlist_form_started", { field }));
+  }
 
   function handleChange(field: WaitlistField, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -64,21 +130,38 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         ok?: boolean;
         message?: string;
         duplicate?: boolean;
+        signup_token?: string;
       };
 
       if (!response.ok) {
+        report(() =>
+          analytics.capture("waitlist_submitted", { outcome: "failed", status: response.status }),
+        );
         setFormError(payload.message || GENERIC_ERROR);
         return;
       }
 
       if (payload.ok || payload.duplicate) {
+        // Funnel step 3. The Signup Token is the only thing tying this Visitor
+        // to the Signup; a duplicate returns the same Token, so two devices
+        // resolve to one person.
+        report(() => {
+          if (payload.signup_token) analytics.identify(payload.signup_token);
+          analytics.capture("waitlist_submitted", {
+            outcome: payload.duplicate ? "duplicate" : "created",
+          });
+        });
         onSuccess();
         return;
       }
 
+      report(() =>
+        analytics.capture("waitlist_submitted", { outcome: "failed", status: response.status }),
+      );
       setFormError(GENERIC_ERROR);
     } catch (err) {
       logger.error({ err }, "waitlist.submit_failed");
+      report(() => analytics.capture("waitlist_submitted", { outcome: "failed" }));
       setFormError(GENERIC_ERROR);
     } finally {
       setLoading(false);
@@ -87,6 +170,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
   return (
     <div
+      ref={containerRef}
       id="waitlist"
       className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 dark:border-line pb-[22px] pt-7 shadow-print"
     >
@@ -107,6 +191,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               className={inputClass}
               value={values.name}
               onChange={(e) => handleChange("name", e.target.value)}
+              onFocus={() => handleFirstInteraction("name")}
               disabled={loading}
               autoComplete="name"
               placeholder="Your name"
@@ -131,6 +216,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               className={inputClass}
               value={values.email}
               onChange={(e) => handleChange("email", e.target.value)}
+              onFocus={() => handleFirstInteraction("email")}
               disabled={loading}
               autoComplete="email"
               placeholder="you@example.com"

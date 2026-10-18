@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import TrackedLink from "@/components/analytics/TrackedLink";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
@@ -26,14 +27,16 @@ export default function Footer() {
             <div>Built with ❤️ for the AI and news community</div>
             <div>
               Follow the build →{" "}
-              <a
+              <TrackedLink
+                event="outbound_link_clicked"
+                properties={{ destination: "github", placement: "footer" }}
                 href={EXTERNAL.repo}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-ink no-underline"
               >
                 Saransh
-              </a>
+              </TrackedLink>
             </div>
           </div>
         </div>
