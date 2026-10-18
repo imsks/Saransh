@@ -6,11 +6,14 @@ there is no CI deployment job.
 
 ## Database safety
 
-Production shares a database with Rajniti. Saransh owns `stories`, `sources` and
+Production shares a database with Rajniti. Saransh owns `stories` and
 `waitlist`, with revision tracking in `alembic_version_saransh`. Rajniti's `users`
 and `alembic_version` must remain untouched. Autogenerate filters ownership through
 [ownership.py](../app/db/ownership.py); manually written revisions still need review.
-See [ADR 0006](adr/0006-shared-database-and-users.md).
+
+Revision `b8c9d0e1f2a3` drops the `sources` table, the Hindi story columns and the
+waitlist Signup Token. Take a `pg_dump` before running it; the downgrade restores the
+columns, not the data.
 
 Install backend requirements in `venv` or the Python 3 environment on PATH.
 Export `DATABASE_URL` from a secure source, using Supabase's session-mode pooler

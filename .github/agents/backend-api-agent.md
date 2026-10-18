@@ -3,8 +3,7 @@
 Read the files being changed before relying on this brief. Current functionality
 is in [readme.md](../../readme.md); terminology and planned product rules are in
 [CONTEXT.md](../../CONTEXT.md). Contribution, security, testing and pipeline rules
-are in [CONTRIBUTING.md](../../CONTRIBUTING.md), with decisions in
-[docs/adr](../../docs/adr) and migration/deploy instructions in
+are in [CONTRIBUTING.md](../../CONTRIBUTING.md), with migration/deploy instructions in
 [DEPLOYMENT.md](../../docs/DEPLOYMENT.md).
 
 ## Backend-specific guidance
@@ -18,7 +17,7 @@ are in [CONTRIBUTING.md](../../CONTRIBUTING.md), with decisions in
 - Settings belong in `app/config.py` and the environment template, not router-level `os.environ` reads.
 - Model changes use the existing Column style and CreatedAtMixin. Register new owned tables in `app/db/ownership.py`; never register Rajniti's tables.
 - Keep the isolated Alembic version table and ownership filters. Do not rewrite applied migrations or bypass production consent.
-- Tests use in-memory SQLite and existing fixtures/router loading in `tests/conftest.py`; use saved Source fixtures, never live feeds.
+- Tests use in-memory SQLite and the fixtures in `tests/conftest.py`, which mount `main.app`; never call live feeds.
 - An Agent may draft or flag, never approve. Planned pipeline work records model/prompt versions and reviewer corrections, attributes claims and fails per Story.
 - Future authentication follows ADR 0005: verify identity on the backend and resolve the acting user from its verified token, never a browser-supplied user ID.
 

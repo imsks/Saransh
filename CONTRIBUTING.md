@@ -54,15 +54,15 @@ For commit hooks: `pre-commit install` after installing the test requirements.
 - Production shares PostgreSQL with Rajniti. Migrations may touch only Saransh-owned tables. Register new tables in `app/db/ownership.py`, review generated SQL and never rewrite applied revisions.
 - Server Components are the default. Add client boundaries only for state, effects or browser APIs.
 - Use theme tokens, not color literals, and check both light and dark. No inversion hacks.
-- Use Sutra where it fits. Existing editorial controls are an intentional exception, recorded in [design-audit.md](docs/design-audit.md); shared primitives belong upstream rather than in a local copy.
-- Keep source links visible. Use keyboard-operable controls, visible focus, appropriate ARIA, Hindi `lang` attributes, AA contrast, 44px tap targets and no overflow at 360px.
-- Treat Hindi and English equally in reader features. Analytics must not personalize the feed or contain names/emails.
+- Use Sutra where it fits; shared primitives belong upstream rather than in a local copy.
+- Keep source links visible. Use keyboard-operable controls, visible focus, appropriate ARIA, AA contrast, 44px tap targets and no overflow at 360px.
+- Analytics must not personalize the feed or contain names/emails.
 - Keep diffs focused; do not reformat unrelated files or introduce abstractions only to reduce line count.
 
 ## Planned pipeline rules
 
 The full review pipeline is not built. Its requirements are hard word limits
-(English <= 60, Hindi <= 70), attribution, official photos or illustrations,
+(English <= 60), attribution, official photos or illustrations,
 and human approval before publication. The current
 [stopgap routine](docs/story-ingest-routine.md) is a documented exception:
 it publishes immediately, may use publisher images and has no enforced word limit.

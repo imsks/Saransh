@@ -1,11 +1,11 @@
-"""Persistence helpers for Stories and their Sources."""
+"""Persistence helpers for Stories."""
 
 from typing import List, Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.db.models import STATUS_PUBLISHED, Source, Story
+from app.db.models import STATUS_PUBLISHED, Story
 from app.schemas.stories import StoryIn
 
 
@@ -35,32 +35,19 @@ def get_story(db: Session, story_id: UUID) -> Optional[Story]:
 
 
 def create_story(db: Session, payload: StoryIn) -> Story:
-    """Persist a story and its sources as published, rolling back on failure."""
+    """Persist a story as published, rolling back on failure."""
     try:
         story = Story(
             title_en=payload.title_en,
-            title_hi=payload.title_hi,
             summary_en=payload.summary_en,
-            summary_hi=payload.summary_hi,
             image_url=str(payload.image_url),
             source_url=str(payload.source_url) if payload.source_url else None,
+            source_label=payload.source_label,
             category=payload.category,
             state=payload.state,
             status=STATUS_PUBLISHED,
         )
         db.add(story)
-        db.flush()  # obtain story.id before inserting sources
-
-        for source_in in payload.sources:
-            db.add(
-                Source(
-                    story_id=story.id,
-                    outlet=source_in.outlet,
-                    url=str(source_in.url),
-                    source_type=source_in.source_type,
-                )
-            )
-
         db.commit()
         db.refresh(story)
         return story
