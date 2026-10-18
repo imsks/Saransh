@@ -28,3 +28,4 @@ def test_api_router_has_no_scraper_or_agent_routes():
     assert "/health" in paths
     assert "/stories" in paths
     assert "/waitlist" in paths
+    assert {"/users/sync", "/me", "/me/onboarding"} <= paths
