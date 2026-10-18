@@ -5,12 +5,15 @@ import {
   describe,
   expect,
   it,
-  jest,
 } from "@jest/globals";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
 import PrivacyPage, { metadata } from "@/app/privacy/page";
+
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({ data: null, status: "unauthenticated" }),
+}));
 
 beforeEach(() => {
   // The page renders the Navbar, whose theme switch reads the colour-scheme query.
@@ -68,7 +71,8 @@ describe("PrivacyPage", () => {
 
     const text = body();
     for (const heading of [
-      "Joining the waitlist",
+      "Signing in with Google",
+      "Earlier waitlist signups",
       "Usage analytics",
       "Session recording",
       "Analytics served from our own domain",
@@ -80,7 +84,8 @@ describe("PrivacyPage", () => {
       ).toBeTruthy();
     }
 
-    expect(text).toContain("one email when Saransh launches");
+    expect(text).toContain("shared with Rajniti");
+    expect(text).toContain("joined to your account ID");
     expect(text).toContain(
       "We do not record sessions or capture what you type into form fields.",
     );

@@ -17,17 +17,29 @@ for host-only backend setup and required checks.
 - `API_REWRITE_TARGET`: optional server-only origin for Next.js API rewrites; Docker uses the API service hostname.
 - `NEXT_PUBLIC_SITE_URL`: canonical site origin. In production omit localhost values; the resolver can fall back to `VERCEL_URL`.
 - `NEXT_PUBLIC_LOG_LEVEL`: frontend logging level.
+- `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google sign-in.
+- `SARANSH_INTERNAL_API_KEY`: server-only key for FastAPI's User endpoints; equals the backend value.
+
+## Sign-in
+
+[auth.ts](src/lib/auth.ts) runs Google sign-in through next-auth. On sign-in the
+server syncs the User with FastAPI through [server-api.ts](src/lib/server-api.ts),
+the only code that holds the internal key. The browser session carries the User's
+id, name, email, image and onboarding state, never a token or key.
 
 ## Analytics
 
 Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog; without it the SDK is never
-initialised. Rebuild or redeploy after changing public environment values.
+loaded. Rebuild or redeploy after changing public environment values.
 
-[AnalyticsProvider](src/components/providers/AnalyticsProvider.tsx) is the whole
-setup: events go through the first-party `/ingest` proxy to PostHog Cloud US,
-pageviews and clicks are captured automatically and session replay is off.
-Call `posthog.capture` directly for the few funnel events. Never send names,
-emails or other personal data, and never use events to personalize stories.
+[analytics.ts](src/lib/analytics.ts) is the whole setup. It loads the SDK on
+demand (outside the first-load bundle) and sends events through the first-party
+`/ingest` proxy to PostHog Cloud US. Pageviews and clicks are captured
+automatically and session replay is off. The sign-in funnel is `$pageview /` →
+`sign_in_clicked` → `signed_in` → `onboarding_completed` → `$pageview /stories`.
+On sign-in the anonymous ID is merged into the User's id, so one person is one ID.
+Never send names, emails or other personal data, and never use events to
+personalize stories.
 
 ## UI
 

@@ -9,7 +9,7 @@ Read the current component and its test first. Actual shipped scope is in
 ## Frontend-specific guidance
 
 - Next.js 14 App Router, React 18, TypeScript, Tailwind 4, Sutra tokens/components. Do not assume React 19 features.
-- Server Components are the default; put client boundaries on the smallest interactive leaf. There are no frontend API routes or sign-in today.
+- Server Components are the default; put client boundaries on the smallest interactive leaf. next-auth lives at `src/app/api/auth`; call FastAPI's User endpoints only through `src/lib/server-api.ts` on the server.
 - `@/` points to `src/`. Components are under `src/components`, sample stories under `src/constants`, reusable logic under `src/lib`, Jest/Testing Library tests under `tests`.
 - Tailwind themes live in `src/app/globals.css`, not a tailwind.config file. Use its light/dark token names, not component-level color literals or inversion.
 - Preserve the editorial landing page: compact mono labels, sharp controls, offset shadows. The planned reader surface has different rounded-card typography; do not redesign one to match the other.
@@ -19,10 +19,10 @@ Read the current component and its test first. Actual shipped scope is in
 - Use the exact positioning line when needed: "No noise. Just news. With proof."
 - Mount theme controls on the client to avoid hydration mismatches. Load fonts through next/font and respect reduced-motion preferences.
 - Use `getApiBaseUrl()` for API calls and choose explicit caching/error behavior. The current landing carousel uses constants, not the tested API-story mapper.
-- Capture funnel events with `posthog.capture` from `posthog-js`; autocapture covers clicks and pageviews. No names/emails, session replay or analytics-driven story personalization.
+- Capture funnel events through `@/lib/analytics`; autocapture covers clicks and pageviews. No names/emails, session replay or analytics-driven story personalization.
 - SEO helpers are in `src/lib/seo`; preserve canonical, Open Graph and JSON-LD output.
 - Use semantic HTML, one H1, sensible heading order, visible focus, keyboard/tap alternatives to swipes and status announcements for async results.
-- Future token-bearing route handlers follow ADR 0005; auth tokens must never become readable by client JavaScript.
+- Never put a token or the internal key on the next-auth session or in a `NEXT_PUBLIC_` variable.
 
 Do not add a local twin of a generic Sutra primitive. The existing editorial
 controls are a documented design exception. Check both themes and 360px/mobile
