@@ -1,6 +1,9 @@
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy import (
+    JSON,
+    Boolean,
     Column,
     DateTime,
     Integer,
@@ -48,3 +51,29 @@ class Waitlist(CreatedAtMixin, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+class User(Base):
+    """Rajniti owns this table; Saransh maps only the columns it reads or fills."""
+
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True)  # Google `sub`
+    email = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=True)
+    username = Column(String, nullable=True, unique=True)
+    profile_picture = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    state = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    age_group = Column(String, nullable=True)
+    political_ideology = Column(String, nullable=True)
+    preferred_parties = Column(JSON, nullable=True)
+    topics_of_interest = Column(JSON, nullable=True)
+    onboarding_completed = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, nullable=False, default=_utcnow)
+    updated_at = Column(DateTime, nullable=False, default=_utcnow, onupdate=_utcnow)
