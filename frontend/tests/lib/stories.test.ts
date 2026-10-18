@@ -10,10 +10,10 @@ function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
     summary_en: "The Lok Sabha passed the bill by voice vote.",
     image_url: "https://example.com/cover.jpg",
     source_url: "https://example.com/canonical",
+    source_label: "PTI",
     category: "National",
     state: "Parliament",
     status: "published",
-    sources: [{ outlet: "PTI", url: "https://example.com/story" }],
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     ...overrides,
   };
@@ -27,6 +27,8 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.body).toContain("Lok Sabha");
     expect(story.category).toBe("National · Parliament");
     expect(story.source).toBe("PTI");
+    expect(story.credit).toBe("PTI");
+    expect(story.sourceUrl).toBe("https://example.com/canonical");
     expect(story.official).toBeUndefined();
     expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
@@ -40,50 +42,13 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.imageUrl).toBeUndefined();
   });
 
-  it("uses source_url as the citation link, not the first source", () => {
+  it("credits Saransh and renders no dead link when citation fields are empty", () => {
     const story = mapApiStoryToCarousel(
-      apiStory({
-        source_url: "https://example.com/canonical",
-        sources: [
-          { outlet: "Source A", url: "https://source-a.com/1" },
-          { outlet: "Source B", url: "https://source-b.com/2" },
-        ],
-      }),
-    );
-
-    expect(story.sourceUrl).toBe("https://example.com/canonical");
-    expect(story.source).toBe("Source A");
-  });
-
-  it("falls back to the first source when source_url is null", () => {
-    const story = mapApiStoryToCarousel(apiStory({ source_url: null }));
-
-    expect(story.sourceUrl).toBe("https://example.com/story");
-  });
-
-  it("falls back to the first source when source_url is absent", () => {
-    const withoutSourceUrl = { ...apiStory() };
-    delete withoutSourceUrl.source_url;
-    const story = mapApiStoryToCarousel(withoutSourceUrl);
-
-    expect(story.sourceUrl).toBe("https://example.com/story");
-  });
-
-  it("leaves sourceUrl undefined when the story has no link at all", () => {
-    const story = mapApiStoryToCarousel(
-      apiStory({ source_url: null, sources: [] }),
+      apiStory({ source_url: "", source_label: null }),
     );
 
     expect(story.sourceUrl).toBeUndefined();
     expect(story.source).toBe("Saransh");
-  });
-
-  it("ignores an empty source_url rather than rendering a dead link", () => {
-    const story = mapApiStoryToCarousel(
-      apiStory({ source_url: "", sources: [] }),
-    );
-
-    expect(story.sourceUrl).toBeUndefined();
   });
 });
 

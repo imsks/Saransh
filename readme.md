@@ -5,8 +5,8 @@ static sample stories, a waitlist and a privacy page, not a live reader app.
 
 ## Current scope
 
-- FastAPI endpoints ingest, list and serve stories, with source attribution.
-- Waitlist signup returns an opaque token, including for repeat signups.
+- FastAPI endpoints ingest, list and serve English stories, each with one citation link.
+- Waitlist signup is idempotent per email.
 - Optional PostHog events measure navigation and the waitlist funnel. No session replay.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
 
@@ -62,7 +62,7 @@ Keep secrets out of commits. Ingest requires `X-API-Key`; waitlist and story rea
 are public. See the API docs for request and response schemas.
 
 Production shares PostgreSQL with [Rajniti](https://rajniti-app.vercel.app).
-Saransh owns only `stories`, `sources`, `waitlist` and its migration version table;
+Saransh owns only `stories`, `waitlist` and its migration version table;
 its migrations must not touch Rajniti's tables.
 
 Report bugs and attribution errors through [GitHub Issues](https://github.com/imsks/Saransh/issues).
