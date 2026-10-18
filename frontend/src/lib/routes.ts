@@ -4,6 +4,7 @@
 export const ROUTES = {
   home: "/",
   stories: "/stories",
+  onboarding: "/onboarding",
   privacy: "/privacy",
 } as const;
 
