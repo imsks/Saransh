@@ -25,7 +25,11 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-5 max-[400px]:gap-3.5">
-          <Link href={ROUTES.contribute} className={navLinkClass}>
+          <Link href={ROUTES.stories} className={navLinkClass}>
+            Stories
+          </Link>
+          {/* Hidden on phones so the bar fits at 360px; the section is on the page. */}
+          <Link href={ROUTES.contribute} className={`${navLinkClass} max-[560px]:hidden`}>
             Contribute
           </Link>
           <a

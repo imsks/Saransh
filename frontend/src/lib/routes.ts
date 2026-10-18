@@ -3,6 +3,7 @@
  */
 export const ROUTES = {
   home: "/",
+  stories: "/stories",
   contribute: "/#contribute",
   privacy: "/privacy",
 } as const;

@@ -1,7 +1,8 @@
 # Saransh
 
 An open-source news project for India. The deployed site is a landing page with
-static sample stories, a waitlist and a privacy page, not a live reader app.
+static sample stories, a public `/stories` list of ingested stories, a waitlist
+and a privacy page.
 
 ## Current scope
 
@@ -12,8 +13,8 @@ static sample stories, a waitlist and a privacy page, not a live reader app.
 
 The reader app, sign-in, review pipeline and word-limit enforcement are not built.
 The temporary [ingest routine](docs/story-ingest-routine.md) publishes directly to
-the API without human review and may use publisher images. Those API stories are
-not wired into the landing-page carousel.
+the API without human review and may use publisher images. `/stories` renders the
+latest 50 of them, refreshed every minute.
 
 ## Run locally
 
