@@ -1,4 +1,4 @@
-"""API router surface — ingestion and waitlist only."""
+"""API router surface — stories and the signed-in User only."""
 
 from app.api import router
 
@@ -27,5 +27,5 @@ def test_api_router_has_no_scraper_or_agent_routes():
     assert not any("agents" in path for path in paths)
     assert "/health" in paths
     assert "/stories" in paths
-    assert "/waitlist" in paths
+    assert "/waitlist" not in paths
     assert {"/users/sync", "/me", "/me/onboarding"} <= paths

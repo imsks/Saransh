@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from "@jest/globals";
 
 import BottomCTA from "@/components/marketing/BottomCTA";
 
+jest.mock("next-auth/react", () => ({ signIn: jest.fn() }));
+
 afterEach(cleanup);
 
 describe("BottomCTA", () => {
@@ -20,11 +22,11 @@ describe("BottomCTA", () => {
     );
   });
 
-  it("still offers the waitlist call to action", () => {
+  it("offers Google sign-in as the call to action", () => {
     render(<BottomCTA />);
 
     expect(
-      screen.getByRole("button", { name: "JOIN THE WAITLIST" }),
+      screen.getByRole("button", { name: "Sign in with Google" }),
     ).toBeTruthy();
   });
 });

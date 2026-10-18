@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import AccountButton from "@/components/auth/AccountButton";
 import ThemeSwitch from "@/components/layout/ThemeSwitch";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
@@ -31,10 +32,11 @@ export default function Navbar() {
             href={EXTERNAL.repo}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted transition-colors hover:text-ink"
+            className="inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted transition-colors hover:text-ink max-[560px]:hidden"
           >
             GitHub
           </a>
+          <AccountButton />
           <ThemeSwitch />
         </div>
       </div>

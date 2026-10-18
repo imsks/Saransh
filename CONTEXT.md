@@ -83,7 +83,7 @@ A Visitor reading Stories in the app before signing in. A Guest sees 6 National 
 _Avoid_: Anonymous user, trial user
 
 **Waitlist Signup**:
-A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two. A Signup is not a User — it is an email we promised to contact, with no credentials and nothing to sign in to.
+A person who asked, before sign-in existed, to be told when Saransh launches. Identified by email. A Signup is not a User — it is an email we promised to contact once, with no credentials. New Signups are no longer collected; Google sign-in replaced the form.
 _Avoid_: Subscriber, lead, waitlister
 
 **User**:

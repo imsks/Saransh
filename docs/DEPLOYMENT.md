@@ -43,7 +43,6 @@ For new schema changes, run `alembic revision --autogenerate -m "description"`
 against a verified local `DATABASE_URL`, review the revision and run `make migrate`.
 Preserve applied history. Non-backwards-compatible changes need an expand/migrate/
 contract rollout so the old serving revision tolerates the transition.
-Application startup still has a legacy `create_all` fallback; it cannot replace migrations.
 
 ## Cloud Run setup
 
@@ -62,9 +61,10 @@ gcloud artifacts repositories create saransh \
 
 ## Deploy API
 
-Export `GCP_PROJECT_ID`, `DATABASE_URL`, `SARANSH_INGEST_API_KEY` and `CORS_ORIGINS`
-(the comma-separated frontend origins). The script reports every missing name.
-Use a fresh production ingest secret, not the local development value.
+Export `GCP_PROJECT_ID`, `DATABASE_URL`, `SARANSH_INGEST_API_KEY`,
+`SARANSH_INTERNAL_API_KEY` and `CORS_ORIGINS` (the comma-separated frontend
+origins). The script reports every missing name. Use fresh production secrets
+(`openssl rand -hex 32`), not the local development values.
 
 ```bash
 ./scripts/deploy_cloud_run.sh
@@ -98,9 +98,9 @@ Secret Manager is a future service-configuration change, not an app API change.
 SERVICE_URL=$(gcloud run services describe saransh-api \
   --region asia-south1 --format 'value(status.url)')
 curl -fsS "$SERVICE_URL/api/v1/health"
-curl -si -X OPTIONS "$SERVICE_URL/api/v1/waitlist" \
+curl -si -X OPTIONS "$SERVICE_URL/api/v1/health" \
   -H "Origin: https://<frontend-origin>" \
-  -H "Access-Control-Request-Method: POST"
+  -H "Access-Control-Request-Method: GET"
 ```
 
 Check the preflight's `access-control-allow-origin`. For rollback, switch traffic
@@ -139,4 +139,20 @@ Security/cache headers live in `frontend/vercel.json`.
 
 Analytics and server-only API overrides are documented in the
 [frontend guide](../frontend/README.md). Public environment changes require a
-rebuild/redeploy. Do not add auth secrets: sign-in is not implemented.
+rebuild/redeploy.
+
+## Google sign-in
+
+1. In Google Cloud Console → APIs & Services, configure the OAuth consent screen
+   (External; scopes `openid`, `email`, `profile`; link the `/privacy` page).
+2. Create an OAuth client ID of type Web application with authorized redirect URIs
+   `https://<site>/api/auth/callback/google` and, for local work,
+   `http://localhost:3001/api/auth/callback/google`.
+3. Set on Vercel (server-only, never `NEXT_PUBLIC_`): `GOOGLE_CLIENT_ID`,
+   `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_URL` (the site origin), `NEXTAUTH_SECRET`
+   (`openssl rand -base64 32`) and `SARANSH_INTERNAL_API_KEY`, identical to the
+   Cloud Run value.
+
+The browser never sees the internal key: only the Next.js server calls
+`/users/sync`, `/me` and `/me/onboarding`, and the session sent to the browser
+carries the User's id and onboarding state only.

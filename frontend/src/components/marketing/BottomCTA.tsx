@@ -1,15 +1,7 @@
-"use client";
-
+import SignInButton from "@/components/auth/SignInButton";
 import { primaryButtonClass } from "@/components/ui/buttonClasses";
 
 export default function BottomCTA() {
-  const scrollToTop = () => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-  };
-
   return (
     <section className="border-t border-line py-20 text-center">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
@@ -23,15 +15,9 @@ export default function BottomCTA() {
           We are building the review step now.
         </p>
         <p className="mx-auto mb-7 max-w-[50ch] font-sans text-[15.5px] leading-[1.72] text-muted">
-          Sign up to hear when it&apos;s ready.
+          Sign in to start reading.
         </p>
-        <button
-          type="button"
-          onClick={scrollToTop}
-          className={primaryButtonClass}
-        >
-          JOIN THE WAITLIST
-        </button>
+        <SignInButton location="bottom_cta" className={primaryButtonClass} />
       </div>
     </section>
   );
