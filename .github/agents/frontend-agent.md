@@ -19,7 +19,7 @@ Read the current component and its test first. Actual shipped scope is in
 - Use the exact positioning line when needed: "No noise. Just news. With proof."
 - Mount theme controls on the client to avoid hydration mismatches. Load fonts through next/font and respect reduced-motion preferences.
 - Use `getApiBaseUrl()` for API calls and choose explicit caching/error behavior. The current landing carousel uses constants, not the tested API-story mapper.
-- Capture declared events through `@/lib/analytics`, never the SDK directly. No names/emails, session replay or analytics-driven story personalization.
+- Capture funnel events with `posthog.capture` from `posthog-js`; autocapture covers clicks and pageviews. No names/emails, session replay or analytics-driven story personalization.
 - SEO helpers are in `src/lib/seo`; preserve canonical, Open Graph and JSON-LD output.
 - Use semantic HTML, one H1, sensible heading order, visible focus, keyboard/tap alternatives to swipes and status announcements for async results.
 - Future token-bearing route handlers follow ADR 0005; auth tokens must never become readable by client JavaScript.

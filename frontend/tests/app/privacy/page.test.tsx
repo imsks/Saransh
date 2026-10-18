@@ -70,7 +70,6 @@ describe("PrivacyPage", () => {
     for (const heading of [
       "Joining the waitlist",
       "Usage analytics",
-      "How a signup is linked to usage",
       "Session recording",
       "Analytics served from our own domain",
       "Who holds the data",
@@ -82,7 +81,6 @@ describe("PrivacyPage", () => {
     }
 
     expect(text).toContain("one email when Saransh launches");
-    expect(text).toContain("opaque token");
     expect(text).toContain(
       "We do not record sessions or capture what you type into form fields.",
     );

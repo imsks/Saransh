@@ -1,4 +1,3 @@
-import TrackedLink from "@/components/analytics/TrackedLink";
 import type { Story, Topic } from "@/constants/stories";
 
 /** Topic colour is reserved for the label and the illustration wash. */
@@ -84,9 +83,7 @@ function SourceLine({ story }: { story: Story }) {
   }
 
   return (
-    <TrackedLink
-      event="citation_link_clicked"
-      properties={{ source: story.source, headline: story.headline, link: "source_line" }}
+    <a
       href={story.sourceUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -94,7 +91,7 @@ function SourceLine({ story }: { story: Story }) {
       className={`${lineClass} underline-offset-2 hover:underline ${focusRing}`}
     >
       {content}
-    </TrackedLink>
+    </a>
   );
 }
 
@@ -145,9 +142,7 @@ export default function StoryCard({ story }: { story: Story }) {
         <div className="mt-5 flex shrink-0 items-center justify-between gap-3">
           <SourceLine story={story} />
           {story.sourceUrl ? (
-            <TrackedLink
-              event="citation_link_clicked"
-              properties={{ source: story.source, headline: story.headline, link: "read_story" }}
+            <a
               href={story.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -155,7 +150,7 @@ export default function StoryCard({ story }: { story: Story }) {
               className={`${readStoryClass} ${focusRing}`}
             >
               Read story
-            </TrackedLink>
+            </a>
           ) : (
             <span
               aria-hidden="true"
