@@ -87,3 +87,13 @@ class Waitlist(CreatedAtMixin, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+
+    # Opaque public identifier of the person, returned by the API and sent to
+    # analytics in place of the email. Distinct from the primary key, which is
+    # never exposed.
+    signup_token = Column(
+        UUID(as_uuid=True),
+        nullable=False,
+        unique=True,
+        default=uuid.uuid4,
+    )

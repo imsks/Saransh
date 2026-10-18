@@ -38,6 +38,7 @@ class WaitlistIn(BaseModel):
 
 class WaitlistOut(BaseModel):
     ok: bool
+    signup_token: str
     duplicate: bool = False
 
 
@@ -59,10 +60,22 @@ def join_waitlist(payload: WaitlistIn, db: Session = Depends(get_db)):
     try:
         db.add(entry)
         db.commit()
-        return JSONResponse(status_code=201, content={"ok": True})
+        return JSONResponse(
+            status_code=201,
+            content={"ok": True, "signup_token": str(entry.signup_token)},
+        )
     except IntegrityError:
+        # Signing up twice is the same Signup, so it keeps the same Token.
         db.rollback()
-        return JSONResponse(status_code=200, content={"ok": True, "duplicate": True})
+        existing = db.query(Waitlist).filter(Waitlist.email == normalized_email).one()
+        return JSONResponse(
+            status_code=200,
+            content={
+                "ok": True,
+                "signup_token": str(existing.signup_token),
+                "duplicate": True,
+            },
+        )
     except Exception as exc:
         db.rollback()
         logger.exception("waitlist.signup_failed")

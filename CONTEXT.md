@@ -87,7 +87,7 @@ A person who asked to be told when Saransh launches. Identified by email; signin
 _Avoid_: Subscriber, lead, waitlister
 
 **Signup Token**:
-The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. It is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Planned with analytics; not in the code yet.
+The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. It is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Issued today as the `signup_token` UUID on every Waitlist row and returned by the waitlist endpoint on both the created and duplicate paths.
 _Avoid_: Signup ID, user ID, waitlist ID
 
 **User**:
