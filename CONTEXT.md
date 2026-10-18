@@ -4,7 +4,7 @@
 
 Saransh is an open-source news app for India: up to 50 short, sourced stories a day, in Hindi or English, approved by a person, with no personalisation and no algorithm.
 
-This file is the project's vocabulary. Use these words in code, commits, issues and reviews. It defines what the words mean; for what is actually built, read [`docs/PROJECT_STATE.md`](./docs/PROJECT_STATE.md). Where a term describes something planned and not yet in the code, it says so.
+This file is the project's vocabulary. Use these words in code, commits, issues and reviews. It defines what the words mean; for what is actually built, see the status section of the [README](./readme.md). Where a term describes something planned and not yet in the code, it says so.
 
 ## Language
 
@@ -87,7 +87,7 @@ A person who asked to be told when Saransh launches. Identified by email; signin
 _Avoid_: Subscriber, lead, waitlister
 
 **Signup Token**:
-The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. It is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Planned with analytics; not in the code yet.
+The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. It is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Built for the Waitlist: `waitlist.signup_token`, returned by `POST /api/v1/waitlist` on both the created and duplicate paths; issuing it at sign-in is planned.
 _Avoid_: Signup ID, user ID, waitlist ID
 
 **User**:

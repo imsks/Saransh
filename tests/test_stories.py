@@ -20,7 +20,6 @@ VALID_PAYLOAD = {
     "source_url": "https://example.com/article",
     "category": "transport",
     "state": "Maharashtra",
-    "district": "Nagpur",
     "sources": [
         {
             "outlet": "Example News",
@@ -54,7 +53,7 @@ def test_ingest_story_response_fields(client):
     assert data["source_url"] == VALID_PAYLOAD["source_url"]
     assert data["category"] == VALID_PAYLOAD["category"]
     assert data["state"] == VALID_PAYLOAD["state"]
-    assert data["district"] == VALID_PAYLOAD["district"]
+    assert "district" not in data
 
 
 def test_ingest_story_default_status_is_published(client):
@@ -104,13 +103,19 @@ def test_story_model_has_no_published_at_column():
 
 
 def test_ingest_story_optional_geo_fields_can_be_omitted(client):
-    """state and district are optional; omitting them should still succeed."""
-    payload = {**VALID_PAYLOAD, "state": None, "district": None}
+    """state is optional; omitting it should still succeed."""
+    payload = {**VALID_PAYLOAD, "state": None}
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
     assert response.status_code == 201
-    data = response.json()
-    assert data["state"] is None
-    assert data["district"] is None
+    assert response.json()["state"] is None
+
+
+def test_district_in_the_payload_is_ignored(client):
+    """A routine still sending district must not break ingest or leak it back."""
+    payload = {**VALID_PAYLOAD, "district": "Nagpur"}
+    response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+    assert response.status_code == 201
+    assert "district" not in response.json()
 
 
 def test_ingest_story_source_url_can_be_omitted(client):
@@ -385,15 +390,14 @@ def test_list_stories_filter_by_state(client):
     assert all(s["state"] == "FilterState" for s in data)
 
 
-def test_list_stories_filter_by_district(client):
-    """Filter by district should return only matching stories."""
-    payload = {**VALID_PAYLOAD, "district": "FilterDistrict"}
-    client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
+def test_list_stories_ignores_a_district_query_param(client):
+    """A leftover ?district= must not filter, fail or come back in the response."""
+    client.post(STORIES_URL, json=VALID_PAYLOAD, headers=VALID_HEADERS)
     response = client.get(f"{STORIES_URL}?district=FilterDistrict")
     assert response.status_code == 200
     data = response.json()
     assert len(data) >= 1
-    assert all(s["district"] == "FilterDistrict" for s in data)
+    assert all("district" not in s for s in data)
 
 
 def test_list_stories_filter_by_status(client):

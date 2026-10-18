@@ -1,13 +1,13 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from app.config import settings
 from app.db.config import get_database_url
 from app.db.database import _normalize_driver
 from app.db.models import Base
+from app.db.ownership import include_name, include_object
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -60,6 +60,21 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table=VERSION_TABLE,
+        include_name=include_name,
+        include_object=include_object,
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def migrate_connection(connection) -> None:
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        version_table=VERSION_TABLE,
+        include_name=include_name,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -67,12 +82,12 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
+    """Use the runner's transaction or connect for standalone Alembic commands."""
+    connection = config.attributes.get("connection")
+    if connection is not None:
+        migrate_connection(connection)
+        return
 
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -80,14 +95,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-            version_table=VERSION_TABLE,
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
+        migrate_connection(connection)
 
 
 if context.is_offline_mode():

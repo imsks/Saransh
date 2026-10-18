@@ -57,3 +57,8 @@ frontend/.next/
 frontend/out/
 frontend/coverage/
 frontend/tsconfig.tsbuildinfo
+
+
+# docs
+/docs/PROJECT_STATE.md
+node_modules/

@@ -22,7 +22,6 @@ class StoryIn(BaseModel):
     source_url: Optional[HttpUrl] = None
     category: str
     state: Optional[str] = None
-    district: Optional[str] = None
     sources: List[SourceIn]
 
     @field_validator("title_en", "title_hi", "summary_en", "summary_hi", "category")
@@ -59,7 +58,6 @@ class StoryOut(BaseModel):
     source_url: Optional[str]
     category: str
     state: Optional[str]
-    district: Optional[str]
     status: str
     sources: List[SourceOut]
     created_at: datetime

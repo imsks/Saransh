@@ -6,17 +6,11 @@ news into Saransh on a schedule. Each run creates up to **10 new Stories** via
 
 No API or app-code change is required — the routine only calls the existing endpoint.
 
-> **This is a stopgap, not the Saransh pipeline.** The planned pipeline reads approved RSS, licensed
-> and official sources, drafts with local AI, and publishes nothing until a person approves it
-> (`docs/PROJECT_STATE.md`, section 14.5). This routine does none of that. Its Stories are published
-> the moment they are ingested, with no human review; it opens and reads article pages; and it may
-> use a publisher's own image. Those are known breaches of the product rules, accepted on
-> 8 Oct 2026 so the landing page stays populated, and the routine is switched off when the review
-> screen and publish action exist, before the pilot starts.
+> **STOPGAP**: This routine is a temporary fallback while the review screen and publish action do not yet exist. It publishes immediately, may use a publisher's own image, and is retired once the pipeline and publish action are in place.
 >
 > **Changing this file does not change a routine that is already scheduled.** After editing the
 > prompt below, replace the prompt in the scheduled routine too. Last prompt change: 8 Oct 2026
-> (no "Regional" tier, no district, International stories need an India link, word limits stated).
+> (National, State and India-relevant International; topic keys only; word limits stated).
 
 ## What the ingest API accepts
 
@@ -31,8 +25,7 @@ Required, non-blank:
 - `image_url`: the cover photo, an absolute `http`/`https` image URL
 - `sources`: at least one `{ outlet, url, source_type? }`
 
-Optional: `source_url`, `state` (omit or `null`; never send `""`). The API still accepts
-`district`, but Saransh no longer has a district tier — do not send it.
+Optional: `source_url`, `state` (omit or `null`; never send `""`). `state` is set for State stories only; leave it `null` for National and International stories.
 
 `source_url` is the **citation link** — the single canonical article the summary was extracted from.
 It is stored on the Story itself, not derived from `sources[0]`, so a Story can cite corroborating
@@ -45,27 +38,26 @@ dropped on 2026-10-01 and is no longer accepted or returned.
 
 Database limits the request schema does not enforce ([`app/db/models.py`](../app/db/models.py)):
 
-| Field | Limit |
-|-------|-------|
-| `category` | ≤ 50 chars |
-| `state` | ≤ 100 chars |
-| `outlet` | ≤ 150 chars |
-| `source_type` | ≤ 30 chars |
+| Field                            | Limit                   |
+| -------------------------------- | ----------------------- |
+| `category`                       | ≤ 50 chars              |
+| `state`                          | ≤ 100 chars             |
+| `outlet`                         | ≤ 150 chars             |
+| `source_type`                    | ≤ 30 chars              |
 | `url`, `image_url`, `source_url` | absolute `http`/`https` |
 
-The landing carousel ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) shows the
-Story's `image_url` as the card image and its first source's outlet name as the credit and source
-line. `category` is not shown on the card; it only picks the card's accent colour, by keyword
-(education, health, jobs or transport words, otherwise civic). So a tier name in `category`
-("National", "State", "International") always gets the civic accent. Saransh's planned schema has a
-separate tier and one topic per Story; until it exists, this routine sends the tier in `category`.
+The tested API-story adapter ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) maps
+`image_url` to the card image and the first source's outlet to its credit and source line.
+The landing carousel currently uses static samples, not this adapter or the API feed.
+`category` holds the story's topic key, not a tier string. Old tier strings are invalid for
+the live topic set. The card topic label is built from the current topic keys: `politics | civic | education | crime | business`.
 
 `state` is geography only: the Indian state or union territory a State-tier Story is about, and
-`null` for National and International Stories.
+`null` for National and International Stories. There is no obsolete location field beyond `state`.
 
-The card's outlet badge is a link to `source_url`, falling back to the first `sources[].url` for
-Stories that predate the field. A wrong citation link is therefore visible to readers — verify the
-URL loads before you send it.
+The adapter uses `source_url`, falling back to the first `sources[].url` for Stories that
+predate the field. Verify the citation URL loads before sending it, even though API Stories
+are not displayed in the landing preview yet.
 
 Ingest is **not idempotent**: a retry after a timeout can
 insert a duplicate. The routine reads recent Stories first and never retries a POST that may have
@@ -99,12 +91,11 @@ Never print, log, or commit the API key.
    Collect every source_url, every sources[].url, and every title_en. Skip any event whose URL or headline is already there.
 
 2. Find 10 distinct events from the last 36 hours. Open each article and confirm the page is about that event and returns successfully. Use the canonical article URL, not a homepage, app link, or tracker. Keep that URL — it is the citation link you send as source_url, and it is the one article you write the summary from.
-   Mix, within this run:
-   - 5 National (category "National", state null): central government, Parliament, Supreme Court, RBI and other central bodies, or anything affecting more than one state
-   - 3 State (category "State", state = the Indian state or union territory the story is about) — different states
-   - 2 International (category "International", state null): the event happens outside India AND the article names India, an Indian entity, Indians abroad, or a direct effect on India. Skip any international story with no India link.
-   If a tier is short, fill from National. Do not ingest entertainment or sports stories.
-   At most two Stories may cover the same event, and only when they cite different outlets. Prefer a second outlet as another source on the same Story instead.
+   Daily mix, within this run:
+   - National: stories about the Union government, Parliament, Supreme Court, RBI or other central bodies, or anything affecting more than one state
+   - State: the story is mainly about one Indian state or UT, with state set to that place
+   - International: only if the event happens outside India and the article names India, an Indian entity, Indians abroad, or a direct effect on India; drop the rest
+   Do not ingest entertainment or sports stories. At most two Stories may cover the same event, and only when they cite different outlets. Prefer a second outlet as another source on the same Story instead.
 
 3. For each event, choose a cover photo (image_url):
    - Use a real, directly-loadable image URL for that event — the outlet's article lead image, or an official/agency (PTI, PIB, ministry, government) photo for the story.
@@ -120,8 +111,8 @@ Never print, log, or commit the API key.
      "summary_hi": "the same summary in Hindi, at most 70 words, not a transliteration",
      "image_url": "https://absolute-url-to-a-real-cover-photo.jpg",
      "source_url": "https://absolute-url-of-the-article-you-summarised",
-     "category": "National | State | International",
-     "state": "Indian state or union territory for a State story, otherwise null",
+     "category": "politics",
+     "state": "Maharashtra",
      "sources": [
        {
          "outlet": "outlet name, max 150 characters",
@@ -136,11 +127,12 @@ Never print, log, or commit the API key.
    - image_url must be an absolute http(s) URL to a real image for this event that you confirmed loads. Skip the story if you cannot find one.
    - source_url is the citation link: the absolute http(s) URL of the one article you summarised, the same URL you opened and confirmed in step 2. Always send it. Never send "" — omit it only if you somehow have no article URL, which should not happen. It must also appear in sources as the entry for that outlet.
    - Word limits are hard: summary_en at most 60 words, summary_hi at most 70 words. A word is anything between spaces. Count before you send; if a summary is over, shorten it.
-   - category is exactly one of National, State, International.
-   - state max 100 characters. Null for National and International. Never send "". Never send district.
+   - category is exactly one of politics | civic | education | crime | business.
+   - state max 100 characters. Set it to the Indian state or union territory for a State story; otherwise null. Never send "". Never send any obsolete location field.
    - At least one source. url must be absolute http(s). outlet required. source_type is "news" or "official" (max 30 characters).
    - Do not send id, status, or created_at. The server stores status "published" and stamps created_at, which is the only time a reader sees. There is no published_at.
    - Hindi must be real Hindi. If you cannot write an accurate Hindi headline and summary, skip that story.
+   - Skip Entertainment and Sports stories; they are not in the live topic set.
 
 5. Ingest one Story at a time:
    POST $SARANSH_API_BASE/api/v1/stories

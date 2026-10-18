@@ -9,7 +9,7 @@ RUN npm ci \
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-COPY next.config.mjs postcss.config.mjs tsconfig.json vitest.config.ts .eslintrc.json ./
+COPY next.config.mjs postcss.config.mjs tsconfig.json jest.config.js .eslintrc.json ./
 COPY src ./src
 
 EXPOSE 3001

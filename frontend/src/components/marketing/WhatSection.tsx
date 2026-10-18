@@ -1,4 +1,5 @@
-import StoryCarousel from "@/components/stories/StoryCarousel";
+import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
+import { STORIES } from "@/constants/stories";
 
 function DocIcon() {
   return (
@@ -57,7 +58,7 @@ function PersonIcon() {
       className="shrink-0 text-red"
       aria-hidden="true"
     >
-      <circle cx="11" cy="7" r="3.2"/>
+      <circle cx="11" cy="7" r="3.2" />
       <path d="M4 19c0-3.5 3.2-6 7-6s7 2.5 7 6" />
     </svg>
   );
@@ -67,18 +68,19 @@ export default function WhatSection() {
   return (
     <section className="border-t border-line py-20">
       <div className="mx-auto max-w-[1120px] px-8 max-[560px]:px-5">
-        <div className="grid grid-cols-1 items-center gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
-          <StoryCarousel />
+        <div className="grid grid-cols-1 items-start gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
+          <StoryCarouselClient stories={STORIES} />
 
-          <div>
+          <div className="min-[860px]:pt-8">
             <div className="flex items-start gap-3.5 pb-5 pt-0 pl-[18px]">
               <DocIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  VERIFIED SOURCES
+                  SOURCED, WITH A LINK
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Government portals, PIB, registered outlets. Nothing unattributed.
+                  Government portals, PIB, registered outlets. Every story names
+                  and links its source.
                 </p>
               </div>
             </div>
@@ -86,10 +88,11 @@ export default function WhatSection() {
               <CodeIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  OPEN-SOURCE PIPELINE
+                  OPEN SOURCE
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Prompts, ranking logic, deduplication rules — all public on GitHub.
+                  Prompts, source list and deduplication rules — public on
+                  GitHub as they are written.
                 </p>
               </div>
             </div>
@@ -97,10 +100,11 @@ export default function WhatSection() {
               <PersonIcon />
               <div>
                 <h2 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
-                  HUMAN REVIEWED
+                  HUMAN REVIEW: BEING BUILT
                 </h2>
                 <p className="font-sans text-[13px] leading-[1.6] text-muted">
-                  Every AI-drafted story is reviewed by a person before it goes live.
+                  Every AI-drafted story will be approved by a person before it
+                  goes live. We are building the review step now.
                 </p>
               </div>
             </div>

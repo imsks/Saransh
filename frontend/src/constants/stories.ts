@@ -1,9 +1,15 @@
-/** Topics with an accent in the design system. Colours the time line and the illustration wash. */
-export type Topic = "civic" | "edu" | "health" | "jobs" | "transport";
+/** The seven topics of design system v1.3. Colours the topic label and the illustration wash. */
+export type Topic =
+  | "politics"
+  | "civic"
+  | "education"
+  | "crime"
+  | "business"
+  | "entertainment"
+  | "sports";
 
 export interface Story {
   category: string;
-  time: string;
   topic: Topic;
   /** Real cover photo. When absent, the topic's illustration wash is shown instead. */
   imageUrl?: string;
@@ -17,34 +23,35 @@ export interface Story {
   sourceUrl?: string;
 }
 
+/**
+ * Illustrative cards for the landing page: one National, one State and one
+ * India-relevant International. They stand in for a story, they do not report
+ * one, so they are always shown under a "Sample story" label.
+ */
 export const STORIES: Story[] = [
   {
-    category: "National · Parliament",
-    time: "2 hrs ago",
+    category: "National",
+    topic: "politics",
+    credit: "Illustration · Saransh",
+    headline: "A ministry announces a national scheme",
+    body: "When a ministry announces a scheme, Saransh explains who qualifies, which benefits are included, when applications open, and what changes for people already receiving support. It separates confirmed details from questions the ministry has not answered yet, so readers can see what to do next and what remains unclear. The green tick marks a summary checked against the ministry's own statement.",
+    source: "Ministry statement · Official",
+    official: true,
+  },
+  {
+    category: "State",
     topic: "civic",
-    credit: "Lok Sabha · PTI",
-    headline: "Parliament passes Digital Personal Data Protection Amendment Bill",
-    body: "The Lok Sabha passed the Amendment Bill by voice vote, per the MoS IT. The Bill revises consent requirements for minors and creates a new appeals tribunal. It now goes to the Rajya Sabha.",
-    source: "PTI · Official",
-    official: true,
+    credit: "Illustration · Saransh",
+    headline: "A state clears a public transport plan",
+    body: "When a state clears a public transport plan, Saransh lays out the routes included, the approved cost, and the agency responsible for delivery. It highlights the project timeline, planned service changes, and any decisions that still need public or budget approval. Readers get the practical details first, with the source attached and no prediction about whether the plan will meet its deadlines.",
+    source: "Saransh · Sample",
   },
   {
-    category: "State · Uttar Pradesh",
-    time: "4 hrs ago",
-    topic: "transport",
-    credit: "© PWD Barabanki · CC BY",
-    headline: "Deva Road widening stalls again; contractor served 15-day notice",
-    body: "The PWD said the Deva Road widening has stalled a third time over a payment dispute. It served the contractor a 15-day notice. The project was to finish by March 2026; 60% of work is complete.",
-    source: "Amar Ujala · Barabanki",
-  },
-  {
-    category: "Regional · Barabanki",
-    time: "6 hrs ago",
-    topic: "edu",
-    credit: "BSA Office · Press note",
-    headline: "12 council schools receive smart classrooms in first phase",
-    body: "Per the BSA office, 12 council-run primary schools in Barabanki now have smart classrooms. Phase one covers 3,400 students across four blocks. Phase two is proposed for October.",
-    source: "BSA press note · Official",
-    official: true,
+    category: "International",
+    topic: "business",
+    credit: "Illustration · Saransh",
+    headline: "A trade decision abroad reaches Indian exporters",
+    body: "When a decision abroad affects Indian exporters, students, or travellers, Saransh explains the specific rule or change and who it reaches. The summary gives the effective date, any stated transition period, and the next step people may need to take. It separates confirmed effects on India from wider speculation, and links the underlying source so readers can check the original announcement themselves.",
+    source: "Saransh · Sample",
   },
 ];

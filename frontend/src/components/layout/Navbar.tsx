@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import TrackedLink from "@/components/analytics/TrackedLink";
 import ThemeSwitch from "@/components/layout/ThemeSwitch";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
@@ -21,14 +22,16 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-5">
-          <a
+          <TrackedLink
+            event="outbound_link_clicked"
+            properties={{ destination: "github", placement: "navbar" }}
             href={EXTERNAL.repo}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted transition-colors hover:text-ink"
           >
             GitHub
-          </a>
+          </TrackedLink>
           <ThemeSwitch />
         </div>
       </div>

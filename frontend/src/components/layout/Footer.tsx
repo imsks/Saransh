@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import TrackedLink from "@/components/analytics/TrackedLink";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
@@ -12,7 +13,7 @@ export default function Footer() {
             <span lang="hi" className="font-hindi text-sm text-red">सारांश</span>
           </div>
           <p lang="hi" className="font-hindi text-[11px] text-muted">
-            आपके ज़िले की खबर, 60 शब्दों में, सबूत के साथ।
+            शोर नहीं। सिर्फ़ खबर। सबूत के साथ।
           </p>
         </div>
         <div className="flex flex-col items-end gap-2 max-[560px]:items-start">
@@ -26,14 +27,16 @@ export default function Footer() {
             <div>Built with ❤️ for the AI and news community</div>
             <div>
               Follow the build →{" "}
-              <a
+              <TrackedLink
+                event="outbound_link_clicked"
+                properties={{ destination: "github", placement: "footer" }}
                 href={EXTERNAL.repo}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-ink no-underline"
               >
                 Saransh
-              </a>
+              </TrackedLink>
             </div>
           </div>
         </div>

@@ -1,45 +1,43 @@
-# Saransh Frontend
+# Frontend
 
-The Next.js frontend for Saransh: today the landing page, the waitlist and the privacy page. The reader app (a swipeable story deck with Google sign-in) is planned and not built.
+Next.js 14 and React 18. The landing page renders static sample stories; the
+waitlist submits to FastAPI. There is no sign-in or live reader feed.
 
-What is built, how it works and what is planned: [`docs/PROJECT_STATE.md`](../docs/PROJECT_STATE.md), sections 8, 9 and 14. If your change makes that file wrong, update it in the same pull request.
-
-## Development
-
-From the repo root, the whole stack runs in Docker:
-
-```bash
-make setup   # copies .env.example → .env and frontend/.env.example → frontend/.env
-make up      # API :8001 + frontend :3001 + Postgres :5433
-```
-
-Or run the frontend alone from this directory (the API must be reachable at `NEXT_PUBLIC_API_URL`):
-
-```bash
-npm ci
-npm run dev        # http://localhost:3001
-```
-
-## Checks
-
-```bash
-npm test
-npm run lint
-npm run typecheck
-npm run build
-```
+Use `make up` from the repository root for the full local stack. For a host-only
+frontend, copy `.env.example` to `.env`, run `npm ci`, then `npm run dev`.
+The API must be reachable at the configured URL. See [CONTRIBUTING.md](../CONTRIBUTING.md)
+for host-only backend setup and required checks.
 
 ## Environment
 
-Copy `frontend/.env.example` → `frontend/.env` (or run `make setup` from the repo root).
+[.env.example](.env.example) documents the available settings.
 
-The `NEXTAUTH_*` and `GOOGLE_CLIENT_*` keys are placeholders: Saransh has no sign-in yet. `NEXT_PUBLIC_GA_MEASUREMENT_ID` is a leftover; analytics will be PostHog ([ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md)) and is not built. On Vercel, do **not** set the localhost `NEXTAUTH_URL` / `NEXT_PUBLIC_SITE_URL` — `getSiteUrl()` falls back to `VERCEL_URL`. Vercel should carry only the production `NEXT_PUBLIC_API_URL`.
+- `NEXT_PUBLIC_API_URL`: browser API base URL, including `/api/v1`.
+- `API_URL`: optional server-side API base URL.
+- `API_REWRITE_TARGET`: optional server-only origin for Next.js API rewrites; Docker uses the API service hostname.
+- `NEXT_PUBLIC_SITE_URL`: canonical site origin. In production omit localhost values; the resolver can fall back to `VERCEL_URL`.
+- `NEXT_PUBLIC_LOG_LEVEL`: frontend logging level.
 
-## Rules worth knowing before you touch the UI
+## Analytics
 
-- All data calls go through FastAPI on `:8001`; there are no Next.js API routes today.
-- Style with the theme colour names (`bg-paper`, `text-ink`, `border-line`), never a hex value.
-- Reach for a [Sutra](https://github.com/imsks/sutra-ui) component before hand-writing one.
-- Anything a reader sees must work in both Hindi and English, and in light and dark.
+Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog. The dashboard's
+`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` alias is also supported; choose one.
+With no token the SDK is not loaded and no analytics requests are sent.
+Rebuild or redeploy after changing public environment values.
 
-House rules in full: [`CONTRIBUTING.md`](../CONTRIBUTING.md). Agent brief: [`.github/agents/frontend-agent.md`](../.github/agents/frontend-agent.md).
+Events go through the first-party `/ingest` proxy to PostHog Cloud US by default.
+Host/proxy overrides are optional. Session replay is disabled. Never send names,
+emails or other personal data to analytics, and never use events to personalize stories.
+
+Use `analytics` from `@/lib/analytics`, not the SDK directly. Event definitions
+are in [events.ts](src/lib/analytics/events.ts).
+The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` ->
+`waitlist_submitted`, filtered to `outcome = created` for new signups.
+See [ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md).
+
+## UI
+
+Use the existing light/dark theme tokens and Sutra primitives where they fit.
+Keep source links visible, keyboard controls usable and mobile layouts intact.
+Shared components belong in [Sutra](https://github.com/imsks/sutra-ui), not a local copy.
+The full contribution rules live in [CONTRIBUTING.md](../CONTRIBUTING.md).
