@@ -1,11 +1,12 @@
 import Link from "next/link";
 
+import { Container } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
   return (
-    <footer className="border-t-[1.5px] border-ink pb-10 pt-7">
-      <div className="mx-auto flex max-w-[1120px] flex-wrap items-start justify-between gap-6 px-8 max-[560px]:flex-col max-[560px]:px-5">
+    <footer className="border-t border-line pb-10 pt-7">
+      <Container className="flex flex-wrap items-start justify-between gap-6 max-[560px]:flex-col">
         <div>
           <div className="mb-1.5 flex items-baseline gap-[7px]">
             <span className="font-serif text-[16px] font-semibold text-ink">Saransh</span>
@@ -37,7 +38,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

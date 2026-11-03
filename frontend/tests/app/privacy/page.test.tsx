@@ -11,6 +11,7 @@ import {
 import { ThemeProvider } from "@sutra_ui/ui";
 
 import PrivacyPage, { metadata } from "@/app/privacy/page";
+import { ROUTES } from "@/lib/routes";
 
 beforeEach(() => {
   // The page renders the Navbar, whose theme switch reads the colour-scheme query.
@@ -86,6 +87,16 @@ describe("PrivacyPage", () => {
     );
     expect(text).toContain("PostHog");
     expect(text).toContain("United States");
+  });
+
+  it("shares the site frame, including the navbar's Contribute link", () => {
+    renderPage();
+
+    expect(screen.getByRole("main")).toBeTruthy();
+    expect(screen.getByRole("contentinfo")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "Contribute" }).getAttribute("href"),
+    ).toBe(ROUTES.contribute);
   });
 
   it("carries page metadata", () => {

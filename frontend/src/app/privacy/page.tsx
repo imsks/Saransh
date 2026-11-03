@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { Footer, Navbar } from "@/components/layout";
+import { PageShell } from "@/components/layout";
+import { Container, cardClass, cx } from "@/components/ui";
 import { EXTERNAL } from "@/lib/routes";
 import {
   buildDefaultOg,
@@ -43,7 +44,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-t border-line py-7">
+    <section className="border-t border-line py-7 first:border-t-0 first:pt-0 last:pb-0">
       <h2 className={headingClass}>{heading}</h2>
       <div className="flex flex-col gap-3">{children}</div>
     </section>
@@ -52,114 +53,124 @@ function Section({
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-paper">
-      <Navbar />
-      <main>
-        <div className="mx-auto max-w-[720px] px-8 py-16 max-[560px]:px-5 max-[560px]:py-12">
-          <h1 className="font-serif text-[34px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink max-[560px]:text-[28px]">
-            Privacy
-          </h1>
-          <p className="mt-4 font-sans text-[14px] leading-[1.75] text-muted">
-            Saransh is pre-launch, and this page says plainly what the site
-            collects and what happens to it. If something here is unclear, that
-            is a bug — tell us and we will rewrite it.
-          </p>
+    <PageShell>
+      <Container size="narrow" className="py-16 max-[560px]:py-12">
+        <h1 className="font-serif text-[34px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink max-[560px]:text-[28px]">
+          Privacy
+        </h1>
+        <p className="mt-4 font-sans text-[14px] leading-[1.75] text-muted">
+          Saransh is pre-launch, and this page says plainly what the site
+          collects and what happens to it. If something here is unclear, that
+          is a bug — tell us and we will rewrite it.
+        </p>
 
-          <div className="mt-8">
-            <Section heading="Joining the waitlist">
-              <p className={paragraphClass}>
-                The waitlist form stores two things: the name you type and the
-                email address you type. Nothing else from the form is kept.
-              </p>
-              <p className={paragraphClass}>
-                They are used for exactly what the form promises — one email
-                when Saransh launches. No newsletter, no drip sequence, and the
-                list is never sold, rented, or shared with anyone else. Signing
-                up twice with the same email is still one signup, not two.
-              </p>
-            </Section>
+        <div className={cx(cardClass({ padding: "lg" }), "mt-8")}>
+          <Section heading="Joining the waitlist">
+            <p className={paragraphClass}>
+              The waitlist form stores two things: the name you type and the
+              email address you type. Nothing else from the form is kept.
+            </p>
+            <p className={paragraphClass}>
+              They are used for exactly what the form promises — one email
+              when Saransh launches. No newsletter, no drip sequence, and the
+              list is never sold, rented, or shared with anyone else. Signing
+              up twice with the same email is still one signup, not two.
+            </p>
+          </Section>
 
-            <Section heading="Usage analytics">
-              <p className={paragraphClass}>
-                The site measures how it is used so we know which parts of the
-                page are working. What is measured is page views, clicks and
-                similar interactions, the page you came from, and the coarse
-                technical details your browser sends anyway — approximate
-                location from your IP address, device type, and browser.
-              </p>
-              <p className={paragraphClass}>
-                <strong className="font-semibold text-ink">
-                  Your email address is never sent to the analytics vendor.
-                </strong>{" "}
-                Neither is your name.
-              </p>
-            </Section>
+          <Section heading="Usage analytics">
+            <p className={paragraphClass}>
+              The site measures how it is used so we know which parts of the
+              page are working. What is measured is page views, clicks and
+              similar interactions, the page you came from, and the coarse
+              technical details your browser sends anyway — approximate
+              location from your IP address, device type, and browser. Your
+              name and email are not part of this.
+            </p>
+          </Section>
 
-            <Section heading="Session recording">
-              <p className={paragraphClass}>
-                We do not record sessions or capture what you type into form
-                fields.
-              </p>
-            </Section>
+          <Section heading="How a signup is linked to usage">
+            <p className={paragraphClass}>
+              When you join the waitlist, your signup is linked to that
+              anonymous usage by an opaque token; pseudonymous — an identifier
+              that cannot be read as your name or email without
+              Saransh&rsquo;s own database. It lets us see that a visit ended
+              in a signup without telling the analytics vendor who signed up.
+            </p>
+            <p className={paragraphClass}>
+              <strong className="font-semibold text-ink">
+                Your email address is never sent to the analytics vendor.
+              </strong>{" "}
+              Neither is your name. Someone holding the analytics data alone
+              sees only opaque tokens.
+            </p>
+          </Section>
 
-            <Section heading="Analytics served from our own domain">
-              <p className={paragraphClass}>
-                Analytics requests are sent to Saransh&rsquo;s own domain and
-                passed on to the vendor from there, rather than going to the
-                vendor&rsquo;s domain directly. We are telling you because this
-                also means a content blocker that would normally stop those
-                requests will not recognise them. If you would rather not be
-                measured, blocking JavaScript on this site keeps you out of the
-                data entirely.
-              </p>
-            </Section>
+          <Section heading="Session recording">
+            <p className={paragraphClass}>
+              We do not record sessions or capture what you type into form
+              fields. We measure page visits and interactions to understand
+              how people reach and complete the waitlist form.
+            </p>
+          </Section>
 
-            <Section heading="Who holds the data">
-              <p className={paragraphClass}>
-                Analytics is handled by{" "}
-                <a
-                  href="https://posthog.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
-                  PostHog
-                </a>
-                , on their cloud service in the United States. Your waitlist
-                name and email stay in Saransh&rsquo;s own database and are
-                never sent to PostHog.
-              </p>
-            </Section>
+          <Section heading="Analytics served from our own domain">
+            <p className={paragraphClass}>
+              Analytics requests are sent to Saransh&rsquo;s own domain and
+              passed on to the vendor from there, rather than going to the
+              vendor&rsquo;s domain directly. We are telling you because this
+              also means a content blocker that would normally stop those
+              requests will not recognise them. If you would rather not be
+              measured, blocking JavaScript on this site keeps you out of the
+              data entirely.
+            </p>
+          </Section>
 
-            <Section heading="Deleting your data">
-              <p className={paragraphClass}>
-                Ask and it is deleted — your waitlist entry and its analytics. Message the maintainer on GitHub at{" "}
-                <a
-                  href={EXTERNAL.maintainer}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
-                  @imsks
-                </a>{" "}
-                or open an issue on the{" "}
-                <a
-                  href={EXTERNAL.issues}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
-                  Saransh issue tracker
-                </a>
-                . An issue is public, so do not put your email address in it —
-                say that you want your waitlist entry removed and we will ask
-                you for it privately.
-              </p>
-            </Section>
-          </div>
+          <Section heading="Who holds the data">
+            <p className={paragraphClass}>
+              Analytics is handled by{" "}
+              <a
+                href="https://posthog.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                PostHog
+              </a>
+              , on their cloud service in the United States. Your waitlist
+              name and email stay in Saransh&rsquo;s own database and are
+              never sent to PostHog.
+            </p>
+          </Section>
+
+          <Section heading="Deleting your data">
+            <p className={paragraphClass}>
+              Ask and it is deleted — your waitlist entry and the analytics
+              attached to its token. Message the maintainer on GitHub at{" "}
+              <a
+                href={EXTERNAL.maintainer}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                @imsks
+              </a>{" "}
+              or open an issue on the{" "}
+              <a
+                href={EXTERNAL.issues}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                Saransh issue tracker
+              </a>
+              . An issue is public, so do not put your email address in it —
+              say that you want your waitlist entry removed and we will ask
+              you for it privately.
+            </p>
+          </Section>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </Container>
+    </PageShell>
   );
 }

@@ -1,6 +1,7 @@
-import { Footer, Navbar } from "@/components/layout";
+import { PageShell } from "@/components/layout";
 import {
   BottomCTA,
+  ContributorsSection,
   HeroSection,
   RajnitiSection,
   WhatSection,
@@ -8,15 +9,12 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-paper">
-      <Navbar />
-      <main>
-        <HeroSection />
-        <WhatSection />
-        <RajnitiSection />
-        <BottomCTA />
-      </main>
-      <Footer />
-    </div>
+    <PageShell>
+      <HeroSection />
+      <WhatSection />
+      <RajnitiSection />
+      <ContributorsSection />
+      <BottomCTA />
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { cardClass, cx } from "@/components/ui";
 import type { Story, Topic } from "@/constants/stories";
 
 /** Topic colour is reserved for the label and the illustration wash. */
@@ -44,7 +45,7 @@ const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
 
 const readStoryClass =
-  "mr-[3px] inline-flex min-h-[46px] shrink-0 items-center justify-center rounded-[12px] border-[1.5px] border-ink bg-card px-[22px] font-sans text-[14.5px] font-bold text-ink no-underline shadow-[3px_3px_0_var(--cta-shadow)]";
+  "mr-[3px] inline-flex min-h-[46px] shrink-0 items-center justify-center rounded-xl border-[1.5px] border-ink bg-card px-[22px] font-sans text-[14.5px] font-bold text-ink no-underline shadow-[3px_3px_0_var(--cta-shadow)]";
 
 /** The green tick. It means "official source" and nothing else. */
 function OfficialTick() {
@@ -100,7 +101,12 @@ export default function StoryCard({ story }: { story: Story }) {
   const topic = topicClass[story.topic];
 
   return (
-    <article className="flex h-148 w-full flex-col overflow-hidden rounded-[24px] border border-edge bg-card text-ink shadow-app-card max-[560px]:h-[640px] max-[360px]:h-[700px]">
+    <article
+      className={cx(
+        cardClass({ variant: "elevated", padding: "none" }),
+        "flex h-148 w-full flex-col overflow-hidden text-ink max-[560px]:h-[640px] max-[360px]:h-[700px]",
+      )}
+    >
       <div
         className={`relative h-55 w-full shrink-0 ${story.imageUrl ? "bg-img-bg" : topic.wash}`}
         data-topic={story.topic}

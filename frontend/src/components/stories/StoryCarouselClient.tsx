@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import StoryCard from "./StoryCard";
+import { eyebrowClass } from "@/components/ui";
 import type { Story } from "@/constants/stories";
 
 interface StoryCarouselClientProps {
@@ -95,15 +96,13 @@ export default function StoryCarouselClient({
       <div className="mb-3 flex items-baseline justify-between">
         {/* Samples say so. Live stories carry no label at all. */}
         {isSample && (
-          <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
-            Sample story
-          </span>
+          <span className={eyebrowClass()}>Sample story</span>
         )}
       </div>
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="overflow-hidden rounded-[24px]"
+        className="overflow-hidden rounded-3xl"
       >
         <div
           key={current}

@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { primaryButtonClass } from "@/components/ui/buttonClasses";
+import { buttonClass, cardClass, cx, eyebrowClass } from "@/components/ui";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
 import { validateWaitlist, type WaitlistField, type WaitlistFieldErrors } from "@/lib/validate";
@@ -14,7 +14,7 @@ const GENERIC_ERROR = "Something went wrong. Please try again.";
 const fieldLabelClass =
   "font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-ink";
 const inputClass =
-  "min-h-11 w-full rounded-[2px] border-[1.5px] border-line-heavy bg-card px-3 py-2.5 font-sans text-[13.5px] text-ink transition-colors placeholder:text-muted focus:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red aria-[invalid=true]:border-red dark:bg-paper";
+  "min-h-11 w-full rounded-xl border-[1.5px] border-line-heavy bg-card px-3.5 py-2.5 font-sans text-[13.5px] text-ink transition-colors placeholder:text-muted focus:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red aria-[invalid=true]:border-red dark:bg-paper";
 const errorClass = "font-mono text-[10px] tracking-[0.04em] text-red";
 
 export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
@@ -88,10 +88,10 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   return (
     <div
       id="waitlist"
-      className="scroll-mt-[72px] rounded-[2px] border-[1.5px] border-ink bg-card px-7 dark:border-line pb-[22px] pt-7 shadow-print"
+      className={cx(cardClass({ variant: "elevated", padding: "lg" }), "scroll-mt-[72px]")}
     >
       <form onSubmit={handleSubmit} noValidate>
-        <span className="mb-[18px] block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-muted">
+        <span className={cx(eyebrowClass(), "mb-[18px]")}>
           JOIN THE WAITLIST
         </span>
         <div className="mb-3 flex flex-col gap-3">
@@ -151,7 +151,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         )}
         <button
           type="submit"
-          className={`${primaryButtonClass} mb-2.5 w-full disabled:cursor-not-allowed disabled:bg-line-heavy`}
+          className={cx(buttonClass({ fullWidth: true }), "mb-2.5")}
           disabled={loading}
         >
           {loading ? (
