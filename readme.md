@@ -7,7 +7,7 @@ static sample stories, a waitlist and a privacy page, not a live reader app.
 
 - FastAPI endpoints ingest, list and serve English stories, each with one citation link.
 - Waitlist signup is idempotent per email.
-- Optional PostHog events measure navigation and the waitlist funnel. No session replay.
+- Optional PostHog captures pageviews and clicks. No session replay.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
 
 The reader app, sign-in, review pipeline and word-limit enforcement are not built.
