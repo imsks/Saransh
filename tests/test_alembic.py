@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import uuid
 from pathlib import Path
 
 import pytest
@@ -168,28 +169,88 @@ def test_migration_runner_refuses_unversioned_default_drift(
 
 
 def test_migration_runner_upgrades_a_versioned_database():
+    """Both API versions can use the expanded schema without losing legacy data."""
     from scripts.init_db import migrate_database
 
     engine = create_engine("sqlite:///:memory:")
     with engine.begin() as connection:
-        connection.execute(
-            text("CREATE TABLE alembic_version_saransh (version_num VARCHAR(32))")
+        connection.connection.driver_connection.create_function(
+            "gen_random_uuid", 0, lambda: str(uuid.uuid4())
         )
-        connection.execute(
-            text("INSERT INTO alembic_version_saransh VALUES ('f6a7b8c9d0e1')")
-        )
-        connection.execute(
-            text(
-                "CREATE TABLE waitlist (id INTEGER PRIMARY KEY, name TEXT, email TEXT)"
-            )
-        )
-        connection.execute(
-            text("INSERT INTO waitlist VALUES (1, 'Priya', 'p@test.in')")
-        )
+        for statement in (
+            "CREATE TABLE alembic_version_saransh (version_num VARCHAR(32))",
+            "INSERT INTO alembic_version_saransh VALUES ('a7b8c9d0e1f2')",
+            "CREATE TABLE stories (id TEXT PRIMARY KEY, title_en TEXT,"
+            " title_hi TEXT, summary_en TEXT, summary_hi TEXT, district TEXT,"
+            " source_url TEXT)",
+            "INSERT INTO stories VALUES"
+            " ('s1', 'T', 'टी', 'S', 'एस', 'Nagpur', 'https://canonical.test'),"
+            " ('s2', 'T', NULL, 'S', NULL, NULL, NULL),"
+            " ('s3', 'T', NULL, 'S', NULL, NULL, 'https://unmatched.test'),"
+            " ('s4', 'T', NULL, 'S', NULL, NULL, NULL)",
+            "CREATE TABLE sources (id TEXT PRIMARY KEY, story_id TEXT,"
+            " outlet TEXT NOT NULL, url TEXT NOT NULL, created_at TIMESTAMP NOT NULL)",
+            "INSERT INTO sources VALUES"
+            " ('a', 's1', 'Other', 'https://other.test', '2026-01-01'),"
+            " ('b', 's1', 'Canonical', 'https://canonical.test', '2026-01-02'),"
+            " ('e', 's2', 'Newest', 'https://new.test', '2026-01-02'),"
+            " ('d', 's2', 'Tie', 'https://tie.test', '2026-01-01'),"
+            " ('c', 's2', 'Oldest', 'https://old.test', '2026-01-01'),"
+            " ('f', 's3', 'Unrelated', 'https://unrelated.test', '2026-01-01')",
+            "CREATE TABLE waitlist (id INTEGER PRIMARY KEY, name TEXT, email TEXT,"
+            " signup_token TEXT NOT NULL, CONSTRAINT uq_waitlist_signup_token"
+            " UNIQUE (signup_token))",
+            "INSERT INTO waitlist VALUES (1, 'Priya', 'p@test.in', 'tok')",
+        ):
+            connection.execute(text(statement))
+
         migrate_database(connection)
+
+        inspector = inspect(connection)
+        assert "sources" in inspector.get_table_names()
+        assert {c["name"] for c in inspector.get_columns("stories")} == {
+            "id",
+            "title_en",
+            "title_hi",
+            "summary_en",
+            "summary_hi",
+            "district",
+            "source_url",
+            "source_label",
+        }
+        assert "signup_token" in {c["name"] for c in inspector.get_columns("waitlist")}
         assert connection.execute(
-            text("SELECT signup_token FROM waitlist WHERE id = 1")
-        ).scalar_one()
+            text("SELECT title_hi, summary_hi, district FROM stories WHERE id = 's1'")
+        ).one() == ("टी", "एस", "Nagpur")
+        assert connection.execute(
+            text("SELECT source_url, source_label FROM stories ORDER BY id")
+        ).all() == [
+            ("https://canonical.test", "Canonical"),
+            ("https://old.test", "Oldest"),
+            ("https://unmatched.test", None),
+            (None, None),
+        ]
+        assert (
+            connection.execute(text("SELECT count(*) FROM sources")).scalar_one() == 6
+        )
+        assert connection.execute(text("SELECT email FROM waitlist")).scalar_one()
+        assert (
+            connection.execute(text("SELECT signup_token FROM waitlist")).scalar_one()
+            == "tok"
+        )
+        connection.execute(
+            text("INSERT INTO waitlist (name, email) VALUES ('New', 'new@test.in')")
+        )
+        connection.execute(
+            text("INSERT INTO waitlist (name, email) VALUES ('Next', 'next@test.in')")
+        )
+        tokens = (
+            connection.execute(text("SELECT signup_token FROM waitlist"))
+            .scalars()
+            .all()
+        )
+        assert all(tokens)
+        assert len(set(tokens)) == 3
         assert (
             connection.execute(
                 text("SELECT version_num FROM alembic_version_saransh")
@@ -349,3 +410,43 @@ def test_add_waitlist_signup_token_migration_round_trips():
             module.downgrade()
         remaining = {c["name"] for c in inspect(connection).get_columns("waitlist")}
         assert "signup_token" not in remaining
+
+
+def test_citation_expansion_downgrade_preserves_legacy_schema():
+    module = _script_directory().get_revision("b8c9d0e1f2a3").module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE stories (id TEXT PRIMARY KEY, source_url TEXT,"
+                " title_hi TEXT, summary_hi TEXT, district TEXT, source_label TEXT)"
+            )
+        )
+        connection.execute(text("CREATE TABLE sources (id TEXT PRIMARY KEY)"))
+        connection.execute(
+            text(
+                "CREATE TABLE waitlist (id INTEGER PRIMARY KEY,"
+                " signup_token TEXT NOT NULL DEFAULT (gen_random_uuid()))"
+            )
+        )
+        with Operations.context(MigrationContext.configure(connection)):
+            module.downgrade()
+
+        inspector = inspect(connection)
+        assert "sources" in inspector.get_table_names()
+        assert {"title_hi", "summary_hi", "district"} <= {
+            c["name"] for c in inspector.get_columns("stories")
+        }
+        assert "signup_token" in {c["name"] for c in inspector.get_columns("waitlist")}
+        assert "source_label" not in {
+            c["name"] for c in inspector.get_columns("stories")
+        }
+        assert (
+            next(
+                c
+                for c in inspector.get_columns("waitlist")
+                if c["name"] == "signup_token"
+            )["default"]
+            is None
+        )

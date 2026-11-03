@@ -1,20 +1,15 @@
 import type { Story, Topic } from "@/constants/stories";
 
-export interface ApiStorySource {
-  outlet: string;
-  url: string;
-}
-
 export interface ApiStory {
   id: string;
   title_en: string;
   summary_en: string;
   image_url: string;
   source_url?: string | null;
+  source_label?: string | null;
   category: string;
   state?: string | null;
   status: string;
-  sources: ApiStorySource[];
   created_at: string;
 }
 
@@ -62,19 +57,18 @@ export function topicFor(category: string): Topic {
 
 /** Map a FastAPI story payload into the carousel card shape. */
 export function mapApiStoryToCarousel(story: ApiStory): Story {
-  const primarySource = story.sources[0];
+  const label = story.source_label || "Saransh";
 
   return {
     category: categoryLabel(story),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
-    credit: primarySource?.outlet ?? "Saransh",
+    credit: label,
     headline: story.title_en,
     body: story.summary_en,
     // No "Verified" and no tick: the API has no `official` field, so nothing
     // from it may claim verification.
-    source: primarySource?.outlet ?? "Saransh",
-    // Stories ingested before source_url existed fall back to their first source.
-    sourceUrl: story.source_url || primarySource?.url || undefined,
+    source: label,
+    sourceUrl: story.source_url || undefined,
   };
 }

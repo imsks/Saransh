@@ -50,8 +50,7 @@
 planned pipeline rules from the current stopgap exception in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 - [ ] Every Summary in this change is **attributed to a real, citable Source** and links out to it
-- [ ] Anything shown to readers works in **both Hindi and English**
-- [ ] Word limits hold: English ≤ 60 words, Hindi ≤ 70 (reject, never warn)
+- [ ] Word limits hold: English ≤ 60 words (reject, never warn)
 - [ ] No publisher image is used; images are an official photo or a Saransh illustration
 - [ ] Nothing is learned from clicks, reading time or analytics (**no personalisation**)
 - [ ] No article page is scraped; Sources are RSS, licensed or official

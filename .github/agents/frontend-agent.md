@@ -3,9 +3,8 @@
 Read the current component and its test first. Actual shipped scope is in
 [readme.md](../../readme.md); environment and analytics are in
 [frontend/README.md](../../frontend/README.md). Use
-[CONTRIBUTING.md](../../CONTRIBUTING.md) for shared rules and checks,
-[CONTEXT.md](../../CONTEXT.md) for domain language, and
-[design-audit.md](../../docs/design-audit.md) for accepted historical design decisions.
+[CONTRIBUTING.md](../../CONTRIBUTING.md) for shared rules and checks, and
+[CONTEXT.md](../../CONTEXT.md) for domain language.
 
 ## Frontend-specific guidance
 
@@ -17,8 +16,7 @@ Read the current component and its test first. Actual shipped scope is in
 - Existing layout uses 1120px content width, 32px side padding (20px below 560px), two columns above 860px and 80px section padding.
 - Red expresses brand identity, ink primary actions and preferences. Topic accents are for topic text/illustrations, not the brand. Topics always have a text label.
 - Source links stay visible; the green tick means an official source only. Samples must not gain invented article links or a fake live-feed claim.
-- Use the exact positioning line when needed: "शोर नहीं। सिर्फ़ खबर। सबूत के साथ।" / "No noise. Just news. With proof."
-- Check English and Devanagari layouts; mark Hindi text with `lang="hi"`. Reader layouts must fit the planned 70-word Hindi body.
+- Use the exact positioning line when needed: "No noise. Just news. With proof."
 - Mount theme controls on the client to avoid hydration mismatches. Load fonts through next/font and respect reduced-motion preferences.
 - Use `getApiBaseUrl()` for API calls and choose explicit caching/error behavior. The current landing carousel uses constants, not the tested API-story mapper.
 - Capture declared events through `@/lib/analytics`, never the SDK directly. No names/emails, session replay or analytics-driven story personalization.

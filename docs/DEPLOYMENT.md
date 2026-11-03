@@ -6,11 +6,24 @@ there is no CI deployment job.
 
 ## Database safety
 
-Production shares a database with Rajniti. Saransh owns `stories`, `sources` and
+Production shares a database with Rajniti. Saransh owns `stories` and
 `waitlist`, with revision tracking in `alembic_version_saransh`. Rajniti's `users`
 and `alembic_version` must remain untouched. Autogenerate filters ownership through
 [ownership.py](../app/db/ownership.py); manually written revisions still need review.
-See [ADR 0006](adr/0006-shared-database-and-users.md).
+
+Revision `b8c9d0e1f2a3` is expand-only on existing databases: it retains `sources`,
+Hindi text, district and `signup_token` so the old API can keep serving while the
+replacement deploys (or if deployment fails). It adds `source_label` and a
+PostgreSQL 13+ `gen_random_uuid()` default for token-free waitlist inserts.
+Matching canonical URLs retain their outlet labels. Stories without a canonical
+URL use their oldest source, ordered by `created_at`, then `id`; unmatched URLs
+remain unchanged and unlabeled. All source rows are retained.
+
+Deploy this revision before retiring the old API. Physical removal of the legacy
+schema is deferred to a separate, later contract rollout, after all old revisions
+and writers are retired and rollback to them is disabled. Before that cleanup,
+take a `pg_dump` and repeat the citation backfill for writes made by old revisions
+during the transition. Do not add destructive cleanup to this pre-deploy migration.
 
 Install backend requirements in `venv` or the Python 3 environment on PATH.
 Export `DATABASE_URL` from a secure source, using Supabase's session-mode pooler
@@ -35,7 +48,7 @@ For new schema changes, run `alembic revision --autogenerate -m "description"`
 against a verified local `DATABASE_URL`, review the revision and run `make migrate`.
 Preserve applied history. Non-backwards-compatible changes need an expand/migrate/
 contract rollout so the old serving revision tolerates the transition.
-Application startup still has a legacy `create_all` fallback; it cannot replace migrations.
+Application startup does not create or migrate tables.
 
 ## Cloud Run setup
 

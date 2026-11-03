@@ -8,7 +8,6 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db.database import Base
@@ -42,11 +41,6 @@ class Story(CreatedAtMixin, Base):
         onupdate=func.now(),
     )
 
-    sources = relationship(
-        "Source",
-        back_populates="story",
-        cascade="all, delete-orphan",
-    )
 
 class Waitlist(CreatedAtMixin, Base):
     __tablename__ = "waitlist"
