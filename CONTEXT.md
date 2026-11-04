@@ -87,11 +87,11 @@ A person who asked to be told when Saransh launches. Identified by email; signin
 _Avoid_: Subscriber, lead, waitlister
 
 **User**:
-A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in and fills onboarding answers; it never changes an answer that already exists. Users are readers of Saransh, never authors of Stories.
+A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in and keeps what readers tell it in its own `saransh_user_preferences` table; it never writes Rajniti's answers. Users are readers of Saransh, never authors of Stories.
 _Avoid_: Account, member, subscriber, profile
 
 **Onboarding**:
-The questions a User is asked right after signing in, shared with Rajniti: political inclination, State and age group (required); city, phone, parties and topics of interest (optional). A question is asked only while it has never been answered in either product, so a User who finished Rajniti's onboarding is not asked again, and a skipped optional question counts as answered. Saransh never asks for a username.
+The questions Saransh asks a User once, right after their first sign-in: name and State (both required) and up to 3 Topics (optional), plus interest in the coming-soon Topics. The name is prefilled from Google and editable; Rajniti's State pre-selects ours when it matches exactly. English only for now, no username step and no district question. Onboarding is per-product: it is stored in Saransh's own table, and Rajniti's onboarding flag is never read or written.
 _Avoid_: Signup, registration, setup, profile completion, wizard
 
 **Edition**:
