@@ -15,7 +15,11 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
 def _check_key(provided: Optional[str], expected: Optional[str]) -> None:
-    if not expected or not provided or not secrets.compare_digest(provided, expected):
+    if (
+        not expected
+        or not provided
+        or not secrets.compare_digest(provided.encode(), expected.encode())
+    ):
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 

@@ -12,7 +12,7 @@ from typing import Optional
 # Register a new Saransh table here in the same change that adds its model.
 # Never list a table another product owns (e.g. Rajniti's `users`), even if
 # Saransh maps a model over it.
-SARANSH_OWNED_TABLES = frozenset({"stories", "waitlist"})
+SARANSH_OWNED_TABLES = frozenset({"stories", "waitlist", "saransh_user_preferences"})
 
 
 def include_name(name: Optional[str], type_: str, parent_names: dict) -> bool:
