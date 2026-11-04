@@ -26,7 +26,13 @@ def list_stories(
         query = query.filter(Story.state == state)
     if status is not None:
         query = query.filter(Story.status == status)
-    return query.order_by(Story.created_at.desc()).offset(offset).limit(limit).all()
+    # id breaks created_at ties so offset paging stays stable.
+    return (
+        query.order_by(Story.created_at.desc(), Story.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
 
 def get_story(db: Session, story_id: UUID) -> Optional[Story]:
