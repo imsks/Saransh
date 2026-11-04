@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Mono, Inter, Noto_Sans_Devanagari } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { AnalyticsProvider, AuthProvider, ThemeProvider } from "@/components/providers";
@@ -27,20 +27,6 @@ const inter = Inter({
   // 700 and 800 are for the app story card (time line, headline).
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-mono",
-  display: "swap",
-});
-
-const notoSansDevanagari = Noto_Sans_Devanagari({
-  subsets: ["devanagari"],
-  weight: ["400", "500"],
-  variable: "--font-devanagari",
   display: "swap",
 });
 
@@ -83,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} ${notoSansDevanagari.variable}`}
+      className={`${fraunces.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <head>
