@@ -19,9 +19,6 @@ export default function Navbar() {
           className="font-serif text-[18px] font-semibold tracking-[-0.01em] text-ink no-underline"
         >
           Saransh
-          <span lang="hi" className="font-medium tracking-[-0.01em] font-hindi text-[16px] text-red ml-2">
-            सारांश
-          </span>
         </Link>
 
         <div className="flex items-center gap-5 max-[400px]:gap-3.5">
