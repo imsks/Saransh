@@ -10,11 +10,7 @@ export default function Footer() {
         <div>
           <div className="mb-1.5 flex items-baseline gap-[7px]">
             <span className="font-serif text-[16px] font-semibold text-ink">Saransh</span>
-            <span lang="hi" className="font-hindi text-sm text-red">सारांश</span>
           </div>
-          <p lang="hi" className="font-hindi text-[11px] text-muted">
-            शोर नहीं। सिर्फ़ खबर। सबूत के साथ।
-          </p>
         </div>
         <div className="flex flex-col items-end gap-2 max-[560px]:items-start">
           <Link
