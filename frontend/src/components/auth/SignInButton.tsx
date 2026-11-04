@@ -23,7 +23,7 @@ export default function SignInButton({
       className={className}
       onClick={() => {
         track("sign_in_clicked", { location });
-        void signIn("google", { callbackUrl: ROUTES.stories });
+        void signIn("google", { callbackUrl: ROUTES.onboarding });
       }}
     >
       {label}

@@ -7,7 +7,9 @@ stories and a privacy page.
 ## Current scope
 
 - FastAPI endpoints ingest, list and serve English stories, each with one citation link.
-- Google sign-in (next-auth) creates or reuses the User shared with Rajniti.
+- Google sign-in (next-auth) creates or reuses the User shared with Rajniti, asks
+  only the onboarding questions not yet answered in either product, then lands on
+  `/stories`.
 - Optional PostHog captures pageviews, clicks and the sign-in funnel under one
   ID per person (anonymous, then the User id). No session replay.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
