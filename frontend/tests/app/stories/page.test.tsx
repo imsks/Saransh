@@ -1,11 +1,15 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
 import StoriesPage from "@/app/stories/page";
 
-const fetchMock = jest.fn<typeof fetch>();
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({ data: null, status: "unauthenticated" }),
+}));
+
+const fetchMock = jest.fn() as jest.MockedFunction<typeof fetch>;
 
 beforeEach(() => {
   global.fetch = fetchMock as typeof fetch;

@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title="Saransh - AI News App",
-    description="Story ingestion and waitlist API for Saransh",
+    description="Story ingestion and signed-in User API for Saransh",
     version="1.0.0",
     debug=settings.DEBUG,
 )

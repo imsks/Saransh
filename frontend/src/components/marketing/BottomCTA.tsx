@@ -1,15 +1,7 @@
-"use client";
-
+import SignInButton from "@/components/auth/SignInButton";
 import { Section, SectionHeader, buttonClass, cardClass, cx } from "@/components/ui";
 
 export default function BottomCTA() {
-  const scrollToTop = () => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-  };
-
   return (
     <Section aria-labelledby="bottom-cta-title">
       <div
@@ -34,13 +26,11 @@ export default function BottomCTA() {
                 attributed, and will be approved by a person before it goes live. We are building
                 the review step now.
               </p>
-              <p>Sign up to hear when it&apos;s ready.</p>
+              <p>Sign in to start reading.</p>
             </>
           }
         />
-        <button type="button" onClick={scrollToTop} className={cx(buttonClass(), "mt-8")}>
-          JOIN THE WAITLIST
-        </button>
+        <SignInButton location="bottom_cta" className={cx(buttonClass(), "mt-8")} />
       </div>
     </Section>
   );

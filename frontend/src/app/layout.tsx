@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 
 import JsonLd from "@/components/seo/JsonLd";
-import { AnalyticsProvider, ThemeProvider } from "@/components/providers";
+import { AnalyticsProvider, AuthProvider, ThemeProvider } from "@/components/providers";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/json-ld";
 import {
   buildDefaultOg,
@@ -98,7 +98,9 @@ export default function RootLayout({
       <body className="antialiased">
         <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />
         <AnalyticsProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </AuthProvider>
         </AnalyticsProvider>
       </body>
     </html>

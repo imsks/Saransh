@@ -29,6 +29,7 @@ SKIP_MIGRATIONS="${SKIP_MIGRATIONS:-0}"
 # Runtime environment for the service itself.
 DATABASE_URL="${DATABASE_URL:-}"
 SARANSH_INGEST_API_KEY="${SARANSH_INGEST_API_KEY:-}"
+SARANSH_INTERNAL_API_KEY="${SARANSH_INTERNAL_API_KEY:-}"
 CORS_ORIGINS="${CORS_ORIGINS:-}"
 LOG_LEVEL="${LOG_LEVEL:-INFO}"
 
@@ -39,6 +40,7 @@ missing=()
 [[ -n "$GCP_PROJECT_ID" ]] || missing+=("GCP_PROJECT_ID — your Google Cloud project id")
 [[ -n "$DATABASE_URL" ]] || missing+=("DATABASE_URL — Postgres connection string for production")
 [[ -n "$SARANSH_INGEST_API_KEY" ]] || missing+=("SARANSH_INGEST_API_KEY — guards POST /api/v1/stories")
+[[ -n "$SARANSH_INTERNAL_API_KEY" ]] || missing+=("SARANSH_INTERNAL_API_KEY — shared with the Next.js server for signed-in User calls")
 [[ -n "$CORS_ORIGINS" ]] || missing+=("CORS_ORIGINS — comma-separated frontend origins")
 
 if ((${#missing[@]} > 0)); then
@@ -107,7 +109,7 @@ gcloud run deploy "$CLOUD_RUN_SERVICE" \
     --allow-unauthenticated \
     --min-instances "$MIN_INSTANCES" \
     --max-instances "$MAX_INSTANCES" \
-    --set-env-vars "APP_ENV=production,DEBUG=False,LOG_LEVEL=${LOG_LEVEL},DATABASE_URL=${DATABASE_URL},SARANSH_INGEST_API_KEY=${SARANSH_INGEST_API_KEY},CORS_ORIGINS=${CORS_ORIGINS}" \
+    --set-env-vars "APP_ENV=production,DEBUG=False,LOG_LEVEL=${LOG_LEVEL},DATABASE_URL=${DATABASE_URL},SARANSH_INGEST_API_KEY=${SARANSH_INGEST_API_KEY},SARANSH_INTERNAL_API_KEY=${SARANSH_INTERNAL_API_KEY},CORS_ORIGINS=${CORS_ORIGINS}" \
     --quiet
 
 SERVICE_URL="$(gcloud run services describe "$CLOUD_RUN_SERVICE" \

@@ -65,16 +65,27 @@ export default function PrivacyPage() {
         </p>
 
         <div className={cx(cardClass({ padding: "lg" }), "mt-8")}>
-          <Section heading="Joining the waitlist">
+          <Section heading="Signing in with Google">
             <p className={paragraphClass}>
-              The waitlist form stores two things: the name you type and the
-              email address you type. Nothing else from the form is kept.
+              Signing in stores your Google account ID, name, email address
+              and profile photo. Saransh shares one account table with its
+              sister project Rajniti, so the same Google account is the same
+              person on both.
             </p>
             <p className={paragraphClass}>
-              They are used for exactly what the form promises — one email
-              when Saransh launches. No newsletter, no drip sequence, and the
-              list is never sold, rented, or shared with anyone else. Signing
-              up twice with the same email is still one signup, not two.
+              After signing in you are asked a few questions: your name and
+              state, and optionally up to three topics you care about.
+              Saransh stores your answers in its own table and does not write
+              to your Rajniti profile. If you already have a state saved on
+              Rajniti, it is only used to pre-select yours.
+            </p>
+          </Section>
+
+          <Section heading="Earlier waitlist signups">
+            <p className={paragraphClass}>
+              If you joined the waitlist before sign-in existed, we keep that
+              name and email only to send the one launch email we promised. It
+              is never sold, rented, or shared with anyone else.
             </p>
           </Section>
 
@@ -84,33 +95,25 @@ export default function PrivacyPage() {
               page are working. What is measured is page views, clicks and
               similar interactions, the page you came from, and the coarse
               technical details your browser sends anyway — approximate
-              location from your IP address, device type, and browser. Your
-              name and email are not part of this.
+              location from your IP address, device type, and browser.
             </p>
-          </Section>
-
-          <Section heading="How a signup is linked to usage">
             <p className={paragraphClass}>
-              When you join the waitlist, your signup is linked to that
-              anonymous usage by an opaque token; pseudonymous — an identifier
-              that cannot be read as your name or email without
-              Saransh&rsquo;s own database. It lets us see that a visit ended
-              in a signup without telling the analytics vendor who signed up.
+              Before you sign in you are an anonymous browser ID. Once you sign
+              in, that history is joined to your account ID, an opaque
+              identifier, so we can see how many visitors become readers.
             </p>
             <p className={paragraphClass}>
               <strong className="font-semibold text-ink">
                 Your email address is never sent to the analytics vendor.
               </strong>{" "}
-              Neither is your name. Someone holding the analytics data alone
-              sees only opaque tokens.
+              Neither is your name, photo or onboarding answers.
             </p>
           </Section>
 
           <Section heading="Session recording">
             <p className={paragraphClass}>
               We do not record sessions or capture what you type into form
-              fields. We measure page visits and interactions to understand
-              how people reach and complete the waitlist form.
+              fields.
             </p>
           </Section>
 
@@ -137,16 +140,17 @@ export default function PrivacyPage() {
               >
                 PostHog
               </a>
-              , on their cloud service in the United States. Your waitlist
-              name and email stay in Saransh&rsquo;s own database and are
-              never sent to PostHog.
+              , on their cloud service in the United States. Your account and
+              waitlist details stay in our own database and are never sent to
+              PostHog.
             </p>
           </Section>
 
           <Section heading="Deleting your data">
             <p className={paragraphClass}>
-              Ask and it is deleted — your waitlist entry and the analytics
-              attached to its token. Message the maintainer on GitHub at{" "}
+              Ask and it is deleted — your account, your answers, any waitlist
+              entry and their analytics. Because the account is shared, this
+              removes you from Rajniti too. Message the maintainer on GitHub at{" "}
               <a
                 href={EXTERNAL.maintainer}
                 target="_blank"
@@ -165,8 +169,8 @@ export default function PrivacyPage() {
                 Saransh issue tracker
               </a>
               . An issue is public, so do not put your email address in it —
-              say that you want your waitlist entry removed and we will ask
-              you for it privately.
+              say that you want your data removed and we will ask you for it
+              privately.
             </p>
           </Section>
         </div>
