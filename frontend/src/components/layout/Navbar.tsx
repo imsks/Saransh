@@ -16,7 +16,7 @@ export default function Navbar() {
       <Container className="flex h-full items-center justify-between">
         <Link
           href={ROUTES.home}
-          className="font-serif text-[18px] font-semibold tracking-[-0.01em] text-ink no-underline"
+          className="font-serif text-[18px] font-semibold tracking-[-0.01em] text-red no-underline"
         >
           Saransh
         </Link>
