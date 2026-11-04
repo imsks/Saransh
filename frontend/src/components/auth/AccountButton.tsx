@@ -15,7 +15,7 @@ export default function AccountButton() {
   const { data, status } = useSession();
 
   if (status === "loading") return null;
-  if (!data) {
+  if (!data || data.expired) {
     return <SignInButton location="navbar" className={navLinkClass} label="Sign in" />;
   }
 
