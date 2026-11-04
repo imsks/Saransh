@@ -1,14 +1,15 @@
 # Saransh
 
 An open-source news project for India. The deployed site is a landing page with
-static sample stories, a public `/stories` list of ingested stories, a waitlist
-and a privacy page.
+static sample stories, Google sign-in, a public `/stories` list of ingested
+stories and a privacy page.
 
 ## Current scope
 
 - FastAPI endpoints ingest, list and serve English stories, each with one citation link.
-- Waitlist signup is idempotent per email.
-- Optional PostHog captures pageviews and clicks. No session replay.
+- Google sign-in (next-auth) creates or reuses the User shared with Rajniti.
+- Optional PostHog captures pageviews, clicks and the sign-in funnel under one
+  ID per person (anonymous, then the User id). No session replay.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
 
 The reader app, sign-in, review pipeline and word-limit enforcement are not built.
@@ -59,8 +60,9 @@ database, not a remote URL from your environment.
 
 Backend settings: [.env.example](.env.example).
 Frontend settings: [frontend/.env.example](frontend/.env.example).
-Keep secrets out of commits. Ingest requires `X-API-Key`; waitlist and story reads
-are public. See the API docs for request and response schemas.
+Keep secrets out of commits. Ingest requires `X-API-Key`; story reads are public;
+User endpoints accept only the Next.js server's internal key. See the API docs for
+request and response schemas.
 
 Production shares PostgreSQL with [Rajniti](https://rajniti-app.vercel.app).
 Saransh owns only `stories`, `waitlist` and its migration version table;

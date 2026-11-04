@@ -15,7 +15,9 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-function renderProvider(key: string | undefined) {
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+async function renderProvider(key: string | undefined) {
   if (key === undefined) delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
   else process.env.NEXT_PUBLIC_POSTHOG_KEY = key;
   render(
@@ -23,18 +25,19 @@ function renderProvider(key: string | undefined) {
       <p>hello</p>
     </AnalyticsProvider>,
   );
+  await flush();
 }
 
 describe("AnalyticsProvider", () => {
-  it("never boots PostHog without a key", () => {
-    renderProvider(undefined);
+  it("never boots PostHog without a key", async () => {
+    await renderProvider(undefined);
 
     expect(screen.getByText("hello")).toBeDefined();
     expect(init).not.toHaveBeenCalled();
   });
 
-  it("boots PostHog through the first-party proxy with replay off", () => {
-    renderProvider("phc_test");
+  it("boots PostHog through the first-party proxy with replay off", async () => {
+    await renderProvider("phc_test");
 
     expect(init).toHaveBeenCalledWith(
       "phc_test",
