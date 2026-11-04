@@ -73,10 +73,11 @@ export default function PrivacyPage() {
               person on both.
             </p>
             <p className={paragraphClass}>
-              After signing in you may be asked a few questions: political
-              inclination, state and age group, and optionally city, phone,
-              parties and topics. Your answers are shared with Rajniti, and
-              anything you already answered there is not asked again.
+              After signing in you are asked a few questions: your name and
+              state, and optionally up to three topics you care about.
+              Saransh stores your answers in its own table and does not write
+              to your Rajniti profile. If you already have a state saved on
+              Rajniti, it is only used to pre-select yours.
             </p>
           </Section>
 
