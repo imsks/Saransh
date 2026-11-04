@@ -98,7 +98,7 @@
 
   --sutra-font-display: var(--font-fraunces), Georgia, serif;
   --sutra-font-body: var(--font-inter), system-ui, sans-serif;
-  --sutra-font-mono: var(--font-plex-mono), "Courier New", monospace;
+  --sutra-font-mono: var(--font-inter), system-ui, sans-serif;
 }
 
 /* ---------------------------------------------------------------------------
@@ -379,6 +379,6 @@ body {
 
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), "Courier New", monospace;
-  --font-hindi: var(--font-devanagari), system-ui, sans-serif;
+  /* Only two typefaces: Fraunces and Inter. font-mono is kept as an alias of Inter. */
+  --font-mono: var(--font-inter), system-ui, sans-serif;
 }
