@@ -4,14 +4,16 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import AccountButton from "@/components/auth/AccountButton";
 import SignInButton from "@/components/auth/SignInButton";
-import { forgetUser, track } from "@/lib/analytics";
+import AuthProvider from "@/components/providers/AuthProvider";
+import { forgetUser, identify, track } from "@/lib/analytics";
 
 jest.mock("next-auth/react", () => ({
+  SessionProvider: ({ children }: { children: React.ReactNode }) => children,
   signIn: jest.fn(),
   signOut: jest.fn(),
   useSession: jest.fn(),
 }));
-jest.mock("@/lib/analytics", () => ({ track: jest.fn(), forgetUser: jest.fn() }));
+jest.mock("@/lib/analytics", () => ({ track: jest.fn(), forgetUser: jest.fn(), identify: jest.fn() }));
 
 const mockedSession = useSession as jest.MockedFunction<typeof useSession>;
 
@@ -37,6 +39,18 @@ describe("AccountButton", () => {
     const { container } = render(<AccountButton />);
 
     expect(container.firstChild).toBeNull();
+  });
+
+  it("treats an expired session as signed out", () => {
+    mockedSession.mockReturnValue({
+      data: { expired: true, user: { id: "" }, expires: "" },
+      status: "authenticated",
+      update: jest.fn(),
+    } as never);
+    render(<AccountButton />);
+
+    expect(screen.getByRole("button", { name: "Sign in" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Sign out" })).toBeNull();
   });
 
   it("offers sign-in to a Visitor", () => {
@@ -73,5 +87,32 @@ describe("AccountButton", () => {
     render(<AccountButton />);
 
     expect(screen.getByRole("img", { name: "p@example.com" })).toBeTruthy();
+  });
+});
+
+describe("AuthProvider", () => {
+  it("signs out an expired session and forgets the analytics ID, without identifying it", () => {
+    mockedSession.mockReturnValue({
+      data: { expired: true, user: { id: "", onboarded: false, isNewUser: false }, expires: "" },
+      status: "authenticated",
+      update: jest.fn(),
+    } as never);
+    render(<AuthProvider>content</AuthProvider>);
+
+    expect(signOut).toHaveBeenCalledWith({ redirect: false });
+    expect(forgetUser).toHaveBeenCalledTimes(1);
+    expect(identify).not.toHaveBeenCalled();
+  });
+
+  it("identifies a live session and leaves it signed in", () => {
+    mockedSession.mockReturnValue({
+      data: { user: { id: "google-1", onboarded: true, isNewUser: false }, expires: "" },
+      status: "authenticated",
+      update: jest.fn(),
+    } as never);
+    render(<AuthProvider>content</AuthProvider>);
+
+    expect(identify).toHaveBeenCalledWith("google-1", false);
+    expect(signOut).not.toHaveBeenCalled();
   });
 });

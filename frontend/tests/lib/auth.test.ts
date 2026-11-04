@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
-import { authOptions } from "@/lib/auth";
+import { SESSION_MAX_AGE_SECONDS, authOptions } from "@/lib/auth";
 
 const fetchMock = jest.fn<typeof fetch>();
 
@@ -51,7 +51,7 @@ describe("authOptions.jwt", () => {
     respond({ id: "google-1", onboarded: true });
 
     const token = await jwt({
-      token: { userId: "google-1", onboarded: false },
+      token: { userId: "google-1", onboarded: false, signedInAt: Date.now() },
       trigger: "update",
       session: { onboarded: false },
     });
@@ -63,14 +63,94 @@ describe("authOptions.jwt", () => {
   });
 
   it("leaves the token alone on ordinary requests", async () => {
-    const token = await jwt({ token: { userId: "google-1", onboarded: true } });
+    const signedInAt = Date.now();
+    const token = await jwt({ token: { userId: "google-1", onboarded: true, signedInAt } });
 
-    expect(token).toEqual({ userId: "google-1", onboarded: true });
+    expect(token).toEqual({ userId: "google-1", onboarded: true, signedInAt });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 
+describe("authOptions.jwt 90-day limit", () => {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const LIMIT_MS = SESSION_MAX_AGE_SECONDS * 1000;
+  const signedInAt = Date.parse("2026-01-01T00:00:00Z");
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const at = (elapsedMs: number) => jest.spyOn(Date, "now").mockReturnValue(signedInAt + elapsedMs);
+  const signedIn = { userId: "google-1", onboarded: true, signedInAt };
+
+  it("is 90 days", () => {
+    expect(LIMIT_MS).toBe(90 * DAY_MS);
+  });
+
+  it("records when the reader signed in with Google", async () => {
+    respond({ id: "google-1", onboarded: false, created: false });
+    at(0);
+
+    const token = await jwt({ token: {}, profile: { sub: "google-1", email: "p@example.com" } });
+
+    expect(token.signedInAt).toBe(signedInAt);
+  });
+
+  it("keeps the session until the limit", async () => {
+    at(LIMIT_MS - 1);
+
+    expect(await jwt({ token: signedIn })).toEqual(signedIn);
+  });
+
+  it("ends the session at the limit, on an ordinary read", async () => {
+    at(LIMIT_MS);
+
+    expect(await jwt({ token: signedIn })).toEqual({ expired: true });
+  });
+
+  it("ends the session at the limit on an update, without calling the API", async () => {
+    at(LIMIT_MS);
+
+    expect(await jwt({ token: signedIn, trigger: "update" })).toEqual({ expired: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not let an update renew the deadline", async () => {
+    respond({ id: "google-1", onboarded: true });
+    at(LIMIT_MS - DAY_MS);
+
+    const updated = await jwt({ token: signedIn, trigger: "update" });
+    expect(updated.signedInAt).toBe(signedInAt);
+
+    at(LIMIT_MS);
+    expect(await jwt({ token: updated })).toEqual({ expired: true });
+  });
+
+  it("expires tokens issued before the sign-in time was recorded", async () => {
+    expect(await jwt({ token: { userId: "google-1", onboarded: true } })).toEqual({ expired: true });
+  });
+
+  it("lets the reader sign in again after expiry", async () => {
+    respond({ id: "google-1", onboarded: true, created: false });
+    at(LIMIT_MS + DAY_MS);
+
+    const token = await jwt({ token: { expired: true }, profile: { sub: "google-1", email: "p@example.com" } });
+
+    expect(token).toMatchObject({ userId: "google-1", signedInAt: signedInAt + LIMIT_MS + DAY_MS });
+    expect(token.expired).toBeUndefined();
+  });
+});
+
 describe("authOptions.session", () => {
+  it("marks an expired session so the client can sign out", async () => {
+    const session = await authOptions.callbacks!.session!({
+      session: { user: {}, expires: "2026-11-18" },
+      token: { expired: true },
+    } as never);
+
+    expect(session).toMatchObject({ expired: true, user: { id: "" } });
+  });
+
   it("exposes only the User's id and flags, never a credential", async () => {
     const session = await authOptions.callbacks!.session!({
       session: {
