@@ -19,7 +19,7 @@ are in [CONTRIBUTING.md](../../CONTRIBUTING.md), with migration/deploy instructi
 - Keep the isolated Alembic version table and ownership filters. Do not rewrite applied migrations or bypass production consent.
 - Tests use in-memory SQLite and the fixtures in `tests/conftest.py`, which mount `main.app`; never call live feeds.
 - An Agent may draft or flag, never approve. Planned pipeline work records model/prompt versions and reviewer corrections, attributes claims and fails per Story.
-- Future authentication follows ADR 0005: verify identity on the backend and resolve the acting user from its verified token, never a browser-supplied user ID.
+- Signed-in User endpoints depend on `get_current_user`: the Next.js server sends `SARANSH_INTERNAL_API_KEY` and the User's id. Never take the acting user's id from a path or body.
 
 The stopgap publishes on ingest today; human review and enforced word limits are
 not implemented. Do not invent an existing pipeline or scaffold empty directories
