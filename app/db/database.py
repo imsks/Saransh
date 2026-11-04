@@ -32,6 +32,9 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
+# Tables another product owns but Saransh maps (Rajniti's `users`). Kept apart so
+# Base.metadata holds only Saransh-owned tables and create_all() never touches them.
+SharedBase = declarative_base()
 
 
 def get_db():
