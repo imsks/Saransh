@@ -87,11 +87,11 @@ A person who asked to be told when Saransh launches. Identified by email; signin
 _Avoid_: Subscriber, lead, waitlister
 
 **User**:
-A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns. A User is the only kind of person who can own anything: preferences, read history, saved Stories. Users are readers of Saransh, never authors of Stories. Planned.
+A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in and keeps what readers tell it in its own `saransh_user_preferences` table; it never writes Rajniti's answers. Users are readers of Saransh, never authors of Stories.
 _Avoid_: Account, member, subscriber, profile
 
 **Onboarding**:
-The questions Saransh asks a User once, right after their first sign-in: reading language (required, nothing pre-selected), State (required) and up to 3 Topics (optional). The name is prefilled from Google and editable. There is no username step and no district question. Onboarding is per-product: a User who completed Rajniti's onboarding has told Saransh nothing, and is still asked. Planned.
+The questions Saransh asks a User once, right after their first sign-in: name and State (both required) and up to 3 Topics (optional), plus interest in the coming-soon Topics. The name is prefilled from Google and editable; Rajniti's State pre-selects ours when it matches exactly. English only for now, no username step and no district question. Onboarding is per-product: it is stored in Saransh's own table, and Rajniti's onboarding flag is never read or written.
 _Avoid_: Signup, registration, setup, profile completion, wizard
 
 **Edition**:
@@ -99,13 +99,13 @@ One batch of cards a reader gets in a sitting. A day holds four Editions of 15, 
 _Avoid_: Session, batch, round
 
 **Feed Mix**:
-The fixed, public rules that decide which Stories a reader sees: daily Tier minimums (National 25, State 15, International 10), the reader's chosen Topics at about 60% within each Tier, Tiers interleaved, newest first. It depends only on the reader's chosen language, State and Topics, the Story's Tier, State, Topic and time, and how much of the day's 50 is used. Nothing is learned from clicks, reading time or analytics. Planned.
+The fixed, public rules that decide which Stories a reader sees: daily Tier minimums (National 25, State 15, International 10), the reader's chosen Topics at about 60% within each Tier, Tiers interleaved, newest first. It depends only on the reader's chosen State and Topics, the Story's Tier, State, Topic and time, and how much of the day's 50 is used. Nothing is learned from clicks, reading time or analytics. Planned.
 _Avoid_: Ranking, recommendation, algorithm, personalisation
 
 ### Pipeline Terms
 
 **Pipeline**:
-The planned sequence that turns Articles into published Stories: fetch from approved Sources → dedupe → summarise → translate → tag → Agent check → Review → publish. It runs on local AI (Ollama) and fails per Story, not per batch. Not built yet.
+The planned sequence that turns Articles into published Stories: fetch from approved Sources → dedupe → summarise → tag → Agent check → Review → publish. It runs on local AI (Ollama) and fails per Story, not per batch. Not built yet.
 _Avoid_: Workflow, flow, scraper
 
 **Agent**:
@@ -113,7 +113,7 @@ An automated process that drafts or checks. An Agent never approves a Story and 
 _Avoid_: Bot, worker, service
 
 **Summariser**:
-The Agent that drafts a Summary in the Article's language and translates it to the other, within the word limits. Its prompts are versioned and public.
+The Agent that drafts an English Summary within the word limit. Its prompts are versioned and public.
 _Avoid_: Summary agent, digest agent
 
 **Tagger**:
@@ -132,7 +132,7 @@ _Avoid_: Length check, soft limit
 
 **User**: How does a news story get into Saransh?
 
-**Dev**: The plan: the Pipeline fetches an Article from an approved Source, the Summariser drafts a Summary in both languages, the Tagger proposes a Tier, State and Topic, and the Checker flags anything that looks wrong. A reviewer then reads both languages beside the source and approves, edits or kills the Story. Only an approved Story is Published.
+**Dev**: The plan: the Pipeline fetches an Article from an approved Source, the Summariser drafts a Summary, the Tagger proposes a Tier, State and Topic, and the Checker flags anything that looks wrong. A reviewer then reads it beside the source and approves, edits or kills the Story. Only an approved Story is Published.
 
 **PM**: And today?
 

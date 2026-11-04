@@ -22,6 +22,7 @@ from typing import Generator
 # suite at the real database and the real ingest key.
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["SARANSH_INGEST_API_KEY"] = "test-api-key"
+os.environ["SARANSH_INTERNAL_API_KEY"] = "test-internal-key"
 os.environ.setdefault("OPENAI_API_KEY", "test-key-not-used")
 
 import pytest  # noqa: E402
@@ -61,7 +62,8 @@ PG_UUID.load_dialect_impl = _pg_uuid_load_dialect_impl
 PG_UUID.process_bind_param = _pg_uuid_process_bind_param
 PG_UUID.process_result_value = _pg_uuid_process_result_value
 
-from app.db.database import Base, get_db  # noqa: E402
+from app.db.database import Base, SharedBase, get_db  # noqa: E402
+from app.db.models import User  # noqa: E402,F401  (registers `users` on SharedBase)
 from main import app as test_app  # noqa: E402
 
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -75,12 +77,20 @@ engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+@event.listens_for(engine, "connect")
+def _enforce_foreign_keys(dbapi_connection, _):  # noqa: ANN001
+    # SQLite ignores foreign keys by default; the cascade tests need them on.
+    dbapi_connection.execute("PRAGMA foreign_keys=ON")
+
+
 @pytest.fixture(scope="session", autouse=True)
 def create_tables():
-    """Create all tables once per test session."""
+    """Create all tables once per test session, plus the local `users` stand-in."""
+    SharedBase.metadata.create_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
+    SharedBase.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture()

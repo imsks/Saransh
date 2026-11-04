@@ -16,6 +16,7 @@ from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
 from alembic.script import ScriptDirectory
+from app.db.database import SharedBase
 from app.db.models import Base
 from app.db.ownership import SARANSH_OWNED_TABLES, include_name, include_object
 
@@ -42,9 +43,10 @@ def test_alembic_only_looks_at_saransh_owned_tables():
 
 def test_every_model_table_is_registered_as_saransh_owned():
     # A new table must be added to SARANSH_OWNED_TABLES on purpose, or
-    # autogenerate will silently ignore it. A model mapped over a table another
-    # product owns (Rajniti's `users`) must not be registered: exempt it here.
-    assert set(Base.metadata.tables) == set(SARANSH_OWNED_TABLES)
+    # autogenerate will silently ignore it. Rajniti's `users` is mapped on its own
+    # base, so it is never in Base.metadata and create_all() never sees it.
+    assert set(Base.metadata.tables) == SARANSH_OWNED_TABLES
+    assert set(SharedBase.metadata.tables) == {"users"}
 
 
 def _dropped_tables(connection, **filters) -> set[str]:
@@ -60,11 +62,11 @@ def test_autogenerate_never_proposes_dropping_another_products_table():
     """Production Postgres is shared with Rajniti; its tables are not ours to drop."""
     engine = create_engine("sqlite:///:memory:")
     with engine.begin() as connection:
-        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        connection.execute(text("CREATE TABLE user_politicians (id TEXT PRIMARY KEY)"))
         connection.execute(text("CREATE TABLE alembic_version (version_num TEXT)"))
 
         # Without the filters this is exactly what autogenerate would write.
-        assert "users" in _dropped_tables(connection)
+        assert "user_politicians" in _dropped_tables(connection)
 
         assert (
             _dropped_tables(
@@ -72,6 +74,40 @@ def test_autogenerate_never_proposes_dropping_another_products_table():
             )
             == set()
         )
+
+
+def test_autogenerate_never_alters_rajnitis_users_table():
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        context = MigrationContext.configure(
+            connection,
+            opts={"include_name": include_name, "include_object": include_object},
+        )
+        diffs = compare_metadata(context, Base.metadata)
+
+        assert diffs
+        for diff in diffs:
+            table = diff[1] if diff[0].endswith("_table") else diff[2]
+            assert getattr(table, "name", table) != "users"
+
+
+def test_migration_runner_creates_the_users_stub_only_when_asked():
+    from scripts.init_db import migrate_database
+
+    for users_stub in (False, True):
+        engine = create_engine("sqlite:///:memory:")
+        with engine.begin() as connection:
+            migrate_database(connection, users_stub=users_stub)
+            tables = set(inspect(connection).get_table_names())
+
+            assert SARANSH_OWNED_TABLES <= tables
+            assert ("users" in tables) is users_stub
+            if users_stub:
+                columns = {c["name"] for c in inspect(connection).get_columns("users")}
+                assert columns == set(
+                    SharedBase.metadata.tables["users"].columns.keys()
+                )
 
 
 def test_suite_never_points_at_a_real_database():
@@ -450,3 +486,30 @@ def test_citation_expansion_downgrade_preserves_legacy_schema():
             )["default"]
             is None
         )
+
+
+def test_no_saransh_migration_alters_users():
+    for path in (REPO_ROOT / "alembic" / "versions").glob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        for call in ("alter_column", "add_column", "drop_column", "drop_table"):
+            assert f'{call}("users"' not in source, path.name
+
+
+def test_preferences_migration_round_trips_and_cascades():
+    module = _script_directory().get_revision("d1e2f3a4b5c6").module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        with Operations.context(MigrationContext.configure(connection)):
+            module.upgrade()
+        inspector = inspect(connection)
+        assert "saransh_user_preferences" in inspector.get_table_names()
+        (foreign_key,) = inspector.get_foreign_keys("saransh_user_preferences")
+        assert foreign_key["referred_table"] == "users"
+        assert foreign_key["options"]["ondelete"] == "CASCADE"
+        assert {c["name"] for c in inspector.get_columns("users")} == {"id"}
+
+        with Operations.context(MigrationContext.configure(connection)):
+            module.downgrade()
+        assert "saransh_user_preferences" not in inspect(connection).get_table_names()
