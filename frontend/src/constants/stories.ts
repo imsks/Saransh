@@ -9,6 +9,8 @@ export type Topic =
   | "sports";
 
 export interface Story {
+  /** API Story id; absent on the landing page's illustrative cards. */
+  id?: string;
   category: string;
   topic: Topic;
   /** Real cover photo. When absent, the topic's illustration wash is shown instead. */

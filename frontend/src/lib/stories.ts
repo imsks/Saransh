@@ -62,6 +62,7 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
   const label = story.source_label || "Saransh";
 
   return {
+    id: story.id,
     category: categoryLabel(story),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
@@ -79,7 +80,7 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
 export async function fetchStories(limit = 50): Promise<Story[]> {
   try {
     const response = await fetch(
-      `${getApiBaseUrl({ forServer: true })}/stories?limit=${limit}`,
+      `${getApiBaseUrl({ forServer: true })}/stories?status=published&limit=${limit}`,
       { next: { revalidate: 60 } },
     );
     if (!response.ok) {

@@ -61,7 +61,9 @@ describe("StoriesPage", () => {
     expect(
       screen.getByRole("heading", { name: "Parliament passes data bill" }),
     ).toBeTruthy();
-    expect(String(fetchMock.mock.calls[0][0])).toMatch(/\/stories\?limit=50$/);
+    expect(String(fetchMock.mock.calls[0][0])).toMatch(
+      /\/stories\?status=published&limit=50$/,
+    );
   });
 
   it("shows an empty state when the API fails", async () => {

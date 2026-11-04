@@ -26,7 +26,7 @@ export default async function StoriesPage() {
             No stories yet. Check back soon.
           </p>
         ) : (
-          stories.map((story, index) => <StoryCard key={index} story={story} />)
+          stories.map((story) => <StoryCard key={story.id} story={story} />)
         )}
       </main>
       <Footer />
