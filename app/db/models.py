@@ -6,6 +6,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
+    ForeignKey,
     Integer,
     String,
     Text,
@@ -13,7 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
-from app.db.database import Base
+from app.db.database import Base, SharedBase
 
 STATUS_PUBLISHED = "published"
 
@@ -57,23 +58,45 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
-class User(Base):
-    """Rajniti owns this table; Saransh maps only the columns it reads or fills."""
+class User(SharedBase):
+    """Rajniti owns this table; Saransh maps only the columns it touches.
+
+    Saransh inserts the row at a first sign-in and refreshes name and picture. `state`
+    is read-only, to pre-select Saransh's State. `onboarding_completed` is Rajniti's
+    flag: Saransh sets it False on insert and never reads or changes it again.
+    """
 
     __tablename__ = "users"
 
     id = Column(String, primary_key=True)  # Google `sub`
     email = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=True)
-    username = Column(String, nullable=True, unique=True)
     profile_picture = Column(String, nullable=True)
-    phone = Column(String, nullable=True)
     state = Column(String, nullable=True)
-    city = Column(String, nullable=True)
-    age_group = Column(String, nullable=True)
-    political_ideology = Column(String, nullable=True)
-    preferred_parties = Column(JSON, nullable=True)
-    topics_of_interest = Column(JSON, nullable=True)
     onboarding_completed = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime, nullable=False, default=_utcnow)
     updated_at = Column(DateTime, nullable=False, default=_utcnow, onupdate=_utcnow)
+
+
+class UserPreferences(CreatedAtMixin, Base):
+    """What a User told Saransh. Saransh owns this table; the row is created lazily."""
+
+    __tablename__ = "saransh_user_preferences"
+
+    # The column object, not "users.id": `users` lives on SharedBase's metadata.
+    user_id = Column(
+        String,
+        ForeignKey(User.__table__.c.id, ondelete="CASCADE"),
+        primary_key=True,
+    )
+    display_name = Column(String(100), nullable=False)
+    state = Column(String(100), nullable=True)
+    topics = Column(JSON, nullable=False, default=list)
+    coming_soon_interests = Column(JSON, nullable=False, default=list)
+    onboarding_completed = Column(Boolean, nullable=False, default=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )

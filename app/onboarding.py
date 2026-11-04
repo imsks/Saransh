@@ -1,19 +1,17 @@
-"""Onboarding questions, shared with Rajniti through the `users` table.
+"""What Saransh asks a User once, right after sign-in.
 
-A question is asked only while its column is NULL, so anything a User already
-answered in either product is never asked again.
+Pure rules, no database. Name and State are required; up to three live Topics are
+optional; Entertainment and Sports are coming-soon interests only. Nothing is
+pre-set, and nothing here touches Rajniti's `users` columns.
 """
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal, Sequence, Union
+from typing import Any
 
-from app.db.models import User
-
-Answer = Union[str, Sequence[str]]
-
-# Option values match Rajniti's onboarding steps exactly.
+# Matches how Rajniti stores `users.state`, so its value can pre-select ours.
 INDIAN_STATES = (
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -54,109 +52,52 @@ INDIAN_STATES = (
 )
 
 
+LIVE_TOPICS = ("politics", "civic", "education", "business", "crime")
+COMING_SOON_INTERESTS = ("entertainment", "sports")
+MAX_TOPICS = 3
+NAME_MAX_LENGTH = 100
+
+
+def _choices(payload: Mapping[str, Any], key: str, allowed: Sequence[str]) -> list[str]:
+    value = payload.get(key)
+    if value is None:
+        return []
+    if isinstance(value, str) or not isinstance(value, Sequence):
+        raise ValueError(f"{key} must be a list")
+    if not set(value) <= set(allowed):
+        raise ValueError(f"{key}: choose from the listed options")
+    return list(dict.fromkeys(value))
+
+
 @dataclass(frozen=True)
-class Question:
-    key: str
-    label: str
-    kind: Literal["single", "multi", "text"]
-    required: bool
-    options: tuple[str, ...] = ()
+class OnboardingAnswers:
+    display_name: str
+    state: str
+    topics: tuple[str, ...]
+    coming_soon_interests: tuple[str, ...]
+
+    @classmethod
+    def validate(cls, payload: Mapping[str, Any]) -> "OnboardingAnswers":
+        """Raise ValueError on the first invalid answer."""
+        name = payload.get("display_name")
+        name = name.strip() if isinstance(name, str) else ""
+        if not name:
+            raise ValueError("display_name is required")
+        if len(name) > NAME_MAX_LENGTH:
+            raise ValueError("display_name is too long")
+
+        state = payload.get("state")
+        if state not in INDIAN_STATES:
+            raise ValueError("state is required: choose from the listed options")
+
+        topics = _choices(payload, "topics", LIVE_TOPICS)
+        if len(topics) > MAX_TOPICS:
+            raise ValueError(f"choose at most {MAX_TOPICS} topics")
+        interests = _choices(payload, "coming_soon_interests", COMING_SOON_INTERESTS)
+
+        return cls(name, state, tuple(topics), tuple(interests))
 
 
-QUESTIONS = (
-    Question(
-        "political_ideology",
-        "Political inclination",
-        "single",
-        True,
-        ("Rightist", "Leftist", "Communist", "Centrist", "Libertarian", "Neutral"),
-    ),
-    Question("state", "State", "single", True, INDIAN_STATES),
-    Question(
-        "age_group",
-        "Age group",
-        "single",
-        True,
-        ("18-25", "26-35", "36-50", "51-65", "65+"),
-    ),
-    Question("city", "City", "text", False),
-    Question("phone", "Phone", "text", False),
-    Question(
-        "preferred_parties",
-        "Parties you follow",
-        "multi",
-        False,
-        (
-            "Bharatiya Janata Party",
-            "Indian National Congress",
-            "Aam Aadmi Party",
-            "Trinamool Congress",
-            "Dravida Munnetra Kazhagam",
-            "Shiv Sena",
-            "Nationalist Congress Party",
-            "Communist Party of India (Marxist)",
-            "Bahujan Samaj Party",
-            "Others",
-        ),
-    ),
-    Question(
-        "topics_of_interest",
-        "Topics of interest",
-        "multi",
-        False,
-        (
-            "Economy",
-            "Healthcare",
-            "Education",
-            "Infrastructure",
-            "Agriculture",
-            "Environment",
-            "Technology",
-            "Social Justice",
-            "Employment",
-            "National Security",
-        ),
-    ),
-)
-
-# What Rajniti needs before it treats its own onboarding as done.
-RAJNITI_REQUIRED = ("political_ideology", "state", "age_group", "username")
-
-TEXT_MAX_LENGTH = 100
-
-
-def missing_questions(user: User) -> list[Question]:
-    return [q for q in QUESTIONS if getattr(user, q.key) is None]
-
-
-def _clean(question: Question, value: Answer | None) -> str | list[str]:
-    if question.kind == "multi":
-        values = list(value or [])
-        if isinstance(value, str) or not set(values) <= set(question.options):
-            raise ValueError(f"{question.key}: choose from the listed options")
-        if question.required and not values:
-            raise ValueError(f"{question.key} is required")
-        return values
-
-    if value is not None and not isinstance(value, str):
-        raise ValueError(f"{question.key} must be a single value")
-    text = (value or "").strip()
-    if question.required and not text:
-        raise ValueError(f"{question.key} is required")
-    if question.kind == "single" and text and text not in question.options:
-        raise ValueError(f"{question.key}: choose from the listed options")
-    if len(text) > TEXT_MAX_LENGTH:
-        raise ValueError(f"{question.key} is too long")
-    return text
-
-
-def apply_answers(user: User, answers: dict[str, Answer]) -> None:
-    """Fill the User's unanswered questions; raises ValueError on an invalid answer.
-
-    Answers to questions the User already answered are ignored, never overwritten.
-    """
-    cleaned = {q.key: _clean(q, answers.get(q.key)) for q in missing_questions(user)}
-    for key, value in cleaned.items():
-        setattr(user, key, value)
-    if all(getattr(user, key) is not None for key in RAJNITI_REQUIRED):
-        user.onboarding_completed = True
+def rajniti_state(value: str | None) -> str | None:
+    """Rajniti's state, only when it exactly matches a State Saransh offers."""
+    return value if value in INDIAN_STATES else None
