@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_api_key
 from app.db.database import get_db
+from app.db.models import STATUS_PUBLISHED
 from app.db.repositories import stories as stories_repo
 from app.schemas.stories import StoryIn, StoryOut
 from app.utils import get_logger
@@ -20,17 +21,16 @@ def list_stories(
     offset: int = Query(0, ge=0),
     category: Optional[str] = Query(None),
     state: Optional[str] = Query(None),
-    status: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
-    """Return stories newest-first with optional filtering and pagination."""
+    """Return published stories newest-first with optional filtering and pagination."""
     return stories_repo.list_stories(
         db,
         limit=limit,
         offset=offset,
         category=category,
         state=state,
-        status=status,
+        status=STATUS_PUBLISHED,
     )
 
 
