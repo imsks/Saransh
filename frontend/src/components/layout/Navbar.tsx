@@ -16,16 +16,17 @@ export default function Navbar() {
       <Container className="flex h-full items-center justify-between">
         <Link
           href={ROUTES.home}
-          className="font-serif text-[18px] font-semibold tracking-[-0.01em] text-ink no-underline"
+          className="font-serif text-[18px] font-semibold tracking-[-0.01em] text-red no-underline"
         >
           Saransh
-          <span lang="hi" className="font-medium tracking-[-0.01em] font-hindi text-[16px] text-red ml-2">
-            सारांश
-          </span>
         </Link>
 
         <div className="flex items-center gap-5 max-[400px]:gap-3.5">
-          <Link href={ROUTES.contribute} className={navLinkClass}>
+          <Link href={ROUTES.stories} className={navLinkClass}>
+            Stories
+          </Link>
+          {/* Hidden on phones so the bar fits at 360px; the section is on the page. */}
+          <Link href={ROUTES.contribute} className={`${navLinkClass} max-[560px]:hidden`}>
             Contribute
           </Link>
           <a

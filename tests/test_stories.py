@@ -4,6 +4,8 @@ import uuid
 
 import pytest
 
+from app.db.models import Story
+
 STORIES_URL = "/api/v1/stories"
 VALID_HEADERS = {"X-API-Key": "test-api-key"}
 
@@ -119,12 +121,23 @@ def test_list_stories_filters(client, field, value):
     assert all(s[field] == value for s in data)
 
 
-def test_list_stories_filter_by_status(client):
+def test_list_stories_only_returns_published(client, db_session):
     _ingest(client)
-    data = client.get(f"{STORIES_URL}?status=published").json()
+    draft = Story(
+        title_en="Unpublished draft",
+        summary_en="Should never be public.",
+        image_url="https://example.com/draft.jpg",
+        category="transport",
+        status="draft",
+    )
+    db_session.add(draft)
+    db_session.commit()
 
-    assert len(data) >= 1
-    assert all(s["status"] == "published" for s in data)
+    for query in ("", "?status=draft"):
+        data = client.get(f"{STORIES_URL}{query}").json()
+        assert data
+        assert all(s["status"] == "published" for s in data)
+        assert "Unpublished draft" not in [s["title_en"] for s in data]
 
 
 def test_list_stories_filter_excludes_non_matching(client):

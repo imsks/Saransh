@@ -75,14 +75,7 @@ export default function ThankYou() {
         </div>
       </div>
       <p className="absolute inset-x-0 bottom-6 px-5 text-center font-mono text-[10px] text-muted">
-        Saransh{" "}
-        <span lang="hi" className="font-hindi">
-          सारांश
-        </span>{" "}
-        —{" "}
-        <span lang="hi" className="font-hindi">
-          शोर नहीं। सिर्फ़ खबर। सबूत के साथ।
-        </span>
+        Saransh
       </p>
     </div>
   );
