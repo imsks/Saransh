@@ -73,11 +73,11 @@ export default function PrivacyPage() {
               person on both.
             </p>
             <p className={paragraphClass}>
-              After signing in you are asked a few questions: your name and
-              state, and optionally up to three topics you care about.
-              Saransh stores your answers in its own table and does not write
-              to your Rajniti profile. If you already have a state saved on
-              Rajniti, it is only used to pre-select yours.
+              After signing in you set up your edition with a display name,
+              state and up to three optional topics. Saransh stores these
+              preferences in its own table and does not write to your Rajniti
+              profile. If you already have a state saved on Rajniti, it is
+              only used to pre-select yours.
             </p>
           </Section>
 

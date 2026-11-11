@@ -27,6 +27,11 @@ server syncs the User with FastAPI through [server-api.ts](src/lib/server-api.ts
 the only code that holds the internal key. The browser session carries the User's
 id, name, email, image and onboarding state, never a token or key.
 
+Sign-in returns to `/onboarding`, where a new reader sets their display name,
+state and topic preferences. The server action saves those preferences to
+FastAPI; [middleware.ts](src/middleware.ts) sends signed-in readers who have not
+completed setup to `/onboarding`, while guests can read `/stories` freely.
+
 ## Analytics
 
 Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog; without it the SDK is never

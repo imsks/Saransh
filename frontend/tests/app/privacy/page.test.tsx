@@ -85,7 +85,7 @@ describe("PrivacyPage", () => {
       ).toBeTruthy();
     }
 
-    expect(text).toContain("stores your answers in its own table");
+    expect(text).toContain("stores these preferences in its own table");
     expect(text).toContain("does not write to your Rajniti profile");
     expect(text).not.toContain("shared with Rajniti");
     expect(text).toContain("joined to your account ID");
