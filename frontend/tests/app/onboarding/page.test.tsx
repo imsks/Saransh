@@ -46,6 +46,14 @@ describe("OnboardingPage", () => {
     expect(redirect).toHaveBeenCalledWith("/");
   });
 
+  it("sends an expired session home without calling the API", async () => {
+    mockedSession.mockResolvedValueOnce({ expired: true, user: { id: "" } } as never);
+
+    await expect(OnboardingPage()).rejects.toThrow("NEXT_REDIRECT");
+    expect(redirect).toHaveBeenCalledWith("/");
+    expect(mockedBackend).not.toHaveBeenCalled();
+  });
+
   it("prefills the setup screen from the current User profile", async () => {
     mockedSession.mockResolvedValueOnce({ user: { id: "google-1" } } as never);
     mockedBackend.mockResolvedValueOnce({

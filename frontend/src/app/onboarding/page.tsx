@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect(ROUTES.home);
+  if (!session || session.expired || !session.user.id) redirect(ROUTES.home);
   const me = await backend<Me>("/me", { userId: session.user.id });
   if (me.onboarded) redirect(ROUTES.stories);
 
