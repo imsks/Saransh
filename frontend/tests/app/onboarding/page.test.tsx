@@ -17,12 +17,16 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/components/layout", () => ({ Navbar: () => null, Footer: () => null }));
 jest.mock("@/components/onboarding/OnboardingForm", () => ({
   __esModule: true,
-  default: ({ questions }: { questions: { key: string }[] }) => (
-    <ul>
-      {questions.map((q) => (
-        <li key={q.key}>{q.key}</li>
-      ))}
-    </ul>
+  default: ({
+    displayName,
+    rajnitiState,
+  }: {
+    displayName: string;
+    rajnitiState: string | null;
+  }) => (
+    <p>
+      {displayName} / {rajnitiState}
+    </p>
   ),
 }));
 
@@ -42,14 +46,27 @@ describe("OnboardingPage", () => {
     expect(redirect).toHaveBeenCalledWith("/");
   });
 
-  it("asks the signed-in User only their unanswered questions", async () => {
+  it("prefills the setup screen from the current User profile", async () => {
     mockedSession.mockResolvedValueOnce({ user: { id: "google-1" } } as never);
-    mockedBackend.mockResolvedValueOnce({ questions: [{ key: "age_group" }] });
+    mockedBackend.mockResolvedValueOnce({
+      display_name: "Priya Sharma",
+      rajniti_state: "Bihar",
+      onboarded: false,
+    });
 
     render(await OnboardingPage());
 
     expect(mockedBackend).toHaveBeenCalledWith("/me", { userId: "google-1" });
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Set up your account");
-    expect(screen.getByText("age_group")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Set up your edition");
+    expect(screen.getByText("Priya Sharma / Bihar")).toBeTruthy();
+  });
+
+  it("sends an already onboarded User to stories", async () => {
+    mockedSession.mockResolvedValueOnce({ user: { id: "google-1" } } as never);
+    mockedBackend.mockResolvedValueOnce({ onboarded: true });
+
+    await expect(OnboardingPage()).rejects.toThrow("NEXT_REDIRECT");
+
+    expect(redirect).toHaveBeenCalledWith("/stories");
   });
 });

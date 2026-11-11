@@ -1,118 +1,208 @@
 "use client";
 
-import { Button, Field, Input, Select } from "@sutra_ui/ui";
+import { Button, Field, Input } from "@sutra_ui/ui";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
-import { submitOnboarding, type Answers } from "@/app/onboarding/actions";
+import { submitOnboarding } from "@/app/onboarding/actions";
+import { COMING_SOON_INTERESTS, STATES, TOPICS } from "@/constants/onboarding";
 import { track } from "@/lib/analytics";
 import { ROUTES } from "@/lib/routes";
-import type { Question } from "@/lib/server-api";
 
 const chipClass =
   "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-4 font-sans text-[13.5px] text-ink transition-colors has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-paper has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-red";
 
-/** Renders only the questions the User has not answered in Saransh or Rajniti. */
-export default function OnboardingForm({ questions }: { questions: Question[] }) {
-  const { update } = useSession();
+const TOPIC_LIMIT = 3;
+
+export default function OnboardingForm({
+  displayName,
+  rajnitiState,
+}: {
+  displayName: string;
+  rajnitiState: string | null;
+}) {
+  const { update, status } = useSession();
   const router = useRouter();
-  const [answers, setAnswers] = useState<Answers>({});
+  const [name, setName] = useState(displayName);
+  const [state, setState] = useState(rajnitiState ?? "");
+  const [stateSearch, setStateSearch] = useState("");
+  const [topics, setTopics] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-
-  const finish = async () => {
-    await update();
-    router.replace(ROUTES.stories);
-  };
-
-  // Answered elsewhere since this session began: refresh the session and move on.
-  useEffect(() => {
-    if (questions.length === 0) void finish();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const answer = (key: string, value: string | string[]) =>
-    setAnswers((current) => ({ ...current, [key]: value }));
-
-  const toggle = (key: string, option: string) => {
-    const selected = (answers[key] as string[] | undefined) ?? [];
-    answer(
-      key,
-      selected.includes(option)
-        ? selected.filter((item) => item !== option)
-        : [...selected, option],
-    );
-  };
+  const selectedTopics = new Set(topics);
+  const selectedInterests = new Set(interests);
+  const filteredStates = STATES.filter((option) =>
+    option.toLocaleLowerCase().includes(stateSearch.trim().toLocaleLowerCase()),
+  );
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setSaving(true);
     setError("");
-    const result = await submitOnboarding(answers);
-    if (result.error) {
-      setError(result.error);
-      setSaving(false);
+    if (status !== "authenticated") {
+      setError("Please sign in again.");
       return;
     }
-    track("onboarding_completed", { asked: questions.length });
-    await finish();
+    if (!name.trim()) {
+      setError("Name is required.");
+      return;
+    }
+    if (!state) {
+      setError("State is required.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const result = await submitOnboarding({
+        display_name: name.trim(),
+        state,
+        topics,
+        coming_soon_interests: interests,
+      });
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      track("onboarding_completed", {
+        state_preselected: Boolean(rajnitiState),
+        topic_count: topics.length,
+      });
+      const session = await update({});
+      if (!session) {
+        setError("Your edition was saved, but your session could not be refreshed. Please try again.");
+        return;
+      }
+      router.replace(ROUTES.stories);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      {questions.map((question) =>
-        question.kind === "multi" ? (
-          <fieldset key={question.key} className="flex flex-col gap-3">
-            <legend className="mb-3 font-sans text-[14px] font-semibold text-ink">
-              {question.label} <span className="font-normal text-muted">(optional)</span>
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {question.options.map((option) => (
-                <label key={option} className={chipClass}>
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={((answers[question.key] as string[]) ?? []).includes(option)}
-                    onChange={() => toggle(question.key, option)}
-                  />
-                  {option}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-        ) : (
-          <Field key={question.key} label={question.label} required={question.required}>
-            {question.kind === "single" ? (
-              <Select
-                placeholder="Choose one"
-                required={question.required}
-                value={(answers[question.key] as string) ?? ""}
-                onChange={(event) => answer(question.key, event.target.value)}
-              >
-                {question.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </Select>
-            ) : (
-              <Input
-                maxLength={100}
-                value={(answers[question.key] as string) ?? ""}
-                onChange={(event) => answer(question.key, event.target.value)}
+      <Field label="Name" required>
+        <Input
+          autoComplete="name"
+          maxLength={100}
+          required
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+      </Field>
+
+      <fieldset className="flex flex-col gap-3" aria-required="true">
+        <legend className="font-sans text-[14px] font-semibold text-ink">
+          State <span className="font-normal text-red">Required</span>
+        </legend>
+        <Field label="Search states">
+          <Input
+            type="search"
+            autoComplete="off"
+            placeholder="Search states"
+            value={stateSearch}
+            onChange={(event) => setStateSearch(event.target.value)}
+          />
+        </Field>
+        <div
+          role="radiogroup"
+          aria-label="State"
+          aria-required="true"
+          className="flex max-h-56 flex-wrap gap-2 overflow-y-auto"
+        >
+          {filteredStates.map((option) => (
+            <label key={option} className={chipClass}>
+              <input
+                type="radio"
+                name="state"
+                className="sr-only"
+                value={option}
+                checked={state === option}
+                onChange={() => {
+                  setState(option);
+                  setStateSearch("");
+                }}
               />
-            )}
-          </Field>
-        ),
-      )}
+              {option}
+            </label>
+          ))}
+        </div>
+        {rajnitiState && (
+          <p className="font-sans text-[13px] text-muted">
+            From your Rajniti profile. You can change it here.
+          </p>
+        )}
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-3">
+        <legend className="font-sans text-[14px] font-semibold text-ink">
+          Topics <span className="font-normal text-muted">(optional, choose up to 3)</span>
+        </legend>
+        <div className="flex flex-wrap gap-2">
+          {TOPICS.map((topic) => (
+            <label key={topic.value} className={chipClass}>
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={selectedTopics.has(topic.value)}
+                onChange={(event) => {
+                  const checked = event.target.checked;
+                  if (checked && topics.length >= TOPIC_LIMIT) {
+                    setError("Choose up to 3 topics.");
+                    return;
+                  }
+                  setError("");
+                  setTopics((current) =>
+                    checked
+                      ? [...current, topic.value]
+                      : current.filter((value) => value !== topic.value),
+                  );
+                }}
+              />
+              {topic.label}
+            </label>
+          ))}
+        </div>
+        <p className="font-sans text-[13px] text-muted">Coming soon</p>
+        <div className="flex flex-wrap gap-2">
+          {COMING_SOON_INTERESTS.map((interest) => (
+            <label key={interest.value} className={chipClass}>
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={selectedInterests.has(interest.value)}
+                onChange={(event) =>
+                  setInterests((current) =>
+                    event.target.checked
+                      ? [...current, interest.value]
+                      : current.filter((value) => value !== interest.value),
+                  )
+                }
+              />
+              {interest.label}
+              <span className="ml-2 text-[11px] text-muted">Soon</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       {error && (
         <p role="alert" className="font-sans text-[13px] text-red">
           {error}
         </p>
       )}
-      <Button type="submit" variant="primary" fullWidth isLoading={saving}>
-        Continue to stories
+      <Button
+        type="submit"
+        variant="primary"
+        fullWidth
+        isLoading={saving}
+        disabled={saving || status !== "authenticated"}
+      >
+        Read today&apos;s edition
       </Button>
     </form>
   );

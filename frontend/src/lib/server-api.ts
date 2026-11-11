@@ -1,20 +1,15 @@
 import { getApiBaseUrl } from "@/lib/api-base";
 
-export interface Question {
-  key: string;
-  label: string;
-  kind: "single" | "multi" | "text";
-  required: boolean;
-  options: string[];
-}
-
 export interface Me {
   id: string;
   email: string;
-  name: string | null;
   picture: string | null;
+  display_name: string;
+  state: string | null;
+  topics: string[];
+  coming_soon_interests: string[];
   onboarded: boolean;
-  questions: Question[];
+  rajniti_state: string | null;
 }
 
 export class BackendError extends Error {

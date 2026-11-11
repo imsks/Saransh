@@ -7,11 +7,12 @@ import { ROUTES } from "@/lib/routes";
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const redirect = (path: string) => NextResponse.redirect(new URL(path, request.url));
+  const isGuest = !token?.userId || token.expired === true;
 
   if (request.nextUrl.pathname === ROUTES.onboarding) {
-    if (!token) return redirect(ROUTES.home);
+    if (isGuest) return redirect(ROUTES.home);
     if (token.onboarded) return redirect(ROUTES.stories);
-  } else if (token && !token.onboarded) {
+  } else if (!isGuest && !token.onboarded) {
     return redirect(ROUTES.onboarding);
   }
   return NextResponse.next();

@@ -22,27 +22,41 @@ describe("middleware", () => {
     expect(await visit("/stories", null)).toBeNull();
   });
 
-  it("sends a signed-in User with unanswered questions to onboarding", async () => {
-    expect(await visit("/stories", { onboarded: false })).toBe(
+  it("sends a signed-in User who has not completed setup to onboarding", async () => {
+    expect(await visit("/stories", { userId: "google-1", onboarded: false })).toBe(
       "https://saransh.test/onboarding",
     );
   });
 
   it("lets an onboarded User read stories", async () => {
-    expect(await visit("/stories", { onboarded: true })).toBeNull();
+    expect(await visit("/stories", { userId: "google-1", onboarded: true })).toBeNull();
+  });
+
+  it("treats a token without a User id as a guest", async () => {
+    expect(await visit("/stories", { onboarded: false })).toBeNull();
+  });
+
+  it("treats an expired token as a guest", async () => {
+    expect(await visit("/stories", { userId: "google-1", expired: true })).toBeNull();
   });
 
   it("keeps guests out of onboarding", async () => {
     expect(await visit("/onboarding", null)).toBe("https://saransh.test/");
   });
 
+  it("keeps an expired session out of onboarding", async () => {
+    expect(await visit("/onboarding", { userId: "google-1", expired: true })).toBe(
+      "https://saransh.test/",
+    );
+  });
+
   it("never shows onboarding again once it is done", async () => {
-    expect(await visit("/onboarding", { onboarded: true })).toBe(
+    expect(await visit("/onboarding", { userId: "google-1", onboarded: true })).toBe(
       "https://saransh.test/stories",
     );
   });
 
-  it("shows onboarding to a User who still has questions", async () => {
-    expect(await visit("/onboarding", { onboarded: false })).toBeNull();
+  it("shows onboarding to a User who has not completed setup", async () => {
+    expect(await visit("/onboarding", { userId: "google-1", onboarded: false })).toBeNull();
   });
 });
