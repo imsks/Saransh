@@ -46,6 +46,7 @@ def test_every_model_table_is_registered_as_saransh_owned():
     # autogenerate will silently ignore it. Rajniti's `users` is mapped on its own
     # base, so it is never in Base.metadata and create_all() never sees it.
     assert set(Base.metadata.tables) == SARANSH_OWNED_TABLES
+    assert set(Base.metadata.tables) == {"stories", "saransh_user_preferences"}
     assert set(SharedBase.metadata.tables) == {"users"}
 
 

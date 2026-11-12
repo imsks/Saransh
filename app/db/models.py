@@ -7,7 +7,6 @@ from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
-    Integer,
     String,
     Text,
 )
@@ -44,14 +43,6 @@ class Story(CreatedAtMixin, Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
-
-
-class Waitlist(CreatedAtMixin, Base):
-    __tablename__ = "waitlist"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(Text, nullable=False)
-    email = Column(Text, nullable=False, unique=True)
 
 
 def _utcnow() -> datetime:
