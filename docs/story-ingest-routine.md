@@ -9,8 +9,17 @@ No API or app-code change is required — the routine only calls the existing en
 > **STOPGAP**: This routine is a temporary fallback while the review screen and publish action do not yet exist. It publishes immediately, may use a publisher's own image, and is retired once the pipeline and publish action are in place.
 >
 > **Changing this file does not change a routine that is already scheduled.** After editing the
-> prompt below, replace the prompt in the scheduled routine too. Last prompt change: 18 Oct 2026
-> (English-only; one citation link and its outlet label; no `sources` list).
+> prompt below, bump its version, replace the prompt in the scheduled routine too, and check the
+> next run's report shows the new version.
+
+## Prompt versions
+
+The version is the first line of the prompt and the first line of every run's report.
+
+| Version      | Change                                                                                                                                                   |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `2026-11-12` | Sends `tier` (`national`, `state`, `international`) on every Story, `state` from Saransh's state list for State Stories, and `source_label` always (#133). |
+| `2026-10-18` | English-only; one citation link and its outlet label; no `sources` list.                                                                                 |
 
 ## What the ingest API accepts
 
@@ -25,6 +34,12 @@ Required, non-blank:
 - `image_url`: the cover photo, an absolute `http`/`https` image URL
 
 Optional: `source_url`, `source_label`, `state` (omit or `null`; never send `""`). `state` is set for State stories only; leave it `null` for National and International stories.
+
+`tier` (`national`, `state` or `international`) is not stored yet: the API ignores it, like any
+unknown field. The routine sends it, `state` and `source_label` on every Story from prompt version
+`2026-11-12`, so that ingest keeps working when [#134](https://github.com/imsks/Saransh/issues/134)
+stores `tier` and makes `tier`, `source_url`, `source_label` and, for State Stories, `state`
+required. Deploy that prompt to the scheduled routine before #134 ships.
 
 `source_url` is the **citation link** — the single canonical article the summary was extracted from —
 and `source_label` is that outlet's name. The column is nullable because Stories ingested before
@@ -49,8 +64,10 @@ The landing carousel currently uses static samples, not this adapter or the API 
 `category` holds the story's topic key, not a tier string. Old tier strings are invalid for
 the live topic set. The card topic label is built from the current topic keys: `politics | civic | education | crime | business`.
 
-`state` is geography only: the Indian state or union territory a State-tier Story is about, and
-`null` for National and International Stories. There is no obsolete location field beyond `state`.
+`state` is geography only: the Indian state or union territory a State-tier Story is about, written
+exactly as in Saransh's state list ([`INDIAN_STATES`](../app/onboarding.py), the same list a reader
+picks from at Onboarding), and `null` for National and International Stories. There is no obsolete
+location field beyond `state`.
 
 The adapter links the card to `source_url`. Verify the citation URL loads before sending it.
 
@@ -69,9 +86,19 @@ Set two variables in the routine environment (the prompt reads them and must nev
 Schedule the prompt five times a day (for example 07:00, 10:00, 13:00, 16:00, 19:00 IST). Each run
 ingests at most 10 new Stories.
 
+### Checking a run after a prompt change
+
+Read the report of the first scheduled run after replacing the prompt:
+
+- its first line names the current prompt version (otherwise the scheduled routine still has the old prompt);
+- every success has a `tier` of `national`, `state` or `international`, and a `source_label`;
+- every `state`-tier success has a `state` copied exactly from Saransh's state list, and every other success has `state` null.
+
 ## Prompt
 
 ```text
+Prompt version: 2026-11-12
+
 You ingest Indian news into Saransh. This run creates at most 10 new Stories, each from a real article published in the last 36 hours. Stop when 10 succeed, or sooner if you cannot find 10 new, sourced events. Never invent a story, a quote, a number, or a URL.
 
 Environment (stop immediately if either is missing; do not guess):
@@ -86,10 +113,11 @@ Never print, log, or commit the API key.
    Collect every source_url and every title_en. Skip any event whose URL or headline is already there.
 
 2. Find 10 distinct events from the last 36 hours. Open each article and confirm the page is about that event and returns successfully. Use the canonical article URL, not a homepage, app link, or tracker. Keep that URL — it is the citation link you send as source_url, and it is the one article you write the summary from.
-   Daily mix, within this run:
-   - National: stories about the Union government, Parliament, Supreme Court, RBI or other central bodies, or anything affecting more than one state
-   - State: the story is mainly about one Indian state or UT, with state set to that place
-   - International: only if the event happens outside India and the article names India, an Indian entity, Indians abroad, or a direct effect on India; drop the rest
+   Daily mix, within this run. Give every event exactly one tier:
+   - national: stories about the Union government, Parliament, Supreme Court, RBI or other central bodies, or anything affecting more than one state
+   - state: the story is mainly about one Indian state or UT, with state set to that place from the state list below; if the place is not on the list, skip the event
+   - international: only if the event happens outside India and the article names India, an Indian entity, Indians abroad, or a direct effect on India; drop the rest
+   There is no district or city tier.
    Do not ingest entertainment or sports stories. At most two Stories may cover the same event, and only when they cite different outlets.
 
 3. For each event, choose a cover photo (image_url):
@@ -106,16 +134,20 @@ Never print, log, or commit the API key.
      "source_url": "https://absolute-url-of-the-article-you-summarised",
      "source_label": "outlet name of that article",
      "category": "politics",
+     "tier": "state",
      "state": "Maharashtra"
    }
 
    Rules:
-   - title_en, summary_en, image_url, category are required and non-blank.
+   - title_en, summary_en, image_url, source_url, source_label, category and tier are required and non-blank on every Story.
    - image_url must be an absolute http(s) URL to a real image for this event that you confirmed loads. Skip the story if you cannot find one.
-   - source_url is the citation link: the absolute http(s) URL of the one article you summarised, the same URL you opened and confirmed in step 2. Always send it, with source_label set to that outlet's name. Never send "".
+   - source_url is the citation link: the absolute http(s) URL of the one article you summarised, the same URL you opened and confirmed in step 2. Always send it, with source_label set to that outlet's name (for example "The Hindu", "PTI", "PIB"). Never send "". If you cannot name the outlet, skip the story.
    - Word limits are hard: summary_en at most 60 words. A word is anything between spaces. Count before you send; if a summary is over, shorten it.
    - category is exactly one of politics | civic | education | crime | business.
-   - state max 100 characters. Set it to the Indian state or union territory for a State story; otherwise null. Never send "". Never send any obsolete location field.
+   - tier is exactly one of national | state | international, chosen by the rules in step 2.
+   - state: when tier is "state", set it to the one state or union territory the story is about, copied exactly from this list (full name, same spelling):
+     Andhra Pradesh, Arunachal Pradesh, Assam, Bihar, Chhattisgarh, Delhi, Goa, Gujarat, Haryana, Himachal Pradesh, Jharkhand, Karnataka, Kerala, Madhya Pradesh, Maharashtra, Manipur, Meghalaya, Mizoram, Nagaland, Odisha, Punjab, Rajasthan, Sikkim, Tamil Nadu, Telangana, Tripura, Uttar Pradesh, Uttarakhand, West Bengal, Andaman and Nicobar Islands, Chandigarh, Dadra and Nagar Haveli and Daman and Diu, Jammu and Kashmir, Ladakh, Lakshadweep, Puducherry
+     Never send an abbreviation, a city or a district ("UP", "Mumbai" and "J&K" are wrong). When tier is "national" or "international", send state as null. Never send "". Never send any obsolete location field.
    - Do not send id, status, or created_at. The server stores status "published" and stamps created_at, which is the only time a reader sees. There is no published_at.
    - Skip Entertainment and Sports stories; they are not in the live topic set.
 
@@ -127,13 +159,14 @@ Never print, log, or commit the API key.
 
    - 201: count it. Record id and title_en. Add its URLs to the skip list.
    - 401: stop the run. The key is missing or wrong.
-   - 422: fix that payload once (blank field, bad URL, bad image_url, bad source_url) and POST again. If it fails again, skip it.
+   - 422: fix that payload once (blank field, bad URL, bad image_url, bad source_url, missing source_label, missing or wrong tier, missing state or a state not on the list) and POST again. If it fails again, skip it.
    - 500 or a timeout after the request was sent: do not retry. The row may already exist. Skip it and say so.
    - Any other error: skip that story and continue.
 
 6. When you finish, report only:
+   - the prompt version (first line of this prompt)
    - how many 201s (target 10)
-   - for each success: id, title_en, category, state, source_url
+   - for each success: id, title_en, category, tier, state, source_label, source_url
    - for each skip: title_en and the reason (duplicate, unverified URL, no valid image, 422, 500)
    Do not include the API key or full article text.
 ```
