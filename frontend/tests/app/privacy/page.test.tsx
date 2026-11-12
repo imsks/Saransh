@@ -73,7 +73,6 @@ describe("PrivacyPage", () => {
     const text = body();
     for (const heading of [
       "Signing in with Google",
-      "Earlier waitlist signups",
       "Usage analytics",
       "Session recording",
       "Analytics served from our own domain",
@@ -94,6 +93,7 @@ describe("PrivacyPage", () => {
     );
     expect(text).toContain("PostHog");
     expect(text).toContain("United States");
+    expect(text).toContain("Your account details stay in our own database");
   });
 
   it("shares the site frame, including the navbar's Contribute link", () => {
