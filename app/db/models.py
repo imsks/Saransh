@@ -6,7 +6,6 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-    ForeignKey,
     String,
     Text,
 )
@@ -51,11 +50,12 @@ def _utcnow() -> datetime:
 
 
 class User(SharedBase):
-    """Rajniti owns this table; Saransh maps only the columns it touches.
+    """One row per person, shared with Rajniti, which owns the table and its migrations.
 
-    Saransh inserts the row at a first sign-in and refreshes name and picture. `state`
-    is read-only, to pre-select Saransh's State. `onboarding_completed` is Rajniti's
-    flag: Saransh sets it False on insert and never reads or changes it again.
+    Saransh keeps everything it asks a User here, never in a table of its own. It
+    inserts the row at a first sign-in (`onboarded_from="saransh"`), fills `name`
+    and `state` only when they are missing, and owns the `saransh_*` columns.
+    `onboarding_completed` is Rajniti's flag: Saransh never reads or changes it.
     """
 
     __tablename__ = "users"
@@ -66,29 +66,10 @@ class User(SharedBase):
     profile_picture = Column(String, nullable=True)
     state = Column(String, nullable=True)
     onboarding_completed = Column(Boolean, nullable=False, default=False)
+    # Which product acquired the User; written once, on insert.
+    onboarded_from = Column(String, nullable=False, server_default="rajniti")
+    saransh_topics = Column(JSON, nullable=True)
+    saransh_interests = Column(JSON, nullable=True)
+    saransh_onboarded_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, nullable=False, default=_utcnow)
     updated_at = Column(DateTime, nullable=False, default=_utcnow, onupdate=_utcnow)
-
-
-class UserPreferences(CreatedAtMixin, Base):
-    """What a User told Saransh. Saransh owns this table; the row is created lazily."""
-
-    __tablename__ = "saransh_user_preferences"
-
-    # The column object, not "users.id": `users` lives on SharedBase's metadata.
-    user_id = Column(
-        String,
-        ForeignKey(User.__table__.c.id, ondelete="CASCADE"),
-        primary_key=True,
-    )
-    display_name = Column(String(100), nullable=False)
-    state = Column(String(100), nullable=True)
-    topics = Column(JSON, nullable=False, default=list)
-    coming_soon_interests = Column(JSON, nullable=False, default=list)
-    onboarding_completed = Column(Boolean, nullable=False, default=False)
-    updated_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-        onupdate=func.now(),
-    )

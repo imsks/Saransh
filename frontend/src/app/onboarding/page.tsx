@@ -27,12 +27,9 @@ export default async function OnboardingPage() {
           Set up your edition
         </h1>
         <p className="mb-8 font-sans text-[14px] leading-[1.7] text-muted">
-          Choose your name, state and topics for your edition.
+          A few details for your edition.
         </p>
-        <OnboardingForm
-          displayName={me.display_name}
-          rajnitiState={me.rajniti_state}
-        />
+        <OnboardingForm missingFields={me.missing_fields} />
       </main>
       <Footer />
     </div>

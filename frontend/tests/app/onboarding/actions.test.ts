@@ -12,7 +12,7 @@ jest.mock("@/lib/auth", () => ({ authOptions: {} }));
 const mockedSession = getServerSession as jest.MockedFunction<typeof getServerSession>;
 const fetchMock = jest.fn() as jest.MockedFunction<typeof fetch>;
 const ANSWERS: OnboardingAnswers = {
-  display_name: "Priya Sharma",
+  name: "Priya Sharma",
   state: "Bihar",
   topics: ["civic"],
   coming_soon_interests: ["sports"],

@@ -17,16 +17,8 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/components/layout", () => ({ Navbar: () => null, Footer: () => null }));
 jest.mock("@/components/onboarding/OnboardingForm", () => ({
   __esModule: true,
-  default: ({
-    displayName,
-    rajnitiState,
-  }: {
-    displayName: string;
-    rajnitiState: string | null;
-  }) => (
-    <p>
-      {displayName} / {rajnitiState}
-    </p>
+  default: ({ missingFields }: { missingFields: string[] }) => (
+    <p>{missingFields.join(", ")}</p>
   ),
 }));
 
@@ -54,11 +46,10 @@ describe("OnboardingPage", () => {
     expect(mockedBackend).not.toHaveBeenCalled();
   });
 
-  it("prefills the setup screen from the current User profile", async () => {
+  it("asks only what the shared User row is missing", async () => {
     mockedSession.mockResolvedValueOnce({ user: { id: "google-1" } } as never);
     mockedBackend.mockResolvedValueOnce({
-      display_name: "Priya Sharma",
-      rajniti_state: "Bihar",
+      missing_fields: ["state", "topics"],
       onboarded: false,
     });
 
@@ -66,7 +57,7 @@ describe("OnboardingPage", () => {
 
     expect(mockedBackend).toHaveBeenCalledWith("/me", { userId: "google-1" });
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Set up your edition");
-    expect(screen.getByText("Priya Sharma / Bihar")).toBeTruthy();
+    expect(screen.getByText("state, topics")).toBeTruthy();
   });
 
   it("sends an already onboarded User to stories", async () => {

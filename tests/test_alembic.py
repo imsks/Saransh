@@ -47,7 +47,8 @@ def test_every_model_table_is_registered_as_saransh_owned():
     # autogenerate will silently ignore it. Rajniti's `users` is mapped on its own
     # base, so it is never in Base.metadata and create_all() never sees it.
     assert set(Base.metadata.tables) == SARANSH_OWNED_TABLES
-    assert set(Base.metadata.tables) == {"stories", "saransh_user_preferences"}
+    # What a User tells Saransh lives on the shared `users` row, not a table of ours.
+    assert set(Base.metadata.tables) == {"stories"}
     assert set(SharedBase.metadata.tables) == {"users"}
 
 
@@ -597,6 +598,29 @@ def test_preferences_migration_round_trips_and_cascades():
         with Operations.context(MigrationContext.configure(connection)):
             module.downgrade()
         assert "saransh_user_preferences" not in inspect(connection).get_table_names()
+
+
+def test_drop_preferences_migration_leaves_users_alone_and_is_safe_to_rerun():
+    create = _script_directory().get_revision("d1e2f3a4b5c6").module
+    drop = _script_directory().get_revision("f1e2d3c4b5a6").module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        connection.execute(text("INSERT INTO users VALUES ('shared-user')"))
+        with Operations.context(MigrationContext.configure(connection)):
+            create.upgrade()
+            drop.upgrade()
+            # A database that never had the table (fresh bootstrap) must not fail.
+            drop.upgrade()
+        assert set(inspect(connection).get_table_names()) == {"users"}
+        assert connection.execute(text("SELECT id FROM users")).scalar_one() == (
+            "shared-user"
+        )
+
+        with Operations.context(MigrationContext.configure(connection)):
+            drop.downgrade()
+        assert "saransh_user_preferences" in inspect(connection).get_table_names()
 
 
 def test_drop_waitlist_migration_round_trips_without_changing_other_tables():
