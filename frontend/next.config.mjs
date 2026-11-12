@@ -1,16 +1,10 @@
 /** @type {import('next').NextConfig} */
 
-/** Origin for /api/v1 rewrites (host only, no /api/v1 suffix). Same resolution as Rajniti. */
-function resolveApiRewriteOrigin() {
-  const raw =
-    process.env.API_REWRITE_TARGET ||
-    process.env.API_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://127.0.0.1:8001/api/v1";
-  return raw.replace(/\/api\/v1\/?$/, "").replace(/\/$/, "");
-}
-
-const apiRewriteOrigin = resolveApiRewriteOrigin();
+const apiRewriteOrigin = (
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8001/api/v1"
+)
+  .replace(/\/api\/v1\/?$/, "")
+  .replace(/\/$/, "");
 
 const nextConfig = {
   // PostHog's API paths end in a slash; redirecting them would break ingestion.

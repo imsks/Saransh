@@ -12,9 +12,8 @@ for host-only backend setup and required checks.
 
 [.env.example](.env.example) documents the available settings.
 
-- `NEXT_PUBLIC_API_URL`: browser API base URL, including `/api/v1`.
-- `API_URL`: optional server-side API base URL.
-- `API_REWRITE_TARGET`: optional server-only origin for Next.js API rewrites; Docker uses the API service hostname.
+- `NEXT_PUBLIC_API_URL`: backend API base URL, including `/api/v1`. Docker supplies its service URL;
+	browser requests use same-origin rewrites for non-localhost URLs.
 - `NEXT_PUBLIC_SITE_URL`: canonical site origin. In production omit localhost values; the resolver can fall back to `VERCEL_URL`.
 - `NEXT_PUBLIC_LOG_LEVEL`: frontend logging level.
 - `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google sign-in.
