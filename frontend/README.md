@@ -26,9 +26,9 @@ server syncs the User with FastAPI through [server-api.ts](src/lib/server-api.ts
 the only code that holds the internal key. The browser session carries the User's
 id, name, email, image and onboarding state, never a token or key.
 
-Sign-in returns to `/onboarding`, where a new reader sets their display name,
-state and topic preferences. The server action saves those preferences to
-FastAPI; [middleware.ts](src/middleware.ts) sends signed-in readers who have not
+Sign-in returns to `/onboarding`, which shows only the questions FastAPI lists
+in `missing_fields` (a name or state the shared User row lacks, and Saransh's
+topics once). The server action saves just those answers to FastAPI; [middleware.ts](src/middleware.ts) sends signed-in readers who have not
 completed setup to `/onboarding`, while guests can read `/stories` freely.
 
 ## Analytics

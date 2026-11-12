@@ -8,7 +8,7 @@ stories and a privacy page.
 
 - FastAPI endpoints ingest, list and serve English stories, each with one citation link.
 - Google sign-in (next-auth) creates or reuses the User shared with Rajniti,
-  then asks new readers to set up a display name, state and topic preferences
+  then asks only what that shared row is missing (name, state, Saransh topics)
   before landing on `/stories`.
 - Optional PostHog captures pageviews, clicks and the sign-in funnel under one
   ID per person (anonymous, then the User id). No session replay.
@@ -68,8 +68,10 @@ User endpoints accept only the Next.js server's internal key. See the API docs f
 request and response schemas.
 
 Production shares PostgreSQL with [Rajniti](https://rajniti-app.vercel.app).
-Saransh owns only `stories`, `saransh_user_preferences` and its migration version table;
-its migrations must not touch Rajniti's tables.
+Saransh owns only `stories` and its migration version table; its migrations must not
+touch Rajniti's tables. Everything Saransh knows about a User lives on the shared
+`users` row (`onboarded_from` and the `saransh_*` columns), whose schema Rajniti's
+migrations own.
 
 Report bugs and attribution errors through [GitHub Issues](https://github.com/imsks/Saransh/issues).
 [MIT License](LICENSE). Product and documentation: Pratyusha Trivedi.
