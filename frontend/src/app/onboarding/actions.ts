@@ -5,11 +5,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { BackendError, backend } from "@/lib/server-api";
 
+/** Only the questions that were asked; the API ignores anything else. */
 export interface OnboardingAnswers {
-  display_name: string;
-  state: string;
-  topics: string[];
-  coming_soon_interests: string[];
+  name?: string;
+  state?: string;
+  topics?: string[];
+  coming_soon_interests?: string[];
 }
 
 /** Saves onboarding preferences as the signed-in User. */

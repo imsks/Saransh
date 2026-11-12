@@ -84,8 +84,9 @@ describe("PrivacyPage", () => {
       ).toBeTruthy();
     }
 
-    expect(text).toContain("stores these preferences in its own table");
-    expect(text).toContain("does not write to your Rajniti profile");
+    expect(text).toContain("stores these preferences on your shared account");
+    expect(text).toContain("which product you first signed up through");
+    expect(text).toContain("never changes ones you already saved");
     expect(text).not.toContain("shared with Rajniti");
     expect(text).toContain("joined to your account ID");
     expect(text).toContain(

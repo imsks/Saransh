@@ -1,15 +1,19 @@
 import { getApiBaseUrl } from "@/lib/api-base";
 
+/** A question onboarding asks only when the shared `users` row lacks the answer. */
+export type OnboardingField = "name" | "state" | "topics";
+
 export interface Me {
   id: string;
   email: string;
   picture: string | null;
-  display_name: string;
+  name: string | null;
   state: string | null;
   topics: string[];
   coming_soon_interests: string[];
+  onboarded_from: "rajniti" | "saransh" | string;
+  missing_fields: OnboardingField[];
   onboarded: boolean;
-  rajniti_state: string | null;
 }
 
 export class BackendError extends Error {
