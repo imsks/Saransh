@@ -47,11 +47,6 @@ export function getApiBaseUrl(options?: { forServer?: boolean }): string {
       return getProxiedApiBaseUrl();
     }
 
-    const explicit = process.env.API_URL || process.env.INTERNAL_API_URL;
-    if (explicit) {
-      return trimTrailingSlash(explicit);
-    }
-
     if (publicUrl) {
       return trimTrailingSlash(publicUrl);
     }

@@ -46,6 +46,15 @@ def test_compose_frontend_uses_dockerfile_dev():
     assert build["dockerfile"] == "Dockerfile.dev"
 
 
+def test_compose_frontend_uses_single_backend_url():
+    data = yaml.safe_load(COMPOSE.read_text())
+    environment = data["services"]["saransh-web"]["environment"]
+    assert environment == {
+        "NEXT_PUBLIC_API_URL": "http://saransh-api:8001/api/v1",
+        "WATCHPACK_POLLING": "true",
+    }
+
+
 def test_compose_frontend_mounts_source_not_whole_app():
     data = yaml.safe_load(COMPOSE.read_text())
     mounts = data["services"]["saransh-web"]["volumes"]
