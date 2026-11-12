@@ -10,6 +10,7 @@ import pytest
 from sqlalchemy import DefaultClause, Uuid, create_engine, inspect, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import make_url
+from sqlalchemy.exc import IntegrityError
 
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
@@ -103,6 +104,7 @@ def test_migration_runner_creates_the_users_stub_only_when_asked():
             tables = set(inspect(connection).get_table_names())
 
             assert SARANSH_OWNED_TABLES <= tables
+            assert "waitlist" not in tables
             assert ("users" in tables) is users_stub
             if users_stub:
                 columns = {c["name"] for c in inspect(connection).get_columns("users")}
@@ -150,6 +152,24 @@ def test_migration_runner_refuses_a_partial_unversioned_schema():
         with pytest.raises(RuntimeError, match="unversioned"):
             migrate_database(connection)
         assert inspect(connection).get_table_names() == ["stories"]
+
+
+@pytest.mark.parametrize("with_active_tables", [False, True])
+def test_migration_runner_refuses_an_unversioned_waitlist(
+    portable_uuid_types, with_active_tables
+):
+    from scripts.init_db import migrate_database
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        if with_active_tables:
+            Base.metadata.create_all(connection)
+        connection.execute(text("CREATE TABLE waitlist (id INTEGER PRIMARY KEY)"))
+        with pytest.raises(RuntimeError, match="unversioned.*waitlist"):
+            migrate_database(connection)
+        tables = set(inspect(connection).get_table_names())
+        assert "waitlist" in tables
+        assert "alembic_version_saransh" not in tables
 
 
 @pytest.fixture
@@ -206,7 +226,7 @@ def test_migration_runner_refuses_unversioned_default_drift(
 
 
 def test_migration_runner_upgrades_a_versioned_database():
-    """Both API versions can use the expanded schema without losing legacy data."""
+    """Story data survives upgrades while the retired waitlist is removed."""
     from scripts.init_db import migrate_database
 
     engine = create_engine("sqlite:///:memory:")
@@ -255,7 +275,7 @@ def test_migration_runner_upgrades_a_versioned_database():
             "source_url",
             "source_label",
         }
-        assert "signup_token" in {c["name"] for c in inspector.get_columns("waitlist")}
+        assert "waitlist" not in inspector.get_table_names()
         assert connection.execute(
             text("SELECT title_hi, summary_hi, district FROM stories WHERE id = 's1'")
         ).one() == ("टी", "एस", "Nagpur")
@@ -270,24 +290,6 @@ def test_migration_runner_upgrades_a_versioned_database():
         assert (
             connection.execute(text("SELECT count(*) FROM sources")).scalar_one() == 6
         )
-        assert connection.execute(text("SELECT email FROM waitlist")).scalar_one()
-        assert (
-            connection.execute(text("SELECT signup_token FROM waitlist")).scalar_one()
-            == "tok"
-        )
-        connection.execute(
-            text("INSERT INTO waitlist (name, email) VALUES ('New', 'new@test.in')")
-        )
-        connection.execute(
-            text("INSERT INTO waitlist (name, email) VALUES ('Next', 'next@test.in')")
-        )
-        tokens = (
-            connection.execute(text("SELECT signup_token FROM waitlist"))
-            .scalars()
-            .all()
-        )
-        assert all(tokens)
-        assert len(set(tokens)) == 3
         assert (
             connection.execute(
                 text("SELECT version_num FROM alembic_version_saransh")
@@ -514,3 +516,78 @@ def test_preferences_migration_round_trips_and_cascades():
         with Operations.context(MigrationContext.configure(connection)):
             module.downgrade()
         assert "saransh_user_preferences" not in inspect(connection).get_table_names()
+
+
+def test_drop_waitlist_migration_round_trips_without_changing_other_tables():
+    module = _script_directory().get_revision("e2f3a4b5c6d7").module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.connection.driver_connection.create_function(
+            "gen_random_uuid", 0, lambda: str(uuid.uuid4())
+        )
+        connection.execute(text("CREATE TABLE users (id TEXT PRIMARY KEY)"))
+        connection.execute(text("INSERT INTO users VALUES ('shared-user')"))
+        connection.execute(text("CREATE TABLE stories (id TEXT PRIMARY KEY)"))
+        connection.execute(text("INSERT INTO stories VALUES ('story')"))
+        connection.execute(
+            text(
+                "CREATE TABLE waitlist (id INTEGER PRIMARY KEY,"
+                " name TEXT NOT NULL, email TEXT NOT NULL UNIQUE,"
+                " created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                " signup_token UUID NOT NULL DEFAULT (gen_random_uuid()),"
+                " CONSTRAINT uq_waitlist_signup_token UNIQUE (signup_token))"
+            )
+        )
+        connection.execute(
+            text(
+                "INSERT INTO waitlist (name, email)"
+                " VALUES ('Retired', 'retired@example.com')"
+            )
+        )
+
+        with Operations.context(MigrationContext.configure(connection)):
+            module.upgrade()
+        assert set(inspect(connection).get_table_names()) == {"users", "stories"}
+        assert connection.execute(text("SELECT id FROM users")).scalar_one() == (
+            "shared-user"
+        )
+        assert (
+            connection.execute(text("SELECT id FROM stories")).scalar_one() == "story"
+        )
+
+        with Operations.context(MigrationContext.configure(connection)):
+            module.downgrade()
+        inspector = inspect(connection)
+        columns = {
+            column["name"]: column for column in inspector.get_columns("waitlist")
+        }
+        assert set(columns) == {"id", "name", "email", "created_at", "signup_token"}
+        assert all(not column["nullable"] for column in columns.values())
+        assert columns["created_at"]["default"]
+        assert columns["signup_token"]["default"]
+        assert {
+            tuple(constraint["column_names"])
+            for constraint in inspector.get_unique_constraints("waitlist")
+        } == {("email",), ("signup_token",)}
+        assert (
+            connection.execute(text("SELECT count(*) FROM waitlist")).scalar_one() == 0
+        )
+        connection.execute(
+            text(
+                "INSERT INTO waitlist (name, email)"
+                " VALUES ('Restored', 'restored@example.com')"
+            )
+        )
+        created_at, token = connection.execute(
+            text("SELECT created_at, signup_token FROM waitlist")
+        ).one()
+        assert created_at
+        assert uuid.UUID(token)
+        with pytest.raises(IntegrityError):
+            connection.execute(
+                text(
+                    "INSERT INTO waitlist (name, email)"
+                    " VALUES ('Duplicate', 'restored@example.com')"
+                )
+            )
