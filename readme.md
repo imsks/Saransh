@@ -68,8 +68,11 @@ User endpoints accept only the Next.js server's internal key. See the API docs f
 request and response schemas.
 
 Production shares PostgreSQL with [Rajniti](https://rajniti-app.vercel.app).
-Saransh owns only `stories`, `waitlist` and its migration version table;
+Saransh owns only `stories`, `saransh_user_preferences` and its migration version table;
 its migrations must not touch Rajniti's tables.
+
+Migration `e2f3a4b5c6d7` drops the retired `waitlist` table. Export any signup records
+that must be retained before migrating; downgrade restores the schema, not deleted data.
 
 Report bugs and attribution errors through [GitHub Issues](https://github.com/imsks/Saransh/issues).
 [MIT License](LICENSE). Product and documentation: Pratyusha Trivedi.

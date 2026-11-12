@@ -41,7 +41,8 @@ def migrate_database(connection: Connection, users_stub: bool = False) -> None:
     )
 
     if context.get_current_revision() is None:
-        existing = set(inspect(connection).get_table_names()) & SARANSH_OWNED_TABLES
+        tables = set(inspect(connection).get_table_names())
+        existing = tables & SARANSH_OWNED_TABLES
         if existing:
             if existing != SARANSH_OWNED_TABLES or compare_metadata(
                 context, Base.metadata
