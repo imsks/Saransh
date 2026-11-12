@@ -154,24 +154,6 @@ def test_migration_runner_refuses_a_partial_unversioned_schema():
         assert inspect(connection).get_table_names() == ["stories"]
 
 
-@pytest.mark.parametrize("with_active_tables", [False, True])
-def test_migration_runner_refuses_an_unversioned_waitlist(
-    portable_uuid_types, with_active_tables
-):
-    from scripts.init_db import migrate_database
-
-    engine = create_engine("sqlite:///:memory:")
-    with engine.begin() as connection:
-        if with_active_tables:
-            Base.metadata.create_all(connection)
-        connection.execute(text("CREATE TABLE waitlist (id INTEGER PRIMARY KEY)"))
-        with pytest.raises(RuntimeError, match="unversioned.*waitlist"):
-            migrate_database(connection)
-        tables = set(inspect(connection).get_table_names())
-        assert "waitlist" in tables
-        assert "alembic_version_saransh" not in tables
-
-
 @pytest.fixture
 def portable_uuid_types(monkeypatch):
     for table in Base.metadata.tables.values():

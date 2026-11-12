@@ -81,14 +81,6 @@ export default function PrivacyPage() {
             </p>
           </Section>
 
-          <Section heading="Earlier waitlist signups">
-            <p className={paragraphClass}>
-              If you joined the waitlist before sign-in existed, we keep that
-              name and email only to send the one launch email we promised. It
-              is never sold, rented, or shared with anyone else.
-            </p>
-          </Section>
-
           <Section heading="Usage analytics">
             <p className={paragraphClass}>
               The site measures how it is used so we know which parts of the
@@ -140,16 +132,15 @@ export default function PrivacyPage() {
               >
                 PostHog
               </a>
-              , on their cloud service in the United States. Your account and
-              waitlist details stay in our own database and are never sent to
-              PostHog.
+              , on their cloud service in the United States. Your account
+              details stay in our own database and are never sent to PostHog.
             </p>
           </Section>
 
           <Section heading="Deleting your data">
             <p className={paragraphClass}>
-              Ask and it is deleted — your account, your answers, any waitlist
-              entry and their analytics. Because the account is shared, this
+              Ask and it is deleted — your account, your answers and their
+              analytics. Because the account is shared, this
               removes you from Rajniti too. Message the maintainer on GitHub at{" "}
               <a
                 href={EXTERNAL.maintainer}
