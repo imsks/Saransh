@@ -10,6 +10,7 @@ export interface ApiStory {
   source_url?: string | null;
   source_label?: string | null;
   category: string;
+  tier?: "national" | "state" | "international" | null;
   state?: string | null;
   status: string;
   created_at: string;

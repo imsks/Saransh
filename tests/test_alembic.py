@@ -247,21 +247,16 @@ def test_migration_runner_upgrades_a_versioned_database():
         migrate_database(connection)
 
         inspector = inspect(connection)
-        assert "sources" in inspector.get_table_names()
+        assert "sources" not in inspector.get_table_names()
         assert {c["name"] for c in inspector.get_columns("stories")} == {
             "id",
             "title_en",
-            "title_hi",
             "summary_en",
-            "summary_hi",
-            "district",
             "source_url",
             "source_label",
+            "tier",
         }
-        assert "waitlist" not in inspector.get_table_names()
-        assert connection.execute(
-            text("SELECT title_hi, summary_hi, district FROM stories WHERE id = 's1'")
-        ).one() == ("टी", "एस", "Nagpur")
+        assert {"sources", "waitlist"}.isdisjoint(inspector.get_table_names())
         assert connection.execute(
             text("SELECT source_url, source_label FROM stories ORDER BY id")
         ).all() == [
@@ -271,14 +266,76 @@ def test_migration_runner_upgrades_a_versioned_database():
             (None, None),
         ]
         assert (
-            connection.execute(text("SELECT count(*) FROM sources")).scalar_one() == 6
-        )
-        assert (
             connection.execute(
                 text("SELECT version_num FROM alembic_version_saransh")
             ).scalar_one()
             == _script_directory().get_current_head()
         )
+
+
+def test_legacy_contract_migration_drops_only_what_exists():
+    module = _script_directory().get_revision("f1a2b3c4d5e6").module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        for statement in (
+            "CREATE TABLE stories (id TEXT PRIMARY KEY, title_en TEXT,"
+            " title_hi TEXT NOT NULL, summary_hi TEXT NOT NULL, district TEXT)",
+            "INSERT INTO stories VALUES ('s1', 'T', 'टी', 'एस', 'Nagpur')",
+            "CREATE TABLE sources (id TEXT PRIMARY KEY, story_id TEXT)",
+            "CREATE TABLE waitlist (id INTEGER PRIMARY KEY, email TEXT,"
+            " signup_token TEXT NOT NULL, CONSTRAINT uq_waitlist_signup_token"
+            " UNIQUE (signup_token))",
+            "INSERT INTO waitlist VALUES (1, 'p@test.in', 'tok')",
+        ):
+            connection.execute(text(statement))
+
+        with Operations.context(MigrationContext.configure(connection)):
+            module.upgrade()
+        inspector = inspect(connection)
+        assert "sources" not in inspector.get_table_names()
+        assert {c["name"] for c in inspector.get_columns("stories")} == {
+            "id",
+            "title_en",
+        }
+        assert {c["name"] for c in inspector.get_columns("waitlist")} == {
+            "id",
+            "email",
+        }
+        assert connection.execute(text("SELECT title_en FROM stories")).scalar_one()
+
+        # A database bootstrapped from the current models has nothing to drop.
+        with Operations.context(MigrationContext.configure(connection)):
+            module.upgrade()
+
+
+def test_migration_runner_enables_row_level_security_on_saransh_tables(
+    monkeypatch,
+):
+    import scripts.init_db as init_db
+
+    class Inspector:
+        def get_table_names(self):
+            return ["stories", "waitlist", "users", init_db.VERSION_TABLE]
+
+    class Connection:
+        class dialect:
+            name = "postgresql"
+
+        def __init__(self):
+            self.statements = []
+
+        def exec_driver_sql(self, statement):
+            self.statements.append(statement)
+
+    monkeypatch.setattr(init_db, "inspect", lambda _connection: Inspector())
+    connection = Connection()
+    init_db.enable_row_level_security(connection)
+
+    assert connection.statements == [
+        f'ALTER TABLE "{name}" ENABLE ROW LEVEL SECURITY'
+        for name in ("alembic_version_saransh", "stories")
+    ]
 
 
 @pytest.mark.parametrize("host", ["localhost", "127.0.0.1", "[::1]", "postgres"])
@@ -342,6 +399,42 @@ def test_add_story_source_url_migration_round_trips():
             module.downgrade()
         remaining = {c["name"] for c in inspect(connection).get_columns("stories")}
         assert "source_url" not in remaining
+
+
+def test_add_story_tier_migration_round_trips_without_backfill():
+    """Existing Stories stay readable with a null tier."""
+    revision = _script_directory().get_revision("e2f3a4b5c6d7")
+    module = revision.module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE stories (" "id TEXT PRIMARY KEY, title_en TEXT NOT NULL)"
+            )
+        )
+        connection.execute(
+            text("INSERT INTO stories (id, title_en) VALUES ('legacy', 'Old story')")
+        )
+        migration_context = MigrationContext.configure(connection)
+
+        with Operations.context(migration_context):
+            module.upgrade()
+        column = {c["name"]: c for c in inspect(connection).get_columns("stories")}[
+            "tier"
+        ]
+        assert column["nullable"] is True
+        assert (
+            connection.execute(
+                text("SELECT tier FROM stories WHERE id = 'legacy'")
+            ).scalar_one()
+            is None
+        )
+
+        with Operations.context(migration_context):
+            module.downgrade()
+        remaining = {c["name"] for c in inspect(connection).get_columns("stories")}
+        assert "tier" not in remaining
 
 
 def test_drop_story_published_at_migration_round_trips():
@@ -525,7 +618,7 @@ def test_drop_preferences_migration_leaves_users_alone_and_is_safe_to_rerun():
 
 
 def test_drop_waitlist_migration_round_trips_without_changing_other_tables():
-    module = _script_directory().get_revision("e2f3a4b5c6d7").module
+    module = _script_directory().get_revision("a9b8c7d6e5f4").module
 
     engine = create_engine("sqlite:///:memory:")
     with engine.begin() as connection:

@@ -56,6 +56,20 @@ def migrate_database(connection: Connection, users_stub: bool = False) -> None:
         command.stamp(config, "head")
 
     command.upgrade(config, "head")
+    enable_row_level_security(connection)
+
+
+def enable_row_level_security(connection: Connection) -> None:
+    """Close Saransh tables to Supabase's public Data API (anon/authenticated roles).
+
+    No policies are added, so only the table owner (the API's own connection) can
+    read or write them. Idempotent; a no-op off PostgreSQL.
+    """
+    if connection.dialect.name != "postgresql":
+        return
+    existing = set(inspect(connection).get_table_names())
+    for table in sorted((SARANSH_OWNED_TABLES | {VERSION_TABLE}) & existing):
+        connection.exec_driver_sql(f'ALTER TABLE "{table}" ENABLE ROW LEVEL SECURITY')
 
 
 def validate_target(url: URL, production: bool) -> None:

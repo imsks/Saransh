@@ -50,6 +50,7 @@ def create_story(db: Session, payload: StoryIn) -> Story:
             source_url=str(payload.source_url) if payload.source_url else None,
             source_label=payload.source_label,
             category=payload.category,
+            tier=payload.tier,
             state=payload.state,
             status=STATUS_PUBLISHED,
         )

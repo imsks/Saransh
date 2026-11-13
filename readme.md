@@ -40,10 +40,11 @@ Health: http://localhost:8001/api/v1/health. Host PostgreSQL port: `5433`.
 | `make up` | Migrate and start the local stack |
 | `make stop` | Stop the stack, preserving database data |
 | `make migrate` | Start local PostgreSQL and apply all schema work in one run |
-| `make migrate-prod` | Migrate an explicitly supplied production database |
+| `make migrate-prod` | Migrate the production database from `.env.production` |
 
-Production migrations require exported `DATABASE_URL` and `CONFIRM_PROD=1`, plus
-installed backend Python requirements. They never use the local Docker database.
+`make migrate-prod` reads `DATABASE_URL` from `.env.production` (falling back to an
+exported `DATABASE_URL`) and needs installed backend Python requirements. It refuses
+local hosts, so it never touches the local Docker database.
 The runner initializes empty tables, adopts a matching unversioned schema and
 upgrades tracked revisions. It refuses partial or mismatched unversioned tables
 rather than guessing their migration baseline.
