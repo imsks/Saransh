@@ -2,7 +2,7 @@
 
 **शोर नहीं। सिर्फ़ खबर। सबूत के साथ।** / **No noise. Just news. With proof.**
 
-Saransh is an open-source news app for India: up to 50 short, sourced stories a day, in Hindi or English, approved by a person, with no personalisation and no algorithm.
+Saransh is an open-source news app for India: up to 50 short, sourced stories a day, in English, approved by a person, with no personalisation and no algorithm.
 
 This file is the project's vocabulary. Use these words in code, commits, issues and reviews. It defines what the words mean; for what is actually built, see the status section of the [README](./readme.md). Where a term describes something planned and not yet in the code, it says so.
 
@@ -11,7 +11,7 @@ This file is the project's vocabulary. Use these words in code, commits, issues 
 ### Story Terms
 
 **Story**:
-A news event with a headline and a Summary in both Hindi and English, its Sources, an image, and metadata (Tier, State, Topic). A Story may draw on several Articles from different Sources.
+A news event with an English headline and Summary, one Citation Link, an image, and metadata (Tier, State, Topic). A Story may draw on several Articles from different Sources. Hindi is not stored today.
 _Avoid_: Article, news item, post
 
 **Article**:
@@ -19,7 +19,7 @@ A single source document from an outlet or an official body. Several Articles ma
 _Avoid_: Story, news piece
 
 **Source**:
-An approved outlet or official body that a Story is drawn from. A Source enters the Source Registry only after its reuse terms are checked. Each Story lists every Source that reports the event.
+An approved outlet or official body that a Story is drawn from. A Source enters the Source Registry only after its reuse terms are checked. A Story names only the Source of its Citation Link.
 _Avoid_: Publisher, feed
 
 **Source Registry**:
@@ -31,11 +31,11 @@ A government body or ministry. Only a Story from an Official Source shows the gr
 _Avoid_: Verified source, trusted source
 
 **Summary**:
-The short text of a Story: at most 60 words in English and 70 in Hindi. Drafted by AI, approved by a person, fact-only, with every claim attributed ("according to police…" / "पुलिस के अनुसार…").
+The short text of a Story: at most 60 words in English. Drafted by AI, approved by a person, fact-only, with every claim attributed ("according to police…").
 _Avoid_: Excerpt, blurb, digest
 
 **Citation Link**:
-The single canonical Article a Story's Summary was written from, stored on the Story as `source_url`. Distinct from the Story's `sources`, which list every outlet that reports the event. A Story has at most one Citation Link and may have many Sources. The card's "Read story" button and source line link to it.
+The single canonical Article a Story's Summary was written from, stored on the Story as `source_url`, with its outlet's name as `source_label`. The card's "Read story" button and source line link to it.
 _Avoid_: Primary source, origin link, reference
 
 **Tier**:
@@ -61,7 +61,7 @@ Where a Story sits in its lifecycle. **Today:** every Story is Published the mom
 _Avoid_: State (reserved for geography), stage, visibility
 
 **Review**:
-A person reading a Story in both Hindi and English beside its source, then approving, editing or killing it, and confirming or correcting its Tier, State and Topic. One Review per Story. Only the review team does this; contributors and volunteers do not. Planned.
+A person reading a Story beside its source, then approving, editing or killing it, and confirming or correcting its Tier, State and Topic. One Review per Story. Only the review team does this; contributors and volunteers do not. Planned.
 _Avoid_: Moderation, QA, approval queue
 
 **Correction**:
@@ -69,33 +69,25 @@ A public record that a published Story was changed: the field, the old value, th
 _Avoid_: Edit, fix, update
 
 **Stopgap Routine**:
-The scheduled Claude Code routine (`docs/story-ingest-routine.md`) that fills the site today. It is not the Pipeline: its Stories are published without Review and may carry a publisher's image. A recorded, temporary exception that ends when the Pipeline and the publish step exist.
+The scheduled Claude Code routine prompt ([docs/story-ingest-routine.md](docs/story-ingest-routine.md)) that fills the site today. It is not the Pipeline: its Stories are published without Review and may carry a publisher's image. A recorded, temporary exception that ends when the Pipeline and the publish step exist.
 _Avoid_: The pipeline, the scraper, the bot
 
 ### Reader Terms
 
 **Visitor**:
-Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a Waitlist Signup — one Visitor may create several Signups, and one Signup may be made from several Visitors. A Visitor is not a User either: a Visitor is a browser Saransh has not identified, so the moment one signs in they are a User for the rest of that browser's session. Saransh never learns an unidentified Visitor's name or email.
+Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a User: a Visitor is a browser Saransh has not identified, so the moment one signs in they are a User for the rest of that browser's session. Saransh never learns an unidentified Visitor's name or email.
 _Avoid_: Session, traffic, audience
 
 **Guest**:
 A Visitor reading Stories in the app before signing in. A Guest sees 6 National and International Stories, counted toward the day's 50, then the sign-in wall. A Guest's progress carries over when they sign in. Planned.
 _Avoid_: Anonymous user, trial user
 
-**Waitlist Signup**:
-A person who asked to be told when Saransh launches. Identified by email; signing up twice is the same Signup, not two. Carries a Signup Token for anything outside Saransh that needs to refer to it. A Signup is not a User — it is an email we promised to contact, with no credentials and nothing to sign in to. A Signup may later become a User, and the Signup Token is what lets us say they are the same person.
-_Avoid_: Subscriber, lead, waitlister
-
-**Signup Token**:
-The opaque public identifier of a person Saransh has identified — not the email, and not the row number. Issued at whichever moment identification first happens: joining the Waitlist, or signing in. Stable: a second signup with the same email yields the same Token, and a User whose verified email matches an existing Signup inherits that Signup's Token rather than being issued a new one. It is how Saransh recognises one person across Visitor, Waitlist Signup and User without the email leaving the system. Built for the Waitlist: `waitlist.signup_token`, returned by `POST /api/v1/waitlist` on both the created and duplicate paths; issuing it at sign-in is planned.
-_Avoid_: Signup ID, user ID, waitlist ID
-
 **User**:
-A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns. A User is the only kind of person who can own anything: preferences, read history, saved Stories. Users are readers of Saransh, never authors of Stories. Planned.
+A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in, recording `onboarded_from = "saransh"` (Rajniti's rows default to `"rajniti"`; the value never changes after insert), and keeps what readers tell it on that same row in the `saransh_*` columns. It has no table of its own for Users. Users are readers of Saransh, never authors of Stories.
 _Avoid_: Account, member, subscriber, profile
 
 **Onboarding**:
-The questions Saransh asks a User once, right after their first sign-in: reading language (required, nothing pre-selected), State (required) and up to 3 Topics (optional). The name is prefilled from Google and editable. There is no username step and no district question. Onboarding is per-product: a User who completed Rajniti's onboarding has told Saransh nothing, and is still asked. Planned.
+The questions Saransh asks a User, right after sign-in, about what the shared `users` row is missing: a name (when Google gave none) and a State (when absent or not one Saransh offers), both required when asked; and, once, up to 3 Topics (optional) plus interest in the coming-soon Topics. A name or State already on the row is never asked for or overwritten. English only for now, no username step and no district question. Saransh is onboarded when nothing is missing (`saransh_onboarded_at` is set); Rajniti's `onboarding_completed` flag is never read or written.
 _Avoid_: Signup, registration, setup, profile completion, wizard
 
 **Edition**:
@@ -103,13 +95,13 @@ One batch of cards a reader gets in a sitting. A day holds four Editions of 15, 
 _Avoid_: Session, batch, round
 
 **Feed Mix**:
-The fixed, public rules that decide which Stories a reader sees: daily Tier minimums (National 25, State 15, International 10), the reader's chosen Topics at about 60% within each Tier, Tiers interleaved, newest first. It depends only on the reader's chosen language, State and Topics, the Story's Tier, State, Topic and time, and how much of the day's 50 is used. Nothing is learned from clicks, reading time or analytics. Planned.
+The fixed, public rules that decide which Stories a reader sees: daily Tier minimums (National 25, State 15, International 10), the reader's chosen Topics at about 60% within each Tier, Tiers interleaved, newest first. It depends only on the reader's chosen State and Topics, the Story's Tier, State, Topic and time, and how much of the day's 50 is used. Nothing is learned from clicks, reading time or analytics. Planned.
 _Avoid_: Ranking, recommendation, algorithm, personalisation
 
 ### Pipeline Terms
 
 **Pipeline**:
-The planned sequence that turns Articles into published Stories: fetch from approved Sources → dedupe → summarise → translate → tag → Agent check → Review → publish. It runs on local AI (Ollama) and fails per Story, not per batch. Not built yet.
+The planned sequence that turns Articles into published Stories: fetch from approved Sources → dedupe → summarise → tag → Agent check → Review → publish. It runs on local AI (Ollama) and fails per Story, not per batch. Not built yet.
 _Avoid_: Workflow, flow, scraper
 
 **Agent**:
@@ -117,7 +109,7 @@ An automated process that drafts or checks. An Agent never approves a Story and 
 _Avoid_: Bot, worker, service
 
 **Summariser**:
-The Agent that drafts a Summary in the Article's language and translates it to the other, within the word limits. Its prompts are versioned and public.
+The Agent that drafts an English Summary within the word limit. Its prompts are versioned and public.
 _Avoid_: Summary agent, digest agent
 
 **Tagger**:
@@ -125,18 +117,18 @@ The Agent that proposes a Story's Tier, State and Topic. The reviewer confirms o
 _Avoid_: Classifier, categoriser
 
 **Checker**:
-The Agent that does a first pass before Review: word count, attribution present, Summary matches the source, Hindi and English say the same thing. It flags; it never approves.
+The Agent that does a first pass before Review: word count, attribution present, Summary matches the source. It flags; it never approves.
 _Avoid_: Validator agent, QA bot
 
 **Word-Limit Validator**:
-Code, not an Agent: English ≤ 60 words, Hindi ≤ 70, hard reject. A word is anything between spaces; punctuation does not count. Planned.
+Code, not an Agent: English ≤ 60 words, hard reject. A word is anything between spaces; punctuation does not count. Planned.
 _Avoid_: Length check, soft limit
 
 ## Example Dialogue
 
 **User**: How does a news story get into Saransh?
 
-**Dev**: The plan: the Pipeline fetches an Article from an approved Source, the Summariser drafts a Summary in both languages, the Tagger proposes a Tier, State and Topic, and the Checker flags anything that looks wrong. A reviewer then reads both languages beside the source and approves, edits or kills the Story. Only an approved Story is Published.
+**Dev**: The plan: the Pipeline fetches an Article from an approved Source, the Summariser drafts a Summary, the Tagger proposes a Tier, State and Topic, and the Checker flags anything that looks wrong. A reviewer then reads it beside the source and approves, edits or kills the Story. Only an approved Story is Published.
 
 **PM**: And today?
 

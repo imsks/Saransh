@@ -5,12 +5,16 @@ import {
   describe,
   expect,
   it,
-  jest,
 } from "@jest/globals";
 
 import { ThemeProvider } from "@sutra_ui/ui";
 
 import PrivacyPage, { metadata } from "@/app/privacy/page";
+import { ROUTES } from "@/lib/routes";
+
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({ data: null, status: "unauthenticated" }),
+}));
 
 beforeEach(() => {
   // The page renders the Navbar, whose theme switch reads the colour-scheme query.
@@ -68,9 +72,8 @@ describe("PrivacyPage", () => {
 
     const text = body();
     for (const heading of [
-      "Joining the waitlist",
+      "Signing in with Google",
       "Usage analytics",
-      "How a signup is linked to usage",
       "Session recording",
       "Analytics served from our own domain",
       "Who holds the data",
@@ -81,13 +84,27 @@ describe("PrivacyPage", () => {
       ).toBeTruthy();
     }
 
-    expect(text).toContain("one email when Saransh launches");
-    expect(text).toContain("opaque token");
+    expect(text).toContain("stores these preferences on your shared account");
+    expect(text).toContain("which product you first signed up through");
+    expect(text).toContain("never changes ones you already saved");
+    expect(text).not.toContain("shared with Rajniti");
+    expect(text).toContain("joined to your account ID");
     expect(text).toContain(
       "We do not record sessions or capture what you type into form fields.",
     );
     expect(text).toContain("PostHog");
     expect(text).toContain("United States");
+    expect(text).toContain("Your account details stay in our own database");
+  });
+
+  it("shares the site frame, including the navbar's Contribute link", () => {
+    renderPage();
+
+    expect(screen.getByRole("main")).toBeTruthy();
+    expect(screen.getByRole("contentinfo")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "Contribute" }).getAttribute("href"),
+    ).toBe(ROUTES.contribute);
   });
 
   it("carries page metadata", () => {

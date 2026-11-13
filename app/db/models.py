@@ -1,19 +1,18 @@
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy import (
+    JSON,
+    Boolean,
     Column,
     DateTime,
-    ForeignKey,
-    Integer,
     String,
     Text,
-    UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.db.database import Base
+from app.db.database import Base, SharedBase
 
 STATUS_PUBLISHED = "published"
 
@@ -28,22 +27,14 @@ class Story(CreatedAtMixin, Base):
     __tablename__ = "stories"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
     title_en = Column(Text, nullable=False)
-    title_hi = Column(Text, nullable=False)
     summary_en = Column(Text, nullable=False)
-    summary_hi = Column(Text, nullable=False)
-
-    # Cover photo shown with the Story. Required — every Story has an image.
     image_url = Column(Text, nullable=False)
-
-    # Canonical Article the Summary was extracted from, cited alongside the Story.
     source_url = Column(Text, nullable=True)
-
+    source_label = Column(Text, nullable=True)
     category = Column(String(50), nullable=False)
+    tier = Column(String(20), nullable=True)
     state = Column(String(100), nullable=True)
-    district = Column(String(100), nullable=True)
-
     status = Column(String(20), nullable=False, default=STATUS_PUBLISHED)
 
     updated_at = Column(
@@ -53,44 +44,32 @@ class Story(CreatedAtMixin, Base):
         onupdate=func.now(),
     )
 
-    sources = relationship(
-        "Source",
-        back_populates="story",
-        cascade="all, delete-orphan",
-    )
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
-class Source(CreatedAtMixin, Base):
-    __tablename__ = "sources"
+class User(SharedBase):
+    """One row per person, shared with Rajniti, which owns the table and its migrations.
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    Saransh keeps everything it asks a User here, never in a table of its own. It
+    inserts the row at a first sign-in (`onboarded_from="saransh"`), fills `name`
+    and `state` only when they are missing, and owns the `saransh_*` columns.
+    `onboarding_completed` is Rajniti's flag: Saransh never reads or changes it.
+    """
 
-    story_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("stories.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
+    __tablename__ = "users"
 
-    outlet = Column(String(150), nullable=False)
-    url = Column(Text, nullable=False)
-    source_type = Column(String(30), nullable=True)
-
-    story = relationship("Story", back_populates="sources")
-
-    __table_args__ = (UniqueConstraint("story_id", "url", name="uq_story_source_url"),)
-
-
-class Waitlist(CreatedAtMixin, Base):
-    __tablename__ = "waitlist"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-    # Opaque public identifier of the Signup. The integer id is never exposed:
-    # it leaks how many Signups exist and is trivially enumerable.
-    signup_token = Column(
-        UUID(as_uuid=True), nullable=False, unique=True, default=uuid.uuid4
-    )
-
-    name = Column(Text, nullable=False)
-    email = Column(Text, nullable=False, unique=True)
+    id = Column(String, primary_key=True)  # Google `sub`
+    email = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=True)
+    state = Column(String, nullable=True)
+    onboarding_completed = Column(Boolean, nullable=False, default=False)
+    # Which product acquired the User; written once, on insert.
+    onboarded_from = Column(String, nullable=False, server_default="rajniti")
+    saransh_topics = Column(JSON, nullable=True)
+    saransh_interests = Column(JSON, nullable=True)
+    saransh_onboarded_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=_utcnow)
+    updated_at = Column(DateTime, nullable=False, default=_utcnow, onupdate=_utcnow)

@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import router as api_router
 from app.config import settings
-from app.db.bootstrap import init_database
 from app.utils import get_logger, setup_logging
 
 # Setup logging
@@ -16,7 +15,7 @@ logger = get_logger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title="Saransh - AI News App",
-    description="Story ingestion and waitlist API for Saransh",
+    description="Story ingestion and signed-in User API for Saransh",
     version="1.0.0",
     debug=settings.DEBUG,
 )
@@ -40,7 +39,6 @@ async def startup_event():
         debug=settings.DEBUG,
         started_at=datetime.now().isoformat(),
     )
-    init_database()
 
 
 @app.on_event("shutdown")

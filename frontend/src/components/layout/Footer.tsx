@@ -1,20 +1,16 @@
 import Link from "next/link";
 
-import TrackedLink from "@/components/analytics/TrackedLink";
+import { Container } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
   return (
-    <footer className="border-t-[1.5px] border-ink pb-10 pt-7">
-      <div className="mx-auto flex max-w-[1120px] flex-wrap items-start justify-between gap-6 px-8 max-[560px]:flex-col max-[560px]:px-5">
+    <footer className="border-t border-line pb-10 pt-7">
+      <Container className="flex flex-wrap items-start justify-between gap-6 max-[560px]:flex-col">
         <div>
           <div className="mb-1.5 flex items-baseline gap-[7px]">
-            <span className="font-serif text-[16px] font-semibold text-ink">Saransh</span>
-            <span lang="hi" className="font-hindi text-sm text-red">सारांश</span>
+            <span className="font-serif text-[16px] font-semibold text-red">Saransh</span>
           </div>
-          <p lang="hi" className="font-hindi text-[11px] text-muted">
-            शोर नहीं। सिर्फ़ खबर। सबूत के साथ।
-          </p>
         </div>
         <div className="flex flex-col items-end gap-2 max-[560px]:items-start">
           <Link
@@ -27,20 +23,18 @@ export default function Footer() {
             <div>Built with ❤️ for the AI and news community</div>
             <div>
               Follow the build →{" "}
-              <TrackedLink
-                event="outbound_link_clicked"
-                properties={{ destination: "github", placement: "footer" }}
+              <a
                 href={EXTERNAL.repo}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-ink no-underline"
               >
                 Saransh
-              </TrackedLink>
+              </a>
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

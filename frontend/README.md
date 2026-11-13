@@ -1,7 +1,7 @@
 # Frontend
 
-Next.js 14 and React 18. The landing page renders static sample stories; the
-waitlist submits to FastAPI. There is no sign-in or live reader feed.
+Next.js 14 and React 18. The landing page renders static sample stories and
+`/stories` server-renders the latest published Stories from FastAPI.
 
 Use `make up` from the repository root for the full local stack. For a host-only
 frontend, copy `.env.example` to `.env`, run `npm ci`, then `npm run dev`.
@@ -12,28 +12,38 @@ for host-only backend setup and required checks.
 
 [.env.example](.env.example) documents the available settings.
 
-- `NEXT_PUBLIC_API_URL`: browser API base URL, including `/api/v1`.
-- `API_URL`: optional server-side API base URL.
-- `API_REWRITE_TARGET`: optional server-only origin for Next.js API rewrites; Docker uses the API service hostname.
+- `NEXT_PUBLIC_API_URL`: backend API base URL, including `/api/v1`. Docker supplies its service URL;
+	browser requests use same-origin rewrites for non-localhost URLs.
 - `NEXT_PUBLIC_SITE_URL`: canonical site origin. In production omit localhost values; the resolver can fall back to `VERCEL_URL`.
 - `NEXT_PUBLIC_LOG_LEVEL`: frontend logging level.
+- `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google sign-in.
+- `SARANSH_INTERNAL_API_KEY`: server-only key for FastAPI's User endpoints; equals the backend value.
+
+## Sign-in
+
+[auth.ts](src/lib/auth.ts) runs Google sign-in through next-auth. On sign-in the
+server syncs the User with FastAPI through [server-api.ts](src/lib/server-api.ts),
+the only code that holds the internal key. The browser session carries the User's
+id, name, email, image and onboarding state, never a token or key.
+
+Sign-in returns to `/onboarding`, which shows only the questions FastAPI lists
+in `missing_fields` (a name or state the shared User row lacks, and Saransh's
+topics once). The server action saves just those answers to FastAPI; [middleware.ts](src/middleware.ts) sends signed-in readers who have not
+completed setup to `/onboarding`, while guests can read `/stories` freely.
 
 ## Analytics
 
-Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog. The dashboard's
-`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` alias is also supported; choose one.
-With no token the SDK is not loaded and no analytics requests are sent.
-Rebuild or redeploy after changing public environment values.
+Set `NEXT_PUBLIC_POSTHOG_KEY` to enable PostHog; without it the SDK is never
+loaded. Rebuild or redeploy after changing public environment values.
 
-Events go through the first-party `/ingest` proxy to PostHog Cloud US by default.
-Host/proxy overrides are optional. Session replay is disabled. Never send names,
-emails or other personal data to analytics, and never use events to personalize stories.
-
-Use `analytics` from `@/lib/analytics`, not the SDK directly. Event definitions
-are in [events.ts](src/lib/analytics/events.ts).
-The waitlist funnel is `waitlist_form_viewed` -> `waitlist_form_started` ->
-`waitlist_submitted`, filtered to `outcome = created` for new signups.
-See [ADR 0004](../docs/adr/0004-posthog-for-saransh-analytics.md).
+[analytics.ts](src/lib/analytics.ts) is the whole setup. It loads the SDK on
+demand (outside the first-load bundle) and sends events through the first-party
+`/ingest` proxy to PostHog Cloud US. Pageviews and clicks are captured
+automatically and session replay is off. The sign-in funnel is `$pageview /` →
+`sign_in_clicked` → `signed_in` → `onboarding_completed` → `$pageview /stories`.
+On sign-in the anonymous ID is merged into the User's id, so one person is one ID.
+Never send names, emails or other personal data, and never use events to
+personalize stories.
 
 ## UI
 

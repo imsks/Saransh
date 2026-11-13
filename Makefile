@@ -19,7 +19,11 @@ migrate:
 		-v "$(CURDIR)/alembic.ini:/app/alembic.ini:ro" \
 		saransh-api python -m scripts.init_db
 
+# Reads DATABASE_URL from $(PROD_ENV) (an exported DATABASE_URL is the fallback).
+PROD_ENV ?= .env.production
+
 migrate-prod:
-	@test -n "$$DATABASE_URL" && test "$$CONFIRM_PROD" = "1" || \
-		{ echo 'Set DATABASE_URL and CONFIRM_PROD=1 to migrate production.'; exit 1; }
-	@$(PYTHON) -m scripts.init_db --production
+	@url="$$($(PYTHON) -c "from dotenv import dotenv_values; print(dotenv_values('$(PROD_ENV)').get('DATABASE_URL') or '')" 2>/dev/null)"; \
+	url="$${url:-$$DATABASE_URL}"; \
+	test -n "$$url" || { echo 'Add DATABASE_URL to $(PROD_ENV).'; exit 1; }; \
+	DATABASE_URL="$$url" CONFIRM_PROD=1 $(PYTHON) -m scripts.init_db --production

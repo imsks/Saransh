@@ -8,8 +8,7 @@ UUID dialect type, we:
 1. Override environment variables *before* any application module is imported
    so that the SQLAlchemy engine created in ``app.db.database`` points at SQLite.
 2. Patch the PostgreSQL UUID column type to be transparent on SQLite.
-3. Build a minimal FastAPI application that registers only the stories and
-   waitlist routers to avoid loading optional modules at import time.
+3. Mount the real ``main.app`` with ``get_db`` pointed at a per-test session.
 """
 
 import os
@@ -23,10 +22,9 @@ from typing import Generator
 # suite at the real database and the real ingest key.
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["SARANSH_INGEST_API_KEY"] = "test-api-key"
-os.environ.setdefault("OPENAI_API_KEY", "test-key-not-used")
+os.environ["SARANSH_INTERNAL_API_KEY"] = "test-internal-key"
 
 import pytest  # noqa: E402
-from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, event  # noqa: E402
 
@@ -63,25 +61,10 @@ PG_UUID.load_dialect_impl = _pg_uuid_load_dialect_impl
 PG_UUID.process_bind_param = _pg_uuid_process_bind_param
 PG_UUID.process_result_value = _pg_uuid_process_result_value
 
-# ---------------------------------------------------------------------------
-# 3. Import only the API modules needed for tests
-# ---------------------------------------------------------------------------
-from app.db.database import Base, get_db  # noqa: E402
-from tests.router_loader import _load_router  # noqa: E402
+from app.db.database import Base, SharedBase, get_db  # noqa: E402
+from app.db.models import User  # noqa: E402,F401  (registers `users` on SharedBase)
+from main import app as test_app  # noqa: E402
 
-stories_router = _load_router("app/api/stories.py", "saransh_test_stories")
-waitlist_router = _load_router("app/api/waitlist.py", "saransh_test_waitlist")
-
-# ---------------------------------------------------------------------------
-# 4. Build a minimal test FastAPI app mounted like main.py
-# ---------------------------------------------------------------------------
-test_app = FastAPI()
-test_app.include_router(stories_router, prefix="/api/v1")
-test_app.include_router(waitlist_router, prefix="/api/v1")
-
-# ---------------------------------------------------------------------------
-# 5. Create a single in-memory SQLite engine for the whole test session
-# ---------------------------------------------------------------------------
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
@@ -93,12 +76,20 @@ engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+@event.listens_for(engine, "connect")
+def _enforce_foreign_keys(dbapi_connection, _):  # noqa: ANN001
+    # SQLite ignores foreign keys by default; the cascade tests need them on.
+    dbapi_connection.execute("PRAGMA foreign_keys=ON")
+
+
 @pytest.fixture(scope="session", autouse=True)
 def create_tables():
-    """Create all tables once per test session."""
+    """Create all tables once per test session, plus the local `users` stand-in."""
+    SharedBase.metadata.create_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
+    SharedBase.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture()

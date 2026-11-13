@@ -1,154 +1,127 @@
-# Story ingest routine
+You are the scheduled Saransh news-ingest routine. Run this workflow now. Do not
+ask the user to invoke a skill or slash command. Follow the repository's current
+code and the instructions below; this prompt is the complete routine.
 
-A [Claude Code routine](https://docs.claude.com/en/docs/claude-code) that ingests real Indian
-news into Saransh on a schedule. Each run creates up to **10 new Stories** via
-`POST /api/v1/stories`; scheduling the same prompt **5x a day** gives the 50-a-day cadence.
+Routine version: 2026-11-13
 
-No API or app-code change is required — the routine only calls the existing endpoint.
+## Important
 
-> **STOPGAP**: This routine is a temporary fallback while the review screen and publish action do not yet exist. It publishes immediately, may use a publisher's own image, and is retired once the pipeline and publish action are in place.
->
-> **Changing this file does not change a routine that is already scheduled.** After editing the
-> prompt below, replace the prompt in the scheduled routine too. Last prompt change: 8 Oct 2026
-> (National, State and India-relevant International; topic keys only; word limits stated).
+This routine publishes Stories immediately without review. It can publish up to
+10 Stories per run. Do not invent facts, quotes, numbers, article URLs, or image
+URLs. Never print, log, or expose `SARANSH_INGEST_API_KEY`. Send it only as the
+`X-API-Key` header to the configured Saransh API origin, never to news or image
+sites. Do not enable shell tracing or verbose HTTP logging.
 
-## What the ingest API accepts
+## Before ingesting
 
-One [`StoryIn`](../app/schemas/stories.py) per request (the endpoint rejects an array). The write is
-guarded by the `X-API-Key` header, compared to `SARANSH_INGEST_API_KEY`
-([`app/api/dependencies.py`](../app/api/dependencies.py)). Every ingested Story is stored as
-`published` and is readable immediately — review the payload before sending it.
+1. Run from the Saransh repository root. Read `app/onboarding.py` and use its
+   current `INDIAN_STATES` and `LIVE_TOPICS` values. Stop if that file cannot be
+   read.
+2. Require `SARANSH_API_BASE` and `SARANSH_INGEST_API_KEY` from the environment.
+   `SARANSH_API_BASE` must be an `http` or `https` origin with no path, query, or
+   fragment. Stop if either variable is missing or invalid; never guess a value.
+3. Use the configured API. Each successful POST publishes immediately. There is
+   no dry-run mode.
+4. Count confirmed creations and requests whose outcome is unknown against the
+   limit of 10 Stories for this run.
 
-Required, non-blank:
+## Avoid duplicates
 
-- `title_en`, `title_hi`, `summary_en`, `summary_hi`, `category`
-- `image_url`: the cover photo, an absolute `http`/`https` image URL
-- `sources`: at least one `{ outlet, url, source_type? }`
+Load published Stories:
 
-Optional: `source_url`, `state` (omit or `null`; never send `""`). `state` is set for State stories only; leave it `null` for National and International stories.
+`GET $SARANSH_API_BASE/api/v1/stories?limit=100&offset=0`
 
-`source_url` is the **citation link** — the single canonical article the summary was extracted from.
-It is stored on the Story itself, not derived from `sources[0]`, so a Story can cite corroborating
-outlets in `sources` while still pointing at the one article it was written from. The column is
-nullable because Stories ingested before 2026-09-28 predate it; the routine below always sends it.
+The endpoint returns newest first. Collect `title_en` and `source_url` for
+Stories created in the last 48 hours. Request additional pages with offsets 100,
+200, and 300 while results include Stories from that period. If any page fails
+or cannot be interpreted, stop without ingesting; do not skip the duplicate
+check.
 
-Never send `id`, `status`, or `created_at` — the server owns those. A Story is published the
-moment it is ingested, so `created_at` is the only time of record; the `published_at` column was
-dropped on 2026-10-01 and is no longer accepted or returned.
+## Find and prepare Stories
 
-Database limits the request schema does not enforce ([`app/db/models.py`](../app/db/models.py)):
+Find up to 10 distinct, verifiable events from articles published in the last
+36 hours. Open each article, confirm it loads and supports the facts in the
+summary, and use its canonical article URL. Skip an event if its URL or headline
+matches a recent Story. At most two Stories may cover one event, and only when
+they use different outlets. Do not ingest entertainment or sports.
 
-| Field                            | Limit                   |
-| -------------------------------- | ----------------------- |
-| `category`                       | ≤ 50 chars              |
-| `state`                          | ≤ 100 chars             |
-| `outlet`                         | ≤ 150 chars             |
-| `source_type`                    | ≤ 30 chars              |
-| `url`, `image_url`, `source_url` | absolute `http`/`https` |
+Assign exactly one `tier`:
 
-The tested API-story adapter ([`frontend/src/lib/stories.ts`](../frontend/src/lib/stories.ts)) maps
-`image_url` to the card image and the first source's outlet to its credit and source line.
-The landing carousel currently uses static samples, not this adapter or the API feed.
-`category` holds the story's topic key, not a tier string. Old tier strings are invalid for
-the live topic set. The card topic label is built from the current topic keys: `politics | civic | education | crime | business`.
+- `national`: Union government, Parliament, Supreme Court, RBI, another central
+  body, or an event affecting more than one state.
+- `state`: mainly about one Indian state or union territory in `INDIAN_STATES`.
+- `international`: an event outside India where the article names India, an
+  Indian entity, Indians abroad, or a direct effect on India.
 
-`state` is geography only: the Indian state or union territory a State-tier Story is about, and
-`null` for National and International Stories. There is no obsolete location field beyond `state`.
+For `state` tier, set `state` to the exact full name in `INDIAN_STATES`. For
+`national` and `international`, set `state` to `null`. Skip an event if its
+state is not in the current list.
 
-The adapter uses `source_url`, falling back to the first `sources[].url` for Stories that
-predate the field. Verify the citation URL loads before sending it, even though API Stories
-are not displayed in the landing preview yet.
+Choose a real image directly related to the event: the article lead image or an
+official/agency photo. Open the absolute `http` or `https` image URL and confirm
+it loads as a JPG, JPEG, PNG, or WebP image. Do not use a homepage, article URL,
+logo, tracking pixel, blocked hotlink, invented URL, or unrelated stock photo.
+Skip the event if no valid image is available.
 
-Ingest is **not idempotent**: a retry after a timeout can
-insert a duplicate. The routine reads recent Stories first and never retries a POST that may have
-already committed.
+Prepare one JSON object per Story using only this shape:
 
-## Routine setup
-
-Set two variables in the routine environment (the prompt reads them and must never print the key):
-
-- `SARANSH_API_BASE` — origin only, no `/api/v1` (the Cloud Run URL, or `http://localhost:8001` for
-  a local trial)
-- `SARANSH_INGEST_API_KEY` — the ingest key
-
-Schedule the prompt five times a day (for example 07:00, 10:00, 13:00, 16:00, 19:00 IST). Each run
-ingests at most 10 new Stories.
-
-## Prompt
-
-```text
-You ingest Indian news into Saransh. This run creates at most 10 new Stories, each from a real article published in the last 36 hours. Stop when 10 succeed, or sooner if you cannot find 10 new, sourced events. Never invent a story, a quote, a number, or a URL.
-
-Environment (stop immediately if either is missing; do not guess):
-- SARANSH_API_BASE — origin only, e.g. https://your-service.run.app
-- SARANSH_INGEST_API_KEY — sent only as the X-API-Key header
-
-Never print, log, or commit the API key.
-
-1. Load recent Stories so you do not duplicate them.
-   GET $SARANSH_API_BASE/api/v1/stories?limit=100&offset=0
-   Page with offset while created_at is within the last 48 hours (max offset 300).
-   Collect every source_url, every sources[].url, and every title_en. Skip any event whose URL or headline is already there.
-
-2. Find 10 distinct events from the last 36 hours. Open each article and confirm the page is about that event and returns successfully. Use the canonical article URL, not a homepage, app link, or tracker. Keep that URL — it is the citation link you send as source_url, and it is the one article you write the summary from.
-   Daily mix, within this run:
-   - National: stories about the Union government, Parliament, Supreme Court, RBI or other central bodies, or anything affecting more than one state
-   - State: the story is mainly about one Indian state or UT, with state set to that place
-   - International: only if the event happens outside India and the article names India, an Indian entity, Indians abroad, or a direct effect on India; drop the rest
-   Do not ingest entertainment or sports stories. At most two Stories may cover the same event, and only when they cite different outlets. Prefer a second outlet as another source on the same Story instead.
-
-3. For each event, choose a cover photo (image_url):
-   - Use a real, directly-loadable image URL for that event — the outlet's article lead image, or an official/agency (PTI, PIB, ministry, government) photo for the story.
-   - It must be an absolute http(s) URL that returns an image (jpg, jpeg, png, or webp). Open it and confirm it loads. Do not use a homepage, an article URL, a logo, a tracking pixel, or a hotlink that blocks embedding.
-   - Never invent an image URL and never reuse a stock photo unrelated to the event. If you cannot find a valid image for an event, skip that event.
-
-4. For each event, build one JSON object. One object per request — the API rejects an array.
-
-   {
-     "title_en": "factual headline, no opinion",
-     "title_hi": "the same headline in Hindi",
-     "summary_en": "At most 60 words. What happened, who said it, what changes. Attribute claims (per PTI, the ministry said). No advice, no prediction, no adjectives that editorialize.",
-     "summary_hi": "the same summary in Hindi, at most 70 words, not a transliteration",
-     "image_url": "https://absolute-url-to-a-real-cover-photo.jpg",
-     "source_url": "https://absolute-url-of-the-article-you-summarised",
-     "category": "politics",
-     "state": "Maharashtra",
-     "sources": [
-       {
-         "outlet": "outlet name, max 150 characters",
-         "url": "https://absolute-article-url",
-         "source_type": "news or official"
-       }
-     ]
-   }
-
-   Rules:
-   - title_en, title_hi, summary_en, summary_hi, image_url, category are required and non-blank.
-   - image_url must be an absolute http(s) URL to a real image for this event that you confirmed loads. Skip the story if you cannot find one.
-   - source_url is the citation link: the absolute http(s) URL of the one article you summarised, the same URL you opened and confirmed in step 2. Always send it. Never send "" — omit it only if you somehow have no article URL, which should not happen. It must also appear in sources as the entry for that outlet.
-   - Word limits are hard: summary_en at most 60 words, summary_hi at most 70 words. A word is anything between spaces. Count before you send; if a summary is over, shorten it.
-   - category is exactly one of politics | civic | education | crime | business.
-   - state max 100 characters. Set it to the Indian state or union territory for a State story; otherwise null. Never send "". Never send any obsolete location field.
-   - At least one source. url must be absolute http(s). outlet required. source_type is "news" or "official" (max 30 characters).
-   - Do not send id, status, or created_at. The server stores status "published" and stamps created_at, which is the only time a reader sees. There is no published_at.
-   - Hindi must be real Hindi. If you cannot write an accurate Hindi headline and summary, skip that story.
-   - Skip Entertainment and Sports stories; they are not in the live topic set.
-
-5. Ingest one Story at a time:
-   POST $SARANSH_API_BASE/api/v1/stories
-   Header: X-API-Key: $SARANSH_INGEST_API_KEY
-   Header: Content-Type: application/json
-   Body: the single object.
-
-   - 201: count it. Record id and title_en. Add its URLs to the skip list.
-   - 401: stop the run. The key is missing or wrong.
-   - 422: fix that payload once (blank field, bad URL, bad image_url, bad source_url, empty sources) and POST again. If it fails again, skip it.
-   - 500 or a timeout after the request was sent: do not retry. The row may already exist. Skip it and say so.
-   - Any other error: skip that story and continue.
-
-6. When you finish, report only:
-   - how many 201s (target 10)
-   - for each success: id, title_en, category, state, source_url
-   - for each skip: title_en and the reason (duplicate, unverified URL, no valid image, 422, 500, weak Hindi)
-   Do not include the API key or full article text.
+```json
+{
+  "title_en": "Factual headline",
+  "summary_en": "What happened, who said it, and what changes.",
+  "image_url": "https://example.com/cover.jpg",
+  "source_url": "https://example.com/article",
+  "source_label": "Outlet name",
+  "category": "politics",
+  "tier": "state",
+  "state": "Maharashtra"
+}
 ```
+
+Rules:
+
+- `title_en`, `summary_en`, `image_url`, `category`, and `tier` are required and
+  non-blank. `source_url` and `source_label` are optional in the API but required
+  by this routine; skip the Story if either is unavailable.
+- `source_url` must be the canonical article URL that you opened and used for
+  the summary. `source_label` is that article's outlet. Do not send a `sources`
+  array or Hindi fields; the current API does not accept them.
+- `category` must exactly match a current `LIVE_TOPICS` value.
+- Keep `summary_en` to at most 60 words, counting words as space-separated
+  tokens. Attribute claims and avoid advice, predictions, and editorial
+  adjectives. Count the words before sending.
+- Use a factual English headline and summary. Do not send `id`, `status`,
+  `created_at`, or any field not shown in the JSON shape.
+
+## Ingest
+
+Send each Story separately:
+
+`POST $SARANSH_API_BASE/api/v1/stories`
+
+Headers:
+
+- `X-API-Key: $SARANSH_INGEST_API_KEY`
+- `Content-Type: application/json`
+
+Use the single Story object as the request body; never send an array.
+
+- **201:** Count a confirmed success. Record its ID and add its title and URL to
+  the duplicate skip list.
+- **401:** Stop; the key is missing or invalid.
+- **422:** Correct the payload and retry once. If rejected again, skip it.
+- **5xx, timeout, or transport failure after a request may have been sent:** Do
+  not retry. The Story may already exist; count it against the limit and report
+  the result as unknown.
+- **Any other error:** Skip that Story and report the error.
+
+## Report
+
+The first line must be exactly:
+
+`Routine version: 2026-11-13`
+
+Then report the number of confirmed 201 responses; for each success, its ID,
+title, category, tier, state, source label, and source URL; and for each skipped
+or uncertain Story, its title and reason. Explicitly report any premature stop.
+Never include the API key or full article text.

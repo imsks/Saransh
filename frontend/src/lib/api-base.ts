@@ -31,7 +31,7 @@ function getProxiedApiBaseUrl(): string {
  * Base URL for Saransh FastAPI requests.
  * Browser code uses NEXT_PUBLIC_API_URL locally. When that URL is remote
  * (Cloud Run), the browser stays on same-origin `/api/v1` so Next.js rewrites
- * proxy the request — production waitlist does not depend on Cloud Run CORS.
+ * proxy the request — production does not depend on Cloud Run CORS.
  * SSR loops back through Next rewrites when the public URL points at
  * localhost (Docker-safe).
  */
@@ -45,11 +45,6 @@ export function getApiBaseUrl(options?: { forServer?: boolean }): string {
 
     if (publicUrl && isBrowserOnlyApiUrl(publicUrl)) {
       return getProxiedApiBaseUrl();
-    }
-
-    const explicit = process.env.API_URL || process.env.INTERNAL_API_URL;
-    if (explicit) {
-      return trimTrailingSlash(explicit);
     }
 
     if (publicUrl) {

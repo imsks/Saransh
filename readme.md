@@ -1,19 +1,23 @@
 # Saransh
 
 An open-source news project for India. The deployed site is a landing page with
-static sample stories, a waitlist and a privacy page, not a live reader app.
+static sample stories, Google sign-in, a public `/stories` list of ingested
+stories and a privacy page.
 
 ## Current scope
 
-- FastAPI endpoints ingest, list and serve stories, with source attribution.
-- Waitlist signup returns an opaque token, including for repeat signups.
-- Optional PostHog events measure navigation and the waitlist funnel. No session replay.
+- FastAPI endpoints ingest, list and serve English stories, each with one citation link.
+- Google sign-in (next-auth) creates or reuses the User shared with Rajniti,
+  then asks only what that shared row is missing (name, state, Saransh topics)
+  before landing on `/stories`.
+- Optional PostHog captures pageviews, clicks and the sign-in funnel under one
+  ID per person (anonymous, then the User id). No session replay.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
 
 The reader app, sign-in, review pipeline and word-limit enforcement are not built.
-The temporary [ingest routine](docs/story-ingest-routine.md) publishes directly to
-the API without human review and may use publisher images. Those API stories are
-not wired into the landing-page carousel.
+The temporary [ingest routine prompt](docs/story-ingest-routine.md) publishes directly to
+the API without human review and may use publisher images. `/stories` renders the
+latest 50 of them, refreshed every minute.
 
 ## Run locally
 
@@ -36,10 +40,11 @@ Health: http://localhost:8001/api/v1/health. Host PostgreSQL port: `5433`.
 | `make up` | Migrate and start the local stack |
 | `make stop` | Stop the stack, preserving database data |
 | `make migrate` | Start local PostgreSQL and apply all schema work in one run |
-| `make migrate-prod` | Migrate an explicitly supplied production database |
+| `make migrate-prod` | Migrate the production database from `.env.production` |
 
-Production migrations require exported `DATABASE_URL` and `CONFIRM_PROD=1`, plus
-installed backend Python requirements. They never use the local Docker database.
+`make migrate-prod` reads `DATABASE_URL` from `.env.production` (falling back to an
+exported `DATABASE_URL`) and needs installed backend Python requirements. It refuses
+local hosts, so it never touches the local Docker database.
 The runner initializes empty tables, adopts a matching unversioned schema and
 upgrades tracked revisions. It refuses partial or mismatched unversioned tables
 rather than guessing their migration baseline.
@@ -58,12 +63,15 @@ database, not a remote URL from your environment.
 
 Backend settings: [.env.example](.env.example).
 Frontend settings: [frontend/.env.example](frontend/.env.example).
-Keep secrets out of commits. Ingest requires `X-API-Key`; waitlist and story reads
-are public. See the API docs for request and response schemas.
+Keep secrets out of commits. Ingest requires `X-API-Key`; story reads are public;
+User endpoints accept only the Next.js server's internal key. See the API docs for
+request and response schemas.
 
 Production shares PostgreSQL with [Rajniti](https://rajniti-app.vercel.app).
-Saransh owns only `stories`, `sources`, `waitlist` and its migration version table;
-its migrations must not touch Rajniti's tables.
+Saransh owns only `stories` and its migration version table; its migrations must not
+touch Rajniti's tables. Everything Saransh knows about a User lives on the shared
+`users` row (`onboarded_from` and the `saransh_*` columns), whose schema Rajniti's
+migrations own.
 
 Report bugs and attribution errors through [GitHub Issues](https://github.com/imsks/Saransh/issues).
 [MIT License](LICENSE). Product and documentation: Pratyusha Trivedi.

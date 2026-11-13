@@ -3,6 +3,9 @@
  */
 export const ROUTES = {
   home: "/",
+  stories: "/stories",
+  onboarding: "/onboarding",
+  contribute: "/#contribute",
   privacy: "/privacy",
 } as const;
 

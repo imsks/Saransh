@@ -1,9 +1,6 @@
 import type { Story, Topic } from "@/constants/stories";
-
-export interface ApiStorySource {
-  outlet: string;
-  url: string;
-}
+import { getApiBaseUrl } from "@/lib/api-base";
+import { logger } from "@/lib/logger";
 
 export interface ApiStory {
   id: string;
@@ -11,10 +8,11 @@ export interface ApiStory {
   summary_en: string;
   image_url: string;
   source_url?: string | null;
+  source_label?: string | null;
   category: string;
+  tier?: "national" | "state" | "international" | null;
   state?: string | null;
   status: string;
-  sources: ApiStorySource[];
   created_at: string;
 }
 
@@ -62,19 +60,38 @@ export function topicFor(category: string): Topic {
 
 /** Map a FastAPI story payload into the carousel card shape. */
 export function mapApiStoryToCarousel(story: ApiStory): Story {
-  const primarySource = story.sources[0];
+  const label = story.source_label || "Saransh";
 
   return {
+    id: story.id,
     category: categoryLabel(story),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
-    credit: primarySource?.outlet ?? "Saransh",
+    credit: label,
     headline: story.title_en,
     body: story.summary_en,
     // No "Verified" and no tick: the API has no `official` field, so nothing
     // from it may claim verification.
-    source: primarySource?.outlet ?? "Saransh",
-    // Stories ingested before source_url existed fall back to their first source.
-    sourceUrl: story.source_url || primarySource?.url || undefined,
+    source: label,
+    sourceUrl: story.source_url || undefined,
   };
+}
+
+/** Latest published Stories for server rendering; an unreachable API yields none. */
+export async function fetchStories(limit = 50): Promise<Story[]> {
+  try {
+    const response = await fetch(
+      `${getApiBaseUrl({ forServer: true })}/stories?status=published&limit=${limit}`,
+      { next: { revalidate: 60 } },
+    );
+    if (!response.ok) {
+      logger.warn({ status: response.status }, "stories.fetch_failed");
+      return [];
+    }
+    const stories = (await response.json()) as ApiStory[];
+    return stories.map(mapApiStoryToCarousel);
+  } catch (err) {
+    logger.warn({ err }, "stories.fetch_failed");
+    return [];
+  }
 }
