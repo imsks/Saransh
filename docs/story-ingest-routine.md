@@ -8,34 +8,37 @@ handling, and report format.
 > publisher's image. Retire this routine when the review screen and publish action
 > are available.
 
-## Setup and scheduling
+## Claude Code Routine setup
 
-Run Claude Code from a Saransh checkout containing the skill. Configure Claude
-authentication and the least-privilege permissions needed to read the repository,
-search and open articles and images, and call the ingest API. Do not use `--bare`,
-which skips project-skill discovery.
+Create or edit the scheduled Claude Code Routine for this repository:
 
-Provide these variables securely to the scheduled process:
+1. Set its checkout and working directory to the Saransh repository root, and
+   ensure that checkout contains
+   [`.claude/skills/story-ingest/SKILL.md`](../.claude/skills/story-ingest/SKILL.md)
+   at the version you intend to run. The skill must be present in the checkout
+   used by the Routine, not only on your local machine.
+2. Set the Routine's prompt to exactly `/story-ingest`, with no additional text.
+   The skill has `disable-model-invocation: true`; a pasted copy of its
+   instructions or a natural-language request will not invoke it.
+3. Configure Claude authentication and the least-privilege permissions needed
+   to read the repository, search and open articles and images, and call the
+   ingest API.
+4. Provide these variables securely in the Routine's environment:
 
-- `SARANSH_API_BASE`: the API origin only, without `/api/v1` (for example
-  `http://localhost:8001` for an isolated local trial).
-- `SARANSH_INGEST_API_KEY`: the API key. Never print it or include it in a report.
+   - `SARANSH_API_BASE`: the API origin only, without `/api/v1` (for example
+     `http://localhost:8001` for an isolated local trial).
+   - `SARANSH_INGEST_API_KEY`: the API key. Never print it or include it in a report.
 
-Invoke the skill explicitly from the repository root:
+This is a live publishing routine: each accepted Story is published immediately,
+with no review or dry-run. Verify changes against an isolated test API and test
+key before pointing the Routine at production. Each run can create at most 10
+Stories; use the Routine's existing schedule.
 
-```sh
-claude -p "/story-ingest"
-```
-
-Schedule this command five times a day (for example 07:00, 10:00, 13:00, 16:00,
-19:00 IST). Each run can create at most 10 Stories. There is no dry-run mode:
-verify the setup against an isolated test API and test key, not production.
-
-An existing schedule that contains the old pasted prompt **does not change
-automatically**. Replace that prompt with `/story-ingest` and ensure the scheduler's
-checkout includes the skill. On subsequent changes, update the checkout and verify
-the first line of the next report matches the routine version in the skill. Do not
-re-copy the workflow into the scheduled prompt.
+An existing Routine that contains the old pasted prompt **does not change
+automatically**. Edit and save that Routine's prompt as exactly `/story-ingest`.
+After changing the Routine or skill, update its checkout and verify the first
+line of the next report matches the routine version in the skill. Do not copy the
+workflow into the Routine prompt.
 
 ## API context
 
@@ -56,6 +59,6 @@ The first line of each report identifies the skill version.
 
 | Version | Change |
 | ------- | ------ |
-| `2026-11-13` | Moved the workflow into the explicitly invoked `story-ingest` skill. |
+| `2026-11-13` | Moved the workflow into the explicitly invoked `story-ingest` skill; the Routine prompt must be exactly `/story-ingest`. |
 | `2026-11-12` | Added tier, State, and source label to the routine payload (#133). |
 | `2026-10-18` | English-only; one citation link and outlet label. |
