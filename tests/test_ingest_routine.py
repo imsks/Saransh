@@ -1,8 +1,7 @@
-"""Contract between the Stopgap Routine prompt and the ingest API.
+"""Contract between the Stopgap Routine skill and the ingest API.
 
-The routine's prompt lives in docs/story-ingest-routine.md. Its example payload is the
-fixture: what the routine sends must keep ingesting, and its state list must match the
-list readers pick from at Onboarding.
+The skill's example payload is the fixture: what the routine sends must keep
+ingesting, and it must use the choices readers pick from at Onboarding.
 """
 
 import json
@@ -10,52 +9,66 @@ import re
 from pathlib import Path
 
 import pytest
+import yaml
 
-from app.onboarding import INDIAN_STATES
+from app.onboarding import INDIAN_STATES, LIVE_TOPICS
 
-ROUTINE_DOC = (
-    Path(__file__).resolve().parent.parent / "docs" / "story-ingest-routine.md"
-)
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ROUTINE_DOC = REPO_ROOT / "docs" / "story-ingest-routine.md"
+SKILL = REPO_ROOT / ".claude" / "skills" / "story-ingest" / "SKILL.md"
 STORIES_URL = "/api/v1/stories"
 VALID_HEADERS = {"X-API-Key": "test-api-key"}
 TIERS = ("national", "state", "international")
 
 
-def _prompt() -> str:
-    text = ROUTINE_DOC.read_text(encoding="utf-8")
-    return text.split("## Prompt\n", 1)[1].split("```text\n", 1)[1].split("\n```", 1)[0]
+def _skill() -> str:
+    return SKILL.read_text(encoding="utf-8")
 
 
 def _example_payload() -> dict:
-    match = re.search(r"^   \{\n.*?^   \}$", _prompt(), re.MULTILINE | re.DOTALL)
-    assert match, "the prompt has no example payload"
-    return json.loads(match.group(0))
+    match = re.search(r"```json\n(\{.*?\})\n```", _skill(), re.DOTALL)
+    assert match, "the skill has no example payload"
+    return json.loads(match.group(1))
 
 
-def _prompt_states() -> list[str]:
-    lines = _prompt().splitlines()
-    index = next(
-        i for i, line in enumerate(lines) if "copied exactly from this list" in line
+def test_skill_is_discoverable_and_requires_explicit_invocation():
+    match = re.match(r"\A---\n(.*?)\n---\n", _skill(), re.DOTALL)
+    assert match, "the skill needs YAML frontmatter"
+    metadata = yaml.safe_load(match.group(1))
+
+    assert metadata["name"] == SKILL.parent.name == "story-ingest"
+    assert "Use when" in metadata["description"]
+    assert metadata["disable-model-invocation"] is True
+
+
+def test_skill_version_is_recorded():
+    version = re.search(
+        r"^Routine version: (\d{4}-\d{2}-\d{2})$", _skill(), re.MULTILINE
     )
-    return [name.strip() for name in lines[index + 1].split(",")]
-
-
-def test_prompt_version_is_recorded():
-    first_line = _prompt().splitlines()[0]
-    version = re.fullmatch(r"Prompt version: (\d{4}-\d{2}-\d{2})", first_line)
-    assert version, "the prompt must start with its version"
-
+    assert version, "the skill must declare its version"
+    assert (
+        f"first line of the report must be `Routine version: {version.group(1)}`"
+        in (_skill())
+    )
     versions_table = ROUTINE_DOC.read_text(encoding="utf-8").split(
-        "## Prompt versions", 1
+        "## Routine versions", 1
     )[1]
     latest = re.search(r"^\| `(\d{4}-\d{2}-\d{2})` \|", versions_table, re.MULTILINE)
     assert latest and latest.group(1) == version.group(1)
+
+
+def test_setup_invokes_the_canonical_skill():
+    doc = ROUTINE_DOC.read_text(encoding="utf-8")
+    assert "../.claude/skills/story-ingest/SKILL.md" in doc
+    assert 'claude -p "/story-ingest"' in doc
+    assert "## Prompt\n" not in doc
 
 
 def test_example_payload_carries_tier_state_and_source_label():
     payload = _example_payload()
 
     assert payload["tier"] in TIERS
+    assert payload["category"] in LIVE_TOPICS
     assert payload["source_label"].strip()
     assert payload["source_url"]
     if payload["tier"] == "state":
@@ -64,8 +77,13 @@ def test_example_payload_carries_tier_state_and_source_label():
         assert payload["state"] is None
 
 
-def test_prompt_state_list_matches_saransh_states():
-    assert _prompt_states() == list(INDIAN_STATES)
+def test_skill_uses_the_canonical_onboarding_choices():
+    assert "[`app/onboarding.py`](../../../app/onboarding.py)" in _skill()
+    assert (SKILL.parent / "../../../app/onboarding.py").resolve() == (
+        REPO_ROOT / "app" / "onboarding.py"
+    )
+    assert "INDIAN_STATES" in _skill()
+    assert "LIVE_TOPICS" in _skill()
 
 
 @pytest.mark.parametrize(
@@ -77,7 +95,7 @@ def test_prompt_state_list_matches_saransh_states():
     ],
 )
 def test_routine_payload_is_accepted_by_ingest(client, overrides):
-    """The prompt's tier must be accepted and returned by the API."""
+    """The skill's tier must be accepted and returned by the API."""
     payload = {**_example_payload(), **overrides}
 
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)

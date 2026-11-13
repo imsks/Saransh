@@ -52,27 +52,25 @@ def test_migrate_defaults_to_the_local_database():
     assert "up: migrate" in text
 
 
-@pytest.mark.parametrize(
-    "variables",
-    [
-        {},
-        {"DATABASE_URL": "postgresql://u:p@db.example.com:5432/postgres"},
-        {"CONFIRM_PROD": "1"},
-        {"DATABASE_URL": "postgresql://u:p@db.example.com/db", "CONFIRM_PROD": "0"},
-    ],
-)
-def test_production_migration_requires_url_and_confirmation(variables):
+def test_production_migration_requires_a_database_url(tmp_path):
+    # Point PROD_ENV at a missing file so the test can never reach production.
     result = subprocess.run(
-        ["make", "migrate-prod"],
+        ["make", "migrate-prod", f"PROD_ENV={tmp_path / 'missing.env'}"],
         cwd=ROOT,
         capture_output=True,
         text=True,
         check=False,
-        env={"PATH": "/usr/bin:/bin", **variables},
+        env={"PATH": "/usr/bin:/bin"},
     )
     assert result.returncode != 0
-    assert "CONFIRM_PROD" in result.stdout + result.stderr
-    assert "u:p" not in result.stdout + result.stderr
+    assert "DATABASE_URL" in result.stdout + result.stderr
+
+
+def test_production_migration_reads_env_production_and_confirms_itself():
+    text = MAKEFILE.read_text()
+    assert "PROD_ENV ?= .env.production" in text
+    assert "CONFIRM_PROD=1" in text
+    assert "-m scripts.init_db --production" in text
 
 
 def test_deploy_script_remains_available_without_a_make_target():
