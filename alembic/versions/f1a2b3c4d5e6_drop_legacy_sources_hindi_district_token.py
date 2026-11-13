@@ -41,7 +41,11 @@ def upgrade() -> None:
             for name in legacy:
                 batch_op.drop_column(name)
 
-    waitlist_columns = {c["name"] for c in inspector.get_columns("waitlist")}
+    waitlist_columns = (
+        {c["name"] for c in inspector.get_columns("waitlist")}
+        if "waitlist" in tables
+        else set()
+    )
     if "signup_token" in waitlist_columns:
         constraints = {c["name"] for c in inspector.get_unique_constraints("waitlist")}
         with op.batch_alter_table("waitlist") as batch_op:

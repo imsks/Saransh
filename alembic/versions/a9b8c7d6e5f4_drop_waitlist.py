@@ -3,8 +3,8 @@
 Export any signup records that must be retained before upgrading. Downgrading
 recreates the previous schema only; deleted records cannot be recovered.
 
-Revision ID: e2f3a4b5c6d7
-Revises: d1e2f3a4b5c6
+Revision ID: a9b8c7d6e5f4
+Revises: f1a2b3c4d5e6
 Create Date: 2026-11-12 00:00:00.000000
 
 """
@@ -16,14 +16,15 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "e2f3a4b5c6d7"
-down_revision: Union[str, Sequence[str], None] = "d1e2f3a4b5c6"
+revision: str = "a9b8c7d6e5f4"
+down_revision: Union[str, Sequence[str], None] = "f1a2b3c4d5e6"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.drop_table("waitlist")
+    if "waitlist" in sa.inspect(op.get_bind()).get_table_names():
+        op.drop_table("waitlist")
 
 
 def downgrade() -> None:

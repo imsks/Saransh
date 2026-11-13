@@ -256,9 +256,7 @@ def test_migration_runner_upgrades_a_versioned_database():
             "source_label",
             "tier",
         }
-        assert "signup_token" not in {
-            c["name"] for c in inspector.get_columns("waitlist")
-        }
+        assert {"sources", "waitlist"}.isdisjoint(inspector.get_table_names())
         assert connection.execute(
             text("SELECT source_url, source_label FROM stories ORDER BY id")
         ).all() == [
@@ -267,10 +265,6 @@ def test_migration_runner_upgrades_a_versioned_database():
             ("https://unmatched.test", None),
             (None, None),
         ]
-        assert connection.execute(text("SELECT email FROM waitlist")).scalar_one()
-        connection.execute(
-            text("INSERT INTO waitlist (name, email) VALUES ('New', 'new@test.in')")
-        )
         assert (
             connection.execute(
                 text("SELECT version_num FROM alembic_version_saransh")
@@ -340,7 +334,7 @@ def test_migration_runner_enables_row_level_security_on_saransh_tables(
 
     assert connection.statements == [
         f'ALTER TABLE "{name}" ENABLE ROW LEVEL SECURITY'
-        for name in ("alembic_version_saransh", "stories", "waitlist")
+        for name in ("alembic_version_saransh", "stories")
     ]
 
 
@@ -624,7 +618,7 @@ def test_drop_preferences_migration_leaves_users_alone_and_is_safe_to_rerun():
 
 
 def test_drop_waitlist_migration_round_trips_without_changing_other_tables():
-    module = _script_directory().get_revision("e2f3a4b5c6d7").module
+    module = _script_directory().get_revision("a9b8c7d6e5f4").module
 
     engine = create_engine("sqlite:///:memory:")
     with engine.begin() as connection:

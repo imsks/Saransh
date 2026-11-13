@@ -5,7 +5,7 @@ migration adds the `saransh_*` and `onboarded_from` columns). Saransh was never
 live, so the rows here are not copied. This migration never alters `users`.
 
 Revision ID: f1e2d3c4b5a6
-Revises: e2f3a4b5c6d7
+Revises: a9b8c7d6e5f4
 Create Date: 2026-11-12 00:00:00.000000
 
 """
@@ -17,7 +17,7 @@ import sqlalchemy as sa
 from alembic import op
 
 revision: str = "f1e2d3c4b5a6"
-down_revision: Union[str, Sequence[str], None] = "e2f3a4b5c6d7"
+down_revision: Union[str, Sequence[str], None] = "a9b8c7d6e5f4"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
