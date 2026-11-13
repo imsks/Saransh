@@ -253,6 +253,7 @@ def test_migration_runner_upgrades_a_versioned_database():
             "district",
             "source_url",
             "source_label",
+            "tier",
         }
         assert "signup_token" in {c["name"] for c in inspector.get_columns("waitlist")}
         assert connection.execute(
@@ -356,6 +357,42 @@ def test_add_story_source_url_migration_round_trips():
             module.downgrade()
         remaining = {c["name"] for c in inspect(connection).get_columns("stories")}
         assert "source_url" not in remaining
+
+
+def test_add_story_tier_migration_round_trips_without_backfill():
+    """Existing Stories stay readable with a null tier."""
+    revision = _script_directory().get_revision("e2f3a4b5c6d7")
+    module = revision.module
+
+    engine = create_engine("sqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE stories (" "id TEXT PRIMARY KEY, title_en TEXT NOT NULL)"
+            )
+        )
+        connection.execute(
+            text("INSERT INTO stories (id, title_en) VALUES ('legacy', 'Old story')")
+        )
+        migration_context = MigrationContext.configure(connection)
+
+        with Operations.context(migration_context):
+            module.upgrade()
+        column = {c["name"]: c for c in inspect(connection).get_columns("stories")}[
+            "tier"
+        ]
+        assert column["nullable"] is True
+        assert (
+            connection.execute(
+                text("SELECT tier FROM stories WHERE id = 'legacy'")
+            ).scalar_one()
+            is None
+        )
+
+        with Operations.context(migration_context):
+            module.downgrade()
+        remaining = {c["name"] for c in inspect(connection).get_columns("stories")}
+        assert "tier" not in remaining
 
 
 def test_drop_story_published_at_migration_round_trips():

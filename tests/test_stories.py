@@ -16,6 +16,7 @@ VALID_PAYLOAD = {
     "source_url": "https://example.com/article",
     "source_label": "Example News",
     "category": "transport",
+    "tier": "state",
     "state": "Maharashtra",
 }
 
@@ -69,7 +70,9 @@ def test_optional_fields_can_be_null(client, field):
     assert response.json()[field] is None
 
 
-@pytest.mark.parametrize("field", ["title_en", "summary_en", "image_url", "category"])
+@pytest.mark.parametrize(
+    "field", ["title_en", "summary_en", "image_url", "category", "tier"]
+)
 def test_missing_required_field_returns_422(client, field):
     payload = {k: v for k, v in VALID_PAYLOAD.items() if k != field}
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
@@ -84,6 +87,7 @@ def test_missing_required_field_returns_422(client, field):
         {"image_url": "not-a-valid-url"},
         {"source_url": "not-a-valid-url"},
         {"source_url": ""},
+        {"tier": "city"},
     ],
 )
 def test_invalid_field_returns_422(client, override):
@@ -164,6 +168,24 @@ def test_get_story_is_public(client):
 
     assert response.status_code == 200
     assert response.json()["id"] == story_id
+
+
+def test_legacy_story_without_tier_still_lists_and_opens(client, db_session):
+    story = Story(
+        title_en="Legacy story",
+        summary_en="Stored before tier was added.",
+        image_url="https://example.com/legacy.jpg",
+        category="transport",
+    )
+    db_session.add(story)
+    db_session.commit()
+
+    listed = client.get(STORIES_URL).json()
+    assert any(item["id"] == str(story.id) and item["tier"] is None for item in listed)
+
+    detail = client.get(f"{STORIES_URL}/{story.id}")
+    assert detail.status_code == 200
+    assert detail.json()["tier"] is None
 
 
 def test_get_story_404_for_unknown_id(client):

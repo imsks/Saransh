@@ -1,10 +1,12 @@
 """Request and response schemas for Stories."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, HttpUrl, field_validator
+
+StoryTier = Literal["national", "state", "international"]
 
 
 class StoryIn(BaseModel):
@@ -14,6 +16,7 @@ class StoryIn(BaseModel):
     source_url: Optional[HttpUrl] = None
     source_label: Optional[str] = None
     category: str
+    tier: StoryTier
     state: Optional[str] = None
 
     @field_validator("title_en", "summary_en", "category")
@@ -32,6 +35,7 @@ class StoryOut(BaseModel):
     source_url: Optional[str]
     source_label: Optional[str]
     category: str
+    tier: Optional[StoryTier]
     state: Optional[str]
     status: str
     created_at: datetime

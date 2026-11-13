@@ -35,6 +35,7 @@ class Story(CreatedAtMixin, Base):
     source_url = Column(Text, nullable=True)
     source_label = Column(Text, nullable=True)
     category = Column(String(50), nullable=False)
+    tier = Column(String(20), nullable=True)
     state = Column(String(100), nullable=True)
     status = Column(String(20), nullable=False, default=STATUS_PUBLISHED)
 

@@ -4,7 +4,7 @@ A [Claude Code routine](https://docs.claude.com/en/docs/claude-code) that ingest
 news into Saransh on a schedule. Each run creates up to **10 new Stories** via
 `POST /api/v1/stories`; scheduling the same prompt **5x a day** gives the 50-a-day cadence.
 
-No API or app-code change is required — the routine only calls the existing endpoint.
+The routine calls the existing ingest endpoint; it does not read or write the database directly.
 
 > **STOPGAP**: This routine is a temporary fallback while the review screen and publish action do not yet exist. It publishes immediately, may use a publisher's own image, and is retired once the pipeline and publish action are in place.
 >
@@ -30,16 +30,15 @@ guarded by the `X-API-Key` header, compared to `SARANSH_INGEST_API_KEY`
 
 Required, non-blank:
 
-- `title_en`, `summary_en`, `category`
+- `title_en`, `summary_en`, `category`, `tier`
 - `image_url`: the cover photo, an absolute `http`/`https` image URL
 
-Optional: `source_url`, `source_label`, `state` (omit or `null`; never send `""`). `state` is set for State stories only; leave it `null` for National and International stories.
+`tier` must be exactly `national`, `state` or `international`. Optional: `source_url`,
+`source_label`, `state` (omit or `null`; never send `""`). `state` is set for State stories only;
+leave it `null` for National and International stories.
 
-`tier` (`national`, `state` or `international`) is not stored yet: the API ignores it, like any
-unknown field. The routine sends it, `state` and `source_label` on every Story from prompt version
-`2026-11-12`, so that ingest keeps working when [#134](https://github.com/imsks/Saransh/issues/134)
-stores `tier` and makes `tier`, `source_url`, `source_label` and, for State Stories, `state`
-required. Deploy that prompt to the scheduled routine before #134 ships.
+The database column is nullable so Stories ingested before this change remain readable with a
+`null` tier. New ingests must include a valid tier; a missing or unknown tier is rejected.
 
 `source_url` is the **citation link** — the single canonical article the summary was extracted from —
 and `source_label` is that outlet's name. The column is nullable because Stories ingested before

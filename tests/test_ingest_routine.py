@@ -77,7 +77,7 @@ def test_prompt_state_list_matches_saransh_states():
     ],
 )
 def test_routine_payload_is_accepted_by_ingest(client, overrides):
-    """H1 ships before the API stores tier: sending it must not break ingest."""
+    """The prompt's tier must be accepted and returned by the API."""
     payload = {**_example_payload(), **overrides}
 
     response = client.post(STORIES_URL, json=payload, headers=VALID_HEADERS)
@@ -85,4 +85,5 @@ def test_routine_payload_is_accepted_by_ingest(client, overrides):
     assert response.status_code == 201
     data = response.json()
     assert data["source_label"] == payload["source_label"]
+    assert data["tier"] == payload["tier"]
     assert data["state"] == payload["state"]
