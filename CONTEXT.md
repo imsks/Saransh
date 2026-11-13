@@ -69,7 +69,7 @@ A public record that a published Story was changed: the field, the old value, th
 _Avoid_: Edit, fix, update
 
 **Stopgap Routine**:
-The scheduled Claude Code routine (`docs/story-ingest-routine.md`) that fills the site today. It is not the Pipeline: its Stories are published without Review and may carry a publisher's image. A recorded, temporary exception that ends when the Pipeline and the publish step exist.
+The scheduled Claude Code routine prompt ([docs/story-ingest-routine.md](docs/story-ingest-routine.md)) that fills the site today. It is not the Pipeline: its Stories are published without Review and may carry a publisher's image. A recorded, temporary exception that ends when the Pipeline and the publish step exist.
 _Avoid_: The pipeline, the scraper, the bot
 
 ### Reader Terms

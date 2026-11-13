@@ -64,7 +64,7 @@ For commit hooks: `pre-commit install` after installing the test requirements.
 The full review pipeline is not built. Its requirements are hard word limits
 (English <= 60), attribution, official photos or illustrations,
 and human approval before publication. The current
-[stopgap routine](docs/story-ingest-routine.md) is a documented exception:
+[stopgap routine prompt](docs/story-ingest-routine.md) is a documented exception:
 it publishes immediately, may use publisher images and has no enforced word limit.
 Do not silently extend that exception to new pipeline work.
 

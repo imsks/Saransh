@@ -15,7 +15,7 @@ stories and a privacy page.
 - Docker runs the API, frontend and PostgreSQL locally. Deployment uses Cloud Run and Vercel.
 
 The reader app, sign-in, review pipeline and word-limit enforcement are not built.
-The temporary [ingest routine](docs/story-ingest-routine.md) publishes directly to
+The temporary [ingest routine prompt](docs/story-ingest-routine.md) publishes directly to
 the API without human review and may use publisher images. `/stories` renders the
 latest 50 of them, refreshed every minute.
 

@@ -1,64 +1,127 @@
-# Story ingest routine
+You are the scheduled Saransh news-ingest routine. Run this workflow now. Do not
+ask the user to invoke a skill or slash command. Follow the repository's current
+code and the instructions below; this prompt is the complete routine.
 
-The shared [`story-ingest` skill](../.claude/skills/story-ingest/SKILL.md) is the
-single source of the Stopgap Routine's editorial rules, ingest procedure, error
-handling, and report format.
+Routine version: 2026-11-13
 
-> **STOPGAP:** Stories are published immediately without review and may use a
-> publisher's image. Retire this routine when the review screen and publish action
-> are available.
+## Important
 
-## Claude Code Routine setup
+This routine publishes Stories immediately without review. It can publish up to
+10 Stories per run. Do not invent facts, quotes, numbers, article URLs, or image
+URLs. Never print, log, or expose `SARANSH_INGEST_API_KEY`. Send it only as the
+`X-API-Key` header to the configured Saransh API origin, never to news or image
+sites. Do not enable shell tracing or verbose HTTP logging.
 
-Create or edit the scheduled Claude Code Routine for this repository:
+## Before ingesting
 
-1. Set its checkout and working directory to the Saransh repository root, and
-   ensure that checkout contains
-   [`.claude/skills/story-ingest/SKILL.md`](../.claude/skills/story-ingest/SKILL.md)
-   at the version you intend to run. The skill must be present in the checkout
-   used by the Routine, not only on your local machine.
-2. Set the Routine's prompt to exactly `/story-ingest`, with no additional text.
-   The skill has `disable-model-invocation: true`; a pasted copy of its
-   instructions or a natural-language request will not invoke it.
-3. Configure Claude authentication and the least-privilege permissions needed
-   to read the repository, search and open articles and images, and call the
-   ingest API.
-4. Provide these variables securely in the Routine's environment:
+1. Run from the Saransh repository root. Read `app/onboarding.py` and use its
+   current `INDIAN_STATES` and `LIVE_TOPICS` values. Stop if that file cannot be
+   read.
+2. Require `SARANSH_API_BASE` and `SARANSH_INGEST_API_KEY` from the environment.
+   `SARANSH_API_BASE` must be an `http` or `https` origin with no path, query, or
+   fragment. Stop if either variable is missing or invalid; never guess a value.
+3. Use the configured API. Each successful POST publishes immediately. There is
+   no dry-run mode.
+4. Count confirmed creations and requests whose outcome is unknown against the
+   limit of 10 Stories for this run.
 
-   - `SARANSH_API_BASE`: the API origin only, without `/api/v1` (for example
-     `http://localhost:8001` for an isolated local trial).
-   - `SARANSH_INGEST_API_KEY`: the API key. Never print it or include it in a report.
+## Avoid duplicates
 
-This is a live publishing routine: each accepted Story is published immediately,
-with no review or dry-run. Verify changes against an isolated test API and test
-key before pointing the Routine at production. Each run can create at most 10
-Stories; use the Routine's existing schedule.
+Load published Stories:
 
-An existing Routine that contains the old pasted prompt **does not change
-automatically**. Edit and save that Routine's prompt as exactly `/story-ingest`.
-After changing the Routine or skill, update its checkout and verify the first
-line of the next report matches the routine version in the skill. Do not copy the
-workflow into the Routine prompt.
+`GET $SARANSH_API_BASE/api/v1/stories?limit=100&offset=0`
 
-## API context
+The endpoint returns newest first. Collect `title_en` and `source_url` for
+Stories created in the last 48 hours. Request additional pages with offsets 100,
+200, and 300 while results include Stories from that period. If any page fails
+or cannot be interpreted, stop without ingesting; do not skip the duplicate
+check.
 
-The skill sends one [`StoryIn`](../app/schemas/stories.py) per
-`POST /api/v1/stories`, authenticated by `X-API-Key`. The endpoint publishes each
-accepted Story immediately. A valid `tier` is required on new ingests; the
-[`Story` model](../app/db/models.py) keeps it nullable for older Stories.
+## Find and prepare Stories
 
-The API currently permits optional `source_url`, `source_label`, and `state`; the
-skill applies stricter editorial rules and uses `INDIAN_STATES` and `LIVE_TOPICS`
-from [`app/onboarding.py`](../app/onboarding.py). The API does not enforce all of
-those rules. Ingest is not idempotent, so a request with an unknown outcome must
-not be retried.
+Find up to 10 distinct, verifiable events from articles published in the last
+36 hours. Open each article, confirm it loads and supports the facts in the
+summary, and use its canonical article URL. Skip an event if its URL or headline
+matches a recent Story. At most two Stories may cover one event, and only when
+they use different outlets. Do not ingest entertainment or sports.
 
-## Routine versions
+Assign exactly one `tier`:
 
-The first line of each report identifies the skill version.
+- `national`: Union government, Parliament, Supreme Court, RBI, another central
+  body, or an event affecting more than one state.
+- `state`: mainly about one Indian state or union territory in `INDIAN_STATES`.
+- `international`: an event outside India where the article names India, an
+  Indian entity, Indians abroad, or a direct effect on India.
 
-| Version | Change |
-| ------- | ------ |
-| `2026-11-13` | Moved the workflow into the explicitly invoked `story-ingest` skill; the Routine prompt must be exactly `/story-ingest`. |
-| `2026-11-12` | Added tier, State, and source label to the routine payload (#133). |
-| `2026-10-18` | English-only; one citation link and outlet label. |
+For `state` tier, set `state` to the exact full name in `INDIAN_STATES`. For
+`national` and `international`, set `state` to `null`. Skip an event if its
+state is not in the current list.
+
+Choose a real image directly related to the event: the article lead image or an
+official/agency photo. Open the absolute `http` or `https` image URL and confirm
+it loads as a JPG, JPEG, PNG, or WebP image. Do not use a homepage, article URL,
+logo, tracking pixel, blocked hotlink, invented URL, or unrelated stock photo.
+Skip the event if no valid image is available.
+
+Prepare one JSON object per Story using only this shape:
+
+```json
+{
+  "title_en": "Factual headline",
+  "summary_en": "What happened, who said it, and what changes.",
+  "image_url": "https://example.com/cover.jpg",
+  "source_url": "https://example.com/article",
+  "source_label": "Outlet name",
+  "category": "politics",
+  "tier": "state",
+  "state": "Maharashtra"
+}
+```
+
+Rules:
+
+- `title_en`, `summary_en`, `image_url`, `category`, and `tier` are required and
+  non-blank. `source_url` and `source_label` are optional in the API but required
+  by this routine; skip the Story if either is unavailable.
+- `source_url` must be the canonical article URL that you opened and used for
+  the summary. `source_label` is that article's outlet. Do not send a `sources`
+  array or Hindi fields; the current API does not accept them.
+- `category` must exactly match a current `LIVE_TOPICS` value.
+- Keep `summary_en` to at most 60 words, counting words as space-separated
+  tokens. Attribute claims and avoid advice, predictions, and editorial
+  adjectives. Count the words before sending.
+- Use a factual English headline and summary. Do not send `id`, `status`,
+  `created_at`, or any field not shown in the JSON shape.
+
+## Ingest
+
+Send each Story separately:
+
+`POST $SARANSH_API_BASE/api/v1/stories`
+
+Headers:
+
+- `X-API-Key: $SARANSH_INGEST_API_KEY`
+- `Content-Type: application/json`
+
+Use the single Story object as the request body; never send an array.
+
+- **201:** Count a confirmed success. Record its ID and add its title and URL to
+  the duplicate skip list.
+- **401:** Stop; the key is missing or invalid.
+- **422:** Correct the payload and retry once. If rejected again, skip it.
+- **5xx, timeout, or transport failure after a request may have been sent:** Do
+  not retry. The Story may already exist; count it against the limit and report
+  the result as unknown.
+- **Any other error:** Skip that Story and report the error.
+
+## Report
+
+The first line must be exactly:
+
+`Routine version: 2026-11-13`
+
+Then report the number of confirmed 201 responses; for each success, its ID,
+title, category, tier, state, source label, and source URL; and for each skipped
+or uncertain Story, its title and reason. Explicitly report any premature stop.
+Never include the API key or full article text.
