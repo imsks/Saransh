@@ -60,8 +60,7 @@ services:
       - ./frontend/package.json:/app/package.json
       - ./frontend/package-lock.json:/app/package-lock.json
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8001/api/v1
-      API_REWRITE_TARGET: http://saransh-api:8001
+      NEXT_PUBLIC_API_URL: http://saransh-api:8001/api/v1
       WATCHPACK_POLLING: "true"
     env_file:
       - path: frontend/.env

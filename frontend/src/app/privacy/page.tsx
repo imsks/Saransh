@@ -73,19 +73,11 @@ export default function PrivacyPage() {
               person on both.
             </p>
             <p className={paragraphClass}>
-              After signing in you set up your edition with a display name,
-              state and up to three optional topics. Saransh stores these
-              preferences in its own table and does not write to your Rajniti
-              profile. If you already have a state saved on Rajniti, it is
-              only used to pre-select yours.
-            </p>
-          </Section>
-
-          <Section heading="Earlier waitlist signups">
-            <p className={paragraphClass}>
-              If you joined the waitlist before sign-in existed, we keep that
-              name and email only to send the one launch email we promised. It
-              is never sold, rented, or shared with anyone else.
+              After signing in you set up your edition with up to three
+              optional topics. Saransh stores these preferences on your shared
+              account, along with which product you first signed up through.
+              It asks for your name and state only if your account does not
+              have them yet, and never changes ones you already saved.
             </p>
           </Section>
 
@@ -140,16 +132,15 @@ export default function PrivacyPage() {
               >
                 PostHog
               </a>
-              , on their cloud service in the United States. Your account and
-              waitlist details stay in our own database and are never sent to
-              PostHog.
+              , on their cloud service in the United States. Your account
+              details stay in our own database and are never sent to PostHog.
             </p>
           </Section>
 
           <Section heading="Deleting your data">
             <p className={paragraphClass}>
-              Ask and it is deleted — your account, your answers, any waitlist
-              entry and their analytics. Because the account is shared, this
+              Ask and it is deleted — your account, your answers and their
+              analytics. Because the account is shared, this
               removes you from Rajniti too. Message the maintainer on GitHub at{" "}
               <a
                 href={EXTERNAL.maintainer}

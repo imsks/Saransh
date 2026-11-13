@@ -21,11 +21,14 @@ def _iter_route_paths(routes):
             yield from _iter_route_paths(included_router.routes)
 
 
-def test_api_router_has_no_scraper_or_agent_routes():
+def test_api_router_exposes_only_current_routes():
     paths = set(_iter_route_paths(router.routes))
-    assert not any("articles" in path for path in paths)
-    assert not any("agents" in path for path in paths)
-    assert "/health" in paths
-    assert "/stories" in paths
-    assert "/waitlist" not in paths
-    assert {"/users/sync", "/me", "/me/onboarding"} <= paths
+    assert paths == {
+        "/",
+        "/health",
+        "/stories",
+        "/stories/{story_id}",
+        "/users/sync",
+        "/me",
+        "/me/onboarding",
+    }

@@ -75,23 +75,19 @@ _Avoid_: The pipeline, the scraper, the bot
 ### Reader Terms
 
 **Visitor**:
-Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a Waitlist Signup — one Visitor may create several Signups, and one Signup may be made from several Visitors. A Visitor is not a User either: a Visitor is a browser Saransh has not identified, so the moment one signs in they are a User for the rest of that browser's session. Saransh never learns an unidentified Visitor's name or email.
+Someone reading the Saransh site, counted anonymously per browser. A Visitor is not a User: a Visitor is a browser Saransh has not identified, so the moment one signs in they are a User for the rest of that browser's session. Saransh never learns an unidentified Visitor's name or email.
 _Avoid_: Session, traffic, audience
 
 **Guest**:
 A Visitor reading Stories in the app before signing in. A Guest sees 6 National and International Stories, counted toward the day's 50, then the sign-in wall. A Guest's progress carries over when they sign in. Planned.
 _Avoid_: Anonymous user, trial user
 
-**Waitlist Signup**:
-A person who asked, before sign-in existed, to be told when Saransh launches. Identified by email. A Signup is not a User — it is an email we promised to contact once, with no credentials. New Signups are no longer collected; Google sign-in replaced the form.
-_Avoid_: Subscriber, lead, waitlister
-
 **User**:
-A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in and keeps what readers tell it in its own `saransh_user_preferences` table; it never writes Rajniti's answers. Users are readers of Saransh, never authors of Stories.
+A person who has signed in with Google and therefore has a durable identity Saransh recognises across browsers and devices. One User is one person across both Saransh and Rajniti — the same row in the shared `users` table, which Rajniti owns, keyed by the Google account id. Saransh creates the row at a first sign-in, recording `onboarded_from = "saransh"` (Rajniti's rows default to `"rajniti"`; the value never changes after insert), and keeps what readers tell it on that same row in the `saransh_*` columns. It has no table of its own for Users. Users are readers of Saransh, never authors of Stories.
 _Avoid_: Account, member, subscriber, profile
 
 **Onboarding**:
-The questions Saransh asks a User once, right after their first sign-in: name and State (both required) and up to 3 Topics (optional), plus interest in the coming-soon Topics. The name is prefilled from Google and editable; Rajniti's State pre-selects ours when it matches exactly. English only for now, no username step and no district question. Onboarding is per-product: it is stored in Saransh's own table, and Rajniti's onboarding flag is never read or written.
+The questions Saransh asks a User, right after sign-in, about what the shared `users` row is missing: a name (when Google gave none) and a State (when absent or not one Saransh offers), both required when asked; and, once, up to 3 Topics (optional) plus interest in the coming-soon Topics. A name or State already on the row is never asked for or overwritten. English only for now, no username step and no district question. Saransh is onboarded when nothing is missing (`saransh_onboarded_at` is set); Rajniti's `onboarding_completed` flag is never read or written.
 _Avoid_: Signup, registration, setup, profile completion, wizard
 
 **Edition**:

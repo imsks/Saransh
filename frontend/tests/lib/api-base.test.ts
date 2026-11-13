@@ -10,7 +10,6 @@ afterEach(() => {
   } else {
     process.env.NEXT_PUBLIC_API_URL = ORIGINAL_PUBLIC_API_URL;
   }
-  delete process.env.API_URL;
 });
 
 const REMOTE = "https://saransh-572964795629.asia-south1.run.app/api/v1";
@@ -28,10 +27,17 @@ describe("getApiBaseUrl", () => {
     );
   });
 
-  it("prefers API_URL on the server when the public API is remote", () => {
-    process.env.NEXT_PUBLIC_API_URL = REMOTE;
-    process.env.API_URL = "http://internal:8001/api/v1/";
-    expect(getApiBaseUrl({ forServer: true })).toBe("http://internal:8001/api/v1");
+  it("trims a trailing slash from the configured server API URL", () => {
+    process.env.NEXT_PUBLIC_API_URL = `${REMOTE}/`;
+    expect(getApiBaseUrl({ forServer: true })).toBe(REMOTE);
+  });
+
+  it("uses the container API directly on the server and same-origin in the browser", () => {
+    process.env.NEXT_PUBLIC_API_URL = "http://saransh-api:8001/api/v1";
+    expect(getApiBaseUrl({ forServer: true })).toBe(
+      "http://saransh-api:8001/api/v1",
+    );
+    expect(getApiBaseUrl({ forServer: false })).toBe("/api/v1");
   });
 
   it("calls the remote public API directly from the server", () => {

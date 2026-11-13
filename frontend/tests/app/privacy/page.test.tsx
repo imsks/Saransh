@@ -73,7 +73,6 @@ describe("PrivacyPage", () => {
     const text = body();
     for (const heading of [
       "Signing in with Google",
-      "Earlier waitlist signups",
       "Usage analytics",
       "Session recording",
       "Analytics served from our own domain",
@@ -85,8 +84,9 @@ describe("PrivacyPage", () => {
       ).toBeTruthy();
     }
 
-    expect(text).toContain("stores these preferences in its own table");
-    expect(text).toContain("does not write to your Rajniti profile");
+    expect(text).toContain("stores these preferences on your shared account");
+    expect(text).toContain("which product you first signed up through");
+    expect(text).toContain("never changes ones you already saved");
     expect(text).not.toContain("shared with Rajniti");
     expect(text).toContain("joined to your account ID");
     expect(text).toContain(
@@ -94,6 +94,7 @@ describe("PrivacyPage", () => {
     );
     expect(text).toContain("PostHog");
     expect(text).toContain("United States");
+    expect(text).toContain("Your account details stay in our own database");
   });
 
   it("shares the site frame, including the navbar's Contribute link", () => {
