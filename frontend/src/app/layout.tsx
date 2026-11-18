@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 
 import JsonLd from "@/components/seo/JsonLd";
+import Splash from "@/components/splash/Splash";
 import { AnalyticsProvider, AuthProvider, ThemeProvider } from "@/components/providers";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/json-ld";
 import {
@@ -11,7 +12,6 @@ import {
   getSiteUrl,
   SITE_NAME,
 } from "@/lib/seo/site";
-
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -99,7 +99,10 @@ export default function RootLayout({
         <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />
         <AnalyticsProvider>
           <AuthProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <Splash />
+              {children}
+            </ThemeProvider>
           </AuthProvider>
         </AnalyticsProvider>
       </body>

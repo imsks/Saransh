@@ -62,3 +62,7 @@ frontend/tsconfig.tsbuildinfo
 # docs
 /docs/PROJECT_STATE.md
 node_modules/
+
+
+# AI
+.claude
