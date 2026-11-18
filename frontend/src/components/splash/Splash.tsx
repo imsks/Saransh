@@ -14,14 +14,6 @@ export const SPLASH_FADE_MS = 300;
 
 type Phase = "intro" | "offline" | "done";
 
-/**
- * CSS owns the fade-out, timed from the same constants, so the splash still
- * leaves if the page's JavaScript never loads. JS only unmounts it afterwards
- * or cancels the fade to show the offline screen.
- *
- * The CSS clock starts at first paint, before React hydrates, so JS reads how
- * far the fade has run and times itself from that: one clock, not two.
- */
 const FADE_OUT = `splash-out ${SPLASH_FADE_MS}ms ease-out ${SPLASH_INTRO_MS}ms forwards`;
 
 export default function Splash() {
@@ -40,14 +32,16 @@ export default function Splash() {
         ?.getAnimations?.()
         .find((a) => (a as CSSAnimation).animationName === "splash-out")?.currentTime ?? 0,
     );
-    let done: ReturnType<typeof setTimeout> | undefined;
+    const introLeft = Math.max(0, SPLASH_INTRO_MS - elapsed);
+
     const intro = setTimeout(() => {
-      // Checked when the intro ends, so losing the connection during it counts
-      // (A3). If React hydrated after that, the page is already showing: let
-      // the splash go rather than bring it back.
-      if (elapsed < SPLASH_INTRO_MS && !navigator.onLine) return setPhase("offline");
-      done = setTimeout(() => setPhase("done"), SPLASH_FADE_MS);
-    }, Math.max(0, SPLASH_INTRO_MS - elapsed));
+      if (elapsed < SPLASH_INTRO_MS && !navigator.onLine) setPhase("offline");
+    }, introLeft);
+    
+    const done = setTimeout(
+      () => setPhase((p) => (p === "offline" ? p : "done")),
+      introLeft + SPLASH_FADE_MS,
+    );
 
     return () => {
       clearTimeout(intro);
