@@ -15,7 +15,7 @@ VALID_PAYLOAD = {
     "image_url": "https://example.com/cover.jpg",
     "source_url": "https://example.com/article",
     "source_label": "Example News",
-    "category": "transport",
+    "category": "civic",
     "tier": "state",
     "state": "Maharashtra",
 }
@@ -62,16 +62,25 @@ def test_legacy_fields_in_the_payload_are_ignored(client, legacy):
     assert not set(legacy) & set(response.json())
 
 
-@pytest.mark.parametrize("field", ["source_url", "source_label", "state"])
-def test_optional_fields_can_be_null(client, field):
-    response = _ingest(client, **{field: None})
-
+@pytest.mark.parametrize("tier", ["national", "international"])
+def test_non_state_story_has_no_state(client, tier):
+    response = _ingest(client, tier=tier, state=None)
     assert response.status_code == 201
-    assert response.json()[field] is None
+    assert response.json()["tier"] == tier
+    assert response.json()["state"] is None
 
 
 @pytest.mark.parametrize(
-    "field", ["title_en", "summary_en", "image_url", "category", "tier"]
+    "field",
+    [
+        "title_en",
+        "summary_en",
+        "image_url",
+        "source_url",
+        "source_label",
+        "category",
+        "tier",
+    ],
 )
 def test_missing_required_field_returns_422(client, field):
     payload = {k: v for k, v in VALID_PAYLOAD.items() if k != field}
@@ -87,11 +96,56 @@ def test_missing_required_field_returns_422(client, field):
         {"image_url": "not-a-valid-url"},
         {"source_url": "not-a-valid-url"},
         {"source_url": ""},
+        {"source_url": None},
+        {"source_label": None},
+        {"source_label": "   "},
         {"tier": "city"},
+        {"category": "entertainment"},
+        {"category": "sports"},
+        {"category": "transport"},
+        {"state": None},
+        {"state": "Not a state"},
+        {"tier": "national", "state": "Maharashtra"},
+        {"tier": "international", "state": "Maharashtra"},
+        {"tier": "national", "state": ""},
     ],
 )
 def test_invalid_field_returns_422(client, override):
-    assert _ingest(client, **override).status_code == 422
+    response = _ingest(client, **override)
+    assert response.status_code == 422
+    assert response.json()["detail"]
+
+
+@pytest.mark.parametrize(
+    "summary, status",
+    [
+        (" ".join(["word"] * 60), 201),
+        (" ".join(["word"] * 61), 422),
+        (" ".join(["word"] * 60 + ["...", "—"]), 201),
+        ("x" * 400, 201),
+        ("x" * 401, 422),
+        ("  " + "x" * 400 + "  ", 201),
+    ],
+)
+def test_summary_limits(client, summary, status):
+    response = _ingest(client, summary_en=summary)
+    assert response.status_code == status
+    if status == 422:
+        assert "summary" in str(response.json()["detail"]).lower()
+
+
+@pytest.mark.parametrize(
+    "headline, status",
+    [
+        ("", 422),
+        ("   ", 422),
+        ("x" * 70, 201),
+        ("x" * 71, 422),
+        ("  " + "x" * 70 + "  ", 201),
+    ],
+)
+def test_headline_limits(client, headline, status):
+    assert _ingest(client, title_en=headline).status_code == status
 
 
 @pytest.mark.parametrize("headers", [{}, {"X-API-Key": "wrong-key"}])
@@ -115,7 +169,7 @@ def test_list_stories_is_public_and_includes_ingested_story(client):
 
 @pytest.mark.parametrize(
     "field, value",
-    [("category", "unique-category"), ("state", "FilterState")],
+    [("category", "civic"), ("state", "Maharashtra")],
 )
 def test_list_stories_filters(client, field, value):
     _ingest(client, **{field: value})
@@ -190,6 +244,19 @@ def test_legacy_story_without_tier_still_lists_and_opens(client, db_session):
 
 def test_get_story_404_for_unknown_id(client):
     assert client.get(f"{STORIES_URL}/{uuid.uuid4()}").status_code == 404
+
+
+def test_get_story_404_for_unpublished_story(client, db_session):
+    draft = Story(
+        title_en="Unpublished draft",
+        summary_en="Should never be public.",
+        image_url="https://example.com/draft.jpg",
+        category="transport",
+        status="draft",
+    )
+    db_session.add(draft)
+    db_session.commit()
+    assert client.get(f"{STORIES_URL}/{draft.id}").status_code == 404
 
 
 def test_unversioned_path_is_not_served(client):

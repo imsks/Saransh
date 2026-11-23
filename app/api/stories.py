@@ -38,7 +38,7 @@ def list_stories(
 def get_story(story_id: UUID, db: Session = Depends(get_db)):
     """Return a single story by ID, or 404 if not found."""
     story = stories_repo.get_story(db, story_id)
-    if story is None:
+    if story is None or story.status != STATUS_PUBLISHED:
         raise HTTPException(status_code=404, detail="Story not found")
     return story
 
