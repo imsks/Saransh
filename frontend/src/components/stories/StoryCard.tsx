@@ -22,12 +22,6 @@ const officialTick = (
   </Icon>
 );
 
-const externalLinkIcon = (
-  <Icon size={12} strokeWidth={2.2} className="shrink-0">
-    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
-  </Icon>
-);
-
 /**
  * The source line names the Citation Link's outlet and links to the original.
  * No label, no line; no URL, plain text. Saransh is never the source.
@@ -58,7 +52,6 @@ function SourceLine({ story }: { story: Story }) {
       )}
     >
       {content}
-      {externalLinkIcon}
     </a>
   );
 }
