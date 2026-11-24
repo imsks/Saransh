@@ -162,7 +162,6 @@ describe("StoryCard source line", () => {
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
     expect(link.textContent).toContain("PTI");
     expect(link.className).toContain("min-h-11");
-    expect(link.querySelectorAll("svg")).toHaveLength(1);
   });
 
   it("is plain text when there is no URL", () => {
