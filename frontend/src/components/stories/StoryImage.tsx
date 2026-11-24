@@ -2,26 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 
-function ImageIcon() {
-  return (
-    <svg
-      width="30"
-      height="30"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-muted"
-      aria-hidden="true"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <circle cx="9" cy="9" r="2" />
-      <path d="m21 15-4.5-4.5L5 21" />
-    </svg>
-  );
-}
+import { Icon } from "@/components/ui";
+
+const imageIcon = (
+  <Icon size={30} strokeWidth={1.8} className="text-muted">
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <circle cx="9" cy="9" r="2" />
+    <path d="m21 15-4.5-4.5L5 21" />
+  </Icon>
+);
 
 /**
  * The card photo at 1.91:1, the ratio publishers use for share images, with a
@@ -44,7 +33,7 @@ export default function StoryImage({ src, source }: { src?: string; source?: str
       className="relative flex aspect-[1.91/1] w-full shrink-0 items-center justify-center bg-img-bg"
     >
       {failed ? (
-        <ImageIcon />
+        imageIcon
       ) : (
         <>
           {/* The headline sits right below, so the photo needs no alt text of its own. */}

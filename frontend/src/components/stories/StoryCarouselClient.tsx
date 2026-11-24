@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import StoryCard from "./StoryCard";
-import { eyebrowClass } from "@/components/ui";
+import { Icon, eyebrowClass, focusRingClass } from "@/components/ui";
 import type { Story } from "@/constants/stories";
 
 interface StoryCarouselClientProps {
@@ -14,24 +14,13 @@ interface StoryCarouselClientProps {
 const SWIPE_THRESHOLD_PX = 80;
 const AUTO_ADVANCE_MS = 3_000;
 
-const circleClass =
-  "inline-flex size-14 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red disabled:cursor-not-allowed disabled:opacity-35";
+const circleClass = `inline-flex size-14 items-center justify-center rounded-full ${focusRingClass} disabled:cursor-not-allowed disabled:opacity-35`;
 
 function Chevron({ direction }: { direction: "back" | "next" }) {
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.4}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <Icon size={22} strokeWidth={2.4}>
       <path d={direction === "back" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
-    </svg>
+    </Icon>
   );
 }
 

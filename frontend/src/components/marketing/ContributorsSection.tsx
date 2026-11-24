@@ -1,6 +1,6 @@
 import { Avatar } from "@sutra_ui/ui";
 
-import { Section, SectionHeader, buttonClass, cardClass, cx } from "@/components/ui";
+import { Section, SectionHeader, buttonClass, cardClass, cx, focusRingClass } from "@/components/ui";
 import contributorsData from "@/data/contributors.json";
 import { EXTERNAL } from "@/lib/routes";
 
@@ -60,7 +60,8 @@ export default function ContributorsSection({
                 rel="noopener noreferrer"
                 className={cx(
                   cardClass({ padding: "none" }),
-                  "flex items-center gap-3.5 p-4 no-underline transition-colors hover:border-line-heavy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red",
+                  "flex items-center gap-3.5 p-4 no-underline transition-colors hover:border-line-heavy",
+                  focusRingClass,
                 )}
               >
                 <Avatar src={contributor.avatar_url} name={contributor.login} alt="" size="lg" />

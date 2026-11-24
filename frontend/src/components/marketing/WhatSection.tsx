@@ -1,24 +1,14 @@
 import type { ReactNode } from "react";
 
 import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
-import { Section, SectionHeader, cardClass, cx, iconChipClass } from "@/components/ui";
+import { Icon, Section, SectionHeader, cardClass, cx, iconChipClass } from "@/components/ui";
 import { STORIES } from "@/constants/stories";
 
 function FeatureIcon({ children }: { children: ReactNode }) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 22 22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <Icon size={20} viewBox="0 0 22 22" strokeWidth={1.8}>
       {children}
-    </svg>
+    </Icon>
   );
 }
 

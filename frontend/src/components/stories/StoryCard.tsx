@@ -1,4 +1,4 @@
-import { cardClass, cx } from "@/components/ui";
+import { Icon, cardClass, cx, focusRingClass } from "@/components/ui";
 import type { Story, Topic } from "@/constants/stories";
 
 import StoryImage from "./StoryImage";
@@ -16,44 +16,17 @@ const TOPIC: Record<Topic, { name: string; className: string }> = {
 };
 
 /** The green tick. It means "Official Source" and nothing else. */
-function OfficialTick() {
-  return (
-    <svg
-      data-official-tick=""
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={3}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="shrink-0 text-green"
-      aria-hidden="true"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
+const officialTick = (
+  <Icon size={13} strokeWidth={3} data-official-tick="" className="shrink-0 text-green">
+    <path d="M20 6 9 17l-5-5" />
+  </Icon>
+);
 
-function ExternalLinkIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="shrink-0"
-      aria-hidden="true"
-    >
-      <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
-    </svg>
-  );
-}
+const externalLinkIcon = (
+  <Icon size={12} strokeWidth={2.2} className="shrink-0">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+  </Icon>
+);
 
 /**
  * The source line names the Citation Link's outlet and links to the original.
@@ -64,7 +37,7 @@ function SourceLine({ story }: { story: Story }) {
 
   const content = (
     <>
-      {story.official ? <OfficialTick /> : null}
+      {story.official && officialTick}
       <span className="truncate">{story.source}</span>
     </>
   );
@@ -79,10 +52,13 @@ function SourceLine({ story }: { story: Story }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${story.source}, opens the original in a new tab`}
-      className="inline-flex min-h-11 min-w-0 items-center gap-1.5 rounded-sm underline-offset-2 hover:underline focus-visible:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+      className={cx(
+        "inline-flex min-h-11 min-w-0 items-center gap-1.5 rounded-sm underline-offset-2 hover:underline focus-visible:underline",
+        focusRingClass,
+      )}
     >
       {content}
-      <ExternalLinkIcon />
+      {externalLinkIcon}
     </a>
   );
 }
@@ -123,8 +99,8 @@ export default function StoryCard({ story }: { story: Story }) {
 
         <footer className="flex min-h-11 items-center gap-1.5 text-[12.5px] leading-[1.35] text-muted">
           <SourceLine story={story} />
-          {story.source && story.createdAt ? <span aria-hidden="true">·</span> : null}
-          {story.createdAt ? <TimeAgo iso={story.createdAt} /> : null}
+          {story.source && story.createdAt && <span aria-hidden="true">·</span>}
+          {story.createdAt && <TimeAgo iso={story.createdAt} />}
         </footer>
       </div>
     </article>
