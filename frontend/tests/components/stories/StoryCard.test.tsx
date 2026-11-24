@@ -1,29 +1,91 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "@jest/globals";
+import { axe } from "jest-axe";
 
 import type { Story, Topic } from "@/constants/stories";
 
 import StoryCard from "@/components/stories/StoryCard";
 
+const NOW = new Date("2026-11-24T12:00:00Z");
+
 afterEach(() => {
   cleanup();
+  jest.useRealTimers();
 });
 
 function story(overrides: Partial<Story> = {}): Story {
   return {
     category: "National · Parliament",
     topic: "civic",
-    credit: "PTI",
+    imageUrl: "https://example.com/cover.jpg",
     headline: "Parliament passes data bill",
     body: "The Lok Sabha passed the bill by voice vote.",
     source: "PTI",
     sourceUrl: "https://example.com/canonical",
+    createdAt: new Date(NOW.getTime() - 4 * 60 * 60 * 1000).toISOString(),
     ...overrides,
   };
 }
 
-describe("StoryCard", () => {
-  const topicCases: [Topic, string][] = [
+function renderAtNow(s: Story) {
+  jest.useFakeTimers();
+  jest.setSystemTime(NOW);
+  return render(<StoryCard story={s} />);
+}
+
+function sourceLink() {
+  return screen.getByRole("link", { name: "PTI, opens the original in a new tab" });
+}
+
+describe("StoryCard layout", () => {
+  it("puts the parts in order: image, Topic row, headline, Summary, footer", () => {
+    const { container } = renderAtNow(story());
+
+    const parts = [
+      screen.getByTestId("story-image"),
+      screen.getByText("Civic"),
+      screen.getByRole("heading", { name: "Parliament passes data bill" }),
+      screen.getByText(/voice vote/),
+      container.querySelector("footer")!,
+    ];
+    for (let i = 1; i < parts.length; i++) {
+      expect(
+        parts[i - 1].compareDocumentPosition(parts[i]) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    }
+  });
+
+  it("keeps a fixed height, sets text in Inter, and never clips or scrolls the copy", () => {
+    const { container } = renderAtNow(story({ body: "Details ".repeat(60) }));
+
+    const card = container.querySelector("article")!;
+    expect(card.className).toContain("h-[612px]");
+    expect(card.className).toContain("font-sans");
+    expect(screen.getByRole("heading").className).toContain("font-sans");
+    const summary = screen.getByText(/Details/);
+    expect(summary.className).not.toMatch(/line-clamp|overflow-y-auto/);
+  });
+
+  it("keeps a 44px slot for Share and has no ⋮ menu", () => {
+    const { container } = renderAtNow(story());
+
+    expect(container.querySelector("[data-share-slot]")?.className).toContain("w-11");
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
+  it("has no Read story button", () => {
+    renderAtNow(story());
+    expect(screen.queryByText(/read story/i)).toBeNull();
+  });
+
+  it("passes axe", async () => {
+    const { container } = render(<StoryCard story={story()} />);
+    expect((await axe(container)).violations).toEqual([]);
+  });
+});
+
+describe("StoryCard Topic", () => {
+  const topics: [Topic, string][] = [
     ["politics", "Politics"],
     ["civic", "Civic"],
     ["education", "Education"],
@@ -33,148 +95,96 @@ describe("StoryCard", () => {
     ["sports", "Sports"],
   ];
 
-  it("links the source credit to the citation link", () => {
-    render(<StoryCard story={story()} />);
+  it.each(topics)("shows %s as text in its colour, with no colour wash", (topic, name) => {
+    const { container } = renderAtNow(story({ topic }));
 
-    const link = screen.getByRole("link", { name: /source article/ });
+    const label = screen.getByText(name);
+    expect(label.className).toContain(`text-topic-${topic}`);
+    expect(container.innerHTML).not.toContain(`bg-topic-${topic}-bg`);
+  });
+});
+
+describe("StoryCard image", () => {
+  it("shows the photo with a Photo: credit chip", () => {
+    renderAtNow(story());
+
+    const img = screen.getByTestId("story-image").querySelector("img")!;
+    expect(img.getAttribute("src")).toBe("https://example.com/cover.jpg");
+    expect(screen.getByText("Photo: PTI")).toBeTruthy();
+  });
+
+  it("swaps to a same-size placeholder with no chip when the photo fails", () => {
+    renderAtNow(story());
+
+    const frame = screen.getByTestId("story-image");
+    act(() => {
+      fireEvent.error(frame.querySelector("img")!);
+    });
+
+    expect(frame.querySelector("img")).toBeNull();
+    expect(frame.querySelector("svg")).not.toBeNull();
+    expect(frame.className).toContain("aspect-[1.91/1]");
+    expect(screen.queryByText(/^Photo:/)).toBeNull();
+  });
+
+  it("shows the placeholder when there is no photo at all", () => {
+    renderAtNow(story({ imageUrl: undefined }));
+
+    expect(screen.getByTestId("story-image").querySelector("img")).toBeNull();
+    expect(screen.queryByText(/^Photo:/)).toBeNull();
+  });
+});
+
+describe("StoryCard time", () => {
+  it("shows how long ago from createdAt, beside the source", () => {
+    const { container } = renderAtNow(story());
+
+    const time = screen.getByText("4 hours ago");
+    expect(time.tagName).toBe("TIME");
+    expect(container.querySelector("footer")?.contains(time)).toBe(true);
+  });
+
+  it("has no time on a sample card", () => {
+    const { container } = renderAtNow(story({ createdAt: undefined }));
+
+    expect(container.querySelector("time")).toBeNull();
+    expect(container.querySelector("footer")?.textContent).not.toContain("·");
+  });
+});
+
+describe("StoryCard source line", () => {
+  it("links to the original in a new tab, named for the source", () => {
+    renderAtNow(story());
+
+    const link = sourceLink();
     expect(link.getAttribute("href")).toBe("https://example.com/canonical");
-    expect(link.textContent).toContain("PTI");
-  });
-
-  it("keeps the visible credit inside the accessible name", () => {
-    // WCAG 2.5.3: a voice-control user says what they see on the badge.
-    render(<StoryCard story={story()} />);
-
-    const link = screen.getByRole("link", { name: /source article/ });
-    expect(link.getAttribute("aria-label")).toContain("PTI");
-  });
-
-  it("opens the citation link safely in a new tab", () => {
-    render(<StoryCard story={story()} />);
-
-    const link = screen.getByRole("link", { name: /source article/ });
     expect(link.getAttribute("target")).toBe("_blank");
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
+    expect(link.textContent).toContain("PTI");
+    expect(link.className).toContain("min-h-11");
+    expect(link.querySelectorAll("svg")).toHaveLength(1);
   });
 
-  it("renders the credit as plain text when there is no citation link", () => {
-    render(
-      <StoryCard
-        story={story({ sourceUrl: undefined, credit: "PTI Photo" })}
-      />,
-    );
+  it("is plain text when there is no URL", () => {
+    renderAtNow(story({ sourceUrl: undefined }));
 
     expect(screen.queryByRole("link")).toBeNull();
     expect(screen.getByText("PTI")).toBeTruthy();
   });
 
-  it("always shows Read story, but only links it when there is an article", () => {
-    const { rerender } = render(<StoryCard story={story()} />);
+  it("is absent without a label, and never falls back to Saransh", () => {
+    const { container } = renderAtNow(story({ source: undefined }));
 
-    const cta = screen.getByRole("link", { name: /^Read story/ });
-    expect(cta.getAttribute("href")).toBe("https://example.com/canonical");
-    expect(cta.textContent).toBe("Read story");
-
-    rerender(<StoryCard story={story({ sourceUrl: undefined })} />);
-    expect(screen.queryByRole("link", { name: /^Read story/ })).toBeNull();
-    expect(screen.getByText("Read story").tagName).toBe("SPAN");
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(container.querySelector("footer")?.textContent).toBe("4 hours ago");
+    expect(container.textContent).not.toContain("Saransh");
   });
 
-  it("shows the tick for official sources only", () => {
-    const { container, rerender } = render(
-      <StoryCard story={story({ official: true })} />,
-    );
-    expect(container.querySelector("[data-official-tick]")).not.toBeNull();
+  it("shows the green tick for an Official Source only", () => {
+    const { container, rerender } = renderAtNow(story({ official: true }));
+    expect(sourceLink().querySelector("[data-official-tick]")).not.toBeNull();
 
     rerender(<StoryCard story={story({ official: false })} />);
     expect(container.querySelector("[data-official-tick]")).toBeNull();
-  });
-
-  it.each(topicCases)(
-    "renders the %s topic as a text label",
-    (topic, label) => {
-      render(<StoryCard story={story({ topic })} />);
-
-      const topicLabel = screen.getByText(label);
-      expect(topicLabel.tagName).toBe("SPAN");
-      expect(topicLabel.className).toContain(`text-topic-${topic}`);
-      expect(topicLabel.className).toContain("text-[12px]");
-      expect(topicLabel.className).toContain("font-bold");
-      expect(topicLabel.parentElement?.className).toContain("h-[26px]");
-      expect(topicLabel.parentElement?.children[1]?.className).toContain(
-        "w-[26px]",
-      );
-    },
-  );
-
-  it("uses the topic wash behind the image only when there is no photo", () => {
-    const { container, rerender } = render(
-      <StoryCard story={story({ topic: "education" })} />,
-    );
-    expect(container.querySelector("[data-topic]")?.className).toContain(
-      "bg-topic-education-bg",
-    );
-
-    rerender(
-      <StoryCard
-        story={story({
-          topic: "education",
-          imageUrl: "https://example.com/cover.jpg",
-        })}
-      />,
-    );
-    expect(container.querySelector("[data-topic]")?.className).not.toContain(
-      "bg-topic-education-bg",
-    );
-  });
-
-  it("renders the wash for every v1.3 topic", () => {
-    const topics: Topic[] = [
-      "politics",
-      "civic",
-      "education",
-      "crime",
-      "business",
-      "entertainment",
-      "sports",
-    ];
-
-    for (const topic of topics) {
-      const { container } = render(<StoryCard story={story({ topic })} />);
-      const wash = container.querySelector("[data-topic]");
-
-      expect(wash?.getAttribute("data-topic")).toBe(topic);
-      expect(wash?.className).toContain(`bg-topic-${topic}-bg`);
-      cleanup();
-    }
-  });
-
-  it("still renders headline, body and cover image alongside the link", () => {
-    render(
-      <StoryCard
-        story={story({ imageUrl: "https://example.com/cover.jpg" })}
-      />,
-    );
-
-    expect(screen.getByText("Parliament passes data bill")).toBeTruthy();
-    expect(screen.getByText(/voice vote/)).toBeTruthy();
-    const image = screen.getByAltText("Parliament passes data bill");
-    expect(image.getAttribute("src")).toBe("https://example.com/cover.jpg");
-  });
-
-  it("keeps card dimensions fixed without scrolling or truncating story copy", () => {
-    const { container } = render(
-      <StoryCard story={story({ body: "Details ".repeat(500) })} />,
-    );
-
-    const card = container.querySelector("article");
-    expect(card?.className).toContain("h-148");
-    expect(card?.className).toContain("w-full");
-    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
-      "overflow-y-auto",
-    );
-    expect(screen.getByText(/Details/).parentElement?.className).not.toContain(
-      "line-clamp",
-    );
   });
 });

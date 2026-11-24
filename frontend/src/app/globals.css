@@ -53,6 +53,8 @@
   --img-bg: #dad7cf;
   --on-red: #ffffff;
   --scrim: rgba(15, 20, 25, 0.58);
+  /* Text on --scrim (the photo credit): white in both themes. */
+  --on-scrim: #ffffff;
   --cta-shadow: #0f1419;
   --card-shadow: 0 10px 28px rgba(15, 20, 25, 0.1);
 
@@ -130,6 +132,7 @@
   /* White on the lifted dark red is only 3.9:1, so text on red goes dark. */
   --on-red: #191816;
   --scrim: rgba(0, 0, 0, 0.6);
+  --on-scrim: #ffffff;
   --cta-shadow: #8e8a82;
   /* Dark cards rely on --edge instead of a shadow. */
   --card-shadow: none;
@@ -411,6 +414,7 @@ body {
   --color-img-bg: var(--img-bg);
   --color-on-red: var(--on-red);
   --color-scrim: var(--scrim);
+  --color-on-scrim: var(--on-scrim);
   --color-cta-shadow: var(--cta-shadow);
   --color-topic-politics: var(--topic-politics);
   --color-topic-politics-bg: var(--topic-politics-bg);

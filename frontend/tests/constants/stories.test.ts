@@ -19,10 +19,9 @@ describe("sample stories", () => {
     ]);
   });
 
-  it("keeps each English body between 60 and 80 words", () => {
+  it("keeps each Summary within the 60-word limit so it fits the card", () => {
     for (const story of STORIES) {
-      expect(story.body.split(/\s+/).length).toBeGreaterThanOrEqual(60);
-      expect(story.body.split(/\s+/).length).toBeLessThanOrEqual(80);
+      expect(story.body.split(/\s+/).length).toBeLessThanOrEqual(60);
     }
   });
 
@@ -33,17 +32,14 @@ describe("sample stories", () => {
     expect(ticked[0].source).toContain("Ministry");
   });
 
-  it("credits an illustration or an official photo, never a publisher", () => {
+  it("never names Saransh as the source and has no time line", () => {
     for (const story of STORIES) {
-      const credit = story.credit;
-      expect(
-        credit === "Illustration · Saransh" ||
-          /^Photo: .+ \(official\)$/.test(credit),
-      ).toBe(true);
+      expect(story.source).not.toMatch(/saransh/i);
+      expect(story.createdAt).toBeUndefined();
     }
   });
 
-  it("has no article behind it, so Read story stays inert", () => {
+  it("has no article behind it, so the source line is plain text", () => {
     for (const story of STORIES) {
       expect(story.sourceUrl).toBeUndefined();
     }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
 import type { ApiStory } from "@/lib/stories";
-import { mapApiStoryToCarousel, topicFor } from "@/lib/stories";
+import { isOfficialSource, mapApiStoryToCarousel, topicFor } from "@/lib/stories";
 
 function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   return {
@@ -27,9 +27,8 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.body).toContain("Lok Sabha");
     expect(story.category).toBe("National · Parliament");
     expect(story.source).toBe("PTI");
-    expect(story.credit).toBe("PTI");
     expect(story.sourceUrl).toBe("https://example.com/canonical");
-    expect(story.official).toBeUndefined();
+    expect(story.official).toBe(false);
     expect(story.topic).toBe("civic");
     expect(story.imageUrl).toBe("https://example.com/cover.jpg");
   });
@@ -42,13 +41,49 @@ describe("mapApiStoryToCarousel", () => {
     expect(story.imageUrl).toBeUndefined();
   });
 
-  it("credits Saransh and renders no dead link when citation fields are empty", () => {
+  it("never credits Saransh when the citation fields are empty", () => {
     const story = mapApiStoryToCarousel(
       apiStory({ source_url: "", source_label: null }),
     );
 
     expect(story.sourceUrl).toBeUndefined();
-    expect(story.source).toBe("Saransh");
+    expect(story.source).toBeUndefined();
+  });
+
+  it("passes created_at through for the time line", () => {
+    const story = mapApiStoryToCarousel(apiStory({ created_at: "2026-11-24T08:00:00Z" }));
+    expect(story.createdAt).toBe("2026-11-24T08:00:00Z");
+  });
+
+  it("sets the tick from the source", () => {
+    expect(
+      mapApiStoryToCarousel(apiStory({ source_url: "https://pib.gov.in/release" })).official,
+    ).toBe(true);
+  });
+});
+
+describe("isOfficialSource", () => {
+  it.each([
+    ["https://gov.in/page", null],
+    ["https://nic.in/page", null],
+    ["https://pib.gov.in/PressRelease", null],
+    ["https://www.mha.nic.in/notice", null],
+    ["https://PIB.GOV.IN/release", null],
+    ["https://rbi.org.in/press", "Reserve Bank of India"],
+    [null, "rbi"],
+  ])("ticks %s / %s", (url, label) => {
+    expect(isOfficialSource(url, label)).toBe(true);
+  });
+
+  it.each([
+    ["https://gov.in.example.com/fake", null],
+    ["https://notgov.in/page", null],
+    ["https://example.com/gov.in", null],
+    ["https://www.thehindu.com/news", "The Hindu"],
+    ["not a url", "PTI"],
+    [null, null],
+  ])("does not tick %s / %s", (url, label) => {
+    expect(isOfficialSource(url, label)).toBe(false);
   });
 });
 

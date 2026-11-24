@@ -41,13 +41,18 @@ const BUTTON_VARIANT: Record<ButtonVariant, string> = {
     "border-[1.5px] border-ink bg-transparent text-ink hover:bg-card dark:border-line-heavy dark:hover:border-ink",
 };
 
+/** The visible focus ring every interactive element shares. */
+export const focusRingClass =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
+
 /** Mono, uppercase, rounded to match the cards. For buttons and links alike. */
 export function buttonClass({
   variant = "primary",
   fullWidth = false,
 }: { variant?: ButtonVariant; fullWidth?: boolean } = {}): string {
   return cx(
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red disabled:cursor-not-allowed",
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] no-underline transition-colors disabled:cursor-not-allowed",
+    focusRingClass,
     BUTTON_VARIANT[variant],
     fullWidth && "w-full",
   );

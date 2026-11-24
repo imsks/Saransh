@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-import { buttonClass, cardClass, cx } from "@/components/ui";
+import { Icon, buttonClass, cardClass, cx } from "@/components/ui";
 import { EXTERNAL } from "@/lib/routes";
 
 export default function ThankYou() {
@@ -29,19 +29,9 @@ export default function ThankYou() {
         )}
       >
         <div className="animate-pop-in mb-7 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-green text-card">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
+          <Icon size={24} strokeWidth={2.5}>
             <polyline points="20 6 9 17 4 12" />
-          </svg>
+          </Icon>
         </div>
         <h2
           ref={headingRef}

@@ -15,7 +15,6 @@ function story(headline: string): Story {
   return {
     category: "National",
     topic: "civic",
-    credit: "PTI",
     headline,
     body: "Body copy.",
     source: "PTI",

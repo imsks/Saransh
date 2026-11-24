@@ -1,3 +1,4 @@
+import { OFFICIAL_SOURCE_DOMAINS, OFFICIAL_SOURCE_LABELS } from "@/constants/sources";
 import type { Story, Topic } from "@/constants/stories";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
@@ -58,22 +59,44 @@ export function topicFor(category: string): Topic {
   return match ? match[0] : "civic";
 }
 
-/** Map a FastAPI story payload into the carousel card shape. */
-export function mapApiStoryToCarousel(story: ApiStory): Story {
-  const label = story.source_label || "Saransh";
+function hostOf(url: string): string | null {
+  try {
+    return new URL(url).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
 
+/**
+ * An Official Source: a `source_url` host on gov.in or nic.in (or a
+ * sub-domain), or a `source_label` on the short list in config.
+ * A look-alike such as gov.in.example.com is not one.
+ */
+export function isOfficialSource(
+  sourceUrl?: string | null,
+  sourceLabel?: string | null,
+): boolean {
+  const host = sourceUrl ? hostOf(sourceUrl) : null;
+  if (host && OFFICIAL_SOURCE_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`))) {
+    return true;
+  }
+  const label = sourceLabel?.trim().toLowerCase();
+  return !!label && OFFICIAL_SOURCE_LABELS.some((l) => l.toLowerCase() === label);
+}
+
+/** Map a FastAPI story payload into the card shape. Saransh is never the source. */
+export function mapApiStoryToCarousel(story: ApiStory): Story {
   return {
     id: story.id,
     category: categoryLabel(story),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
-    credit: label,
     headline: story.title_en,
     body: story.summary_en,
-    // No "Verified" and no tick: the API has no `official` field, so nothing
-    // from it may claim verification.
-    source: label,
+    source: story.source_label || undefined,
     sourceUrl: story.source_url || undefined,
+    official: isOfficialSource(story.source_url, story.source_label),
+    createdAt: story.created_at,
   };
 }
 
