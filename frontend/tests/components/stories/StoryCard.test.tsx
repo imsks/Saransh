@@ -15,7 +15,6 @@ afterEach(() => {
 
 function story(overrides: Partial<Story> = {}): Story {
   return {
-    category: "National · Parliament",
     topic: "civic",
     imageUrl: "https://example.com/cover.jpg",
     headline: "Parliament passes data bill",

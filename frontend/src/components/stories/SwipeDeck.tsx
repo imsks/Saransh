@@ -13,14 +13,14 @@ import type { Story } from "@/constants/stories";
 
 import StoryCard from "./StoryCard";
 
-/** Motion from mock v5 (#138). */
-const SWIPE_PX = 80; // a shorter drag springs back
-const EDGE_PX = 24; // drags starting this close to a card edge are ignored
-const FULL_PX = 160; // the drag at which the card underneath is fully raised
-const FLY_PX = -520; // where the current card flies to on Next
-const PARK_PX = -420; // where earlier cards wait, off to the left
-const TILT = 22; // degrees = x / TILT
-const SINK_PX = 14; // the card underneath sits this far down, at SINK_SCALE
+/** Motion */
+const SWIPE_PX = 80;
+const EDGE_PX = 24;
+const FULL_RAISE_PX = 160;
+const FLY_PX = -520;
+const PARK_PX = -420;
+const TILT = 22;
+const SINK_PX = 14;
 const SINK_SCALE = 0.94;
 const SETTLE_MS = 260;
 
@@ -41,30 +41,21 @@ function prefersReducedMotion() {
 }
 
 const slide = (x: number) => `translateX(${x}px) rotate(${x / TILT}deg)`;
-/** p = 0 sits underneath, p = 1 is fully raised. */
 const raise = (p: number) =>
   `translateY(${SINK_PX * (1 - p)}px) scale(${SINK_SCALE + (1 - SINK_SCALE) * p})`;
 
-/**
- * Where a card sits, from its place relative to the current card and the drag.
- * Left drag (dx < 0): the current card tilts away and the next one rises.
- * Right drag (dx > 0): the previous card swings in on top and the current one sinks.
- */
+/** Left drag (dx < 0) raises the next card; right drag swings the previous one in on top. */
 function cardTransform(offset: number, dx: number): string {
-  const p = Math.min(Math.abs(dx) / FULL_PX, 1);
+  const p = Math.min(Math.abs(dx) / FULL_RAISE_PX, 1);
   if (offset < 0) return slide(offset === -1 && dx > 0 ? PARK_PX + dx : PARK_PX);
   if (offset === 0) return dx > 0 ? raise(1 - p) : slide(dx);
   return raise(offset === 1 && dx < 0 ? p : 0);
 }
 
-/**
- * The swipe deck (mock v5): stacked story cards. Swipe left or press Next for
- * the next card; swipe right or press Back to bring the previous one back.
- */
 export default function SwipeDeck({ stories }: { stories: Story[] }) {
   const [index, setIndex] = useState(0);
   const [dx, setDx] = useState(0);
-  /** The move being animated: 1 or -1, 0 for a spring back, null when at rest. */
+  /** 0 is a spring back; null is at rest. */
   const [settling, setSettling] = useState<Move | 0 | null>(null);
   const drag = useRef<{ id: number; startX: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
@@ -138,9 +129,7 @@ export default function SwipeDeck({ stories }: { stories: Story[] }) {
 
   return (
     <section aria-roledescription="carousel" aria-label="Stories" className="mx-auto w-full max-w-[496px]">
-      {/* Tall enough for the card underneath to show 14px below the top one.
-          The clip hides cards flying off; it reaches 20px past the cards (the
-          small-screen gutter) so their shadow fades out instead of being cut. */}
+      {/* The clip reaches 20px (the phone gutter) past the cards so their shadow is not cut. */}
       <div className="relative -mx-5 h-[626px] overflow-x-clip">
         {stories.map((story, i) => {
           const offset = i - index;
@@ -148,9 +137,8 @@ export default function SwipeDeck({ stories }: { stories: Story[] }) {
           const style: CSSProperties = {
             transform: cardTransform(offset, dx),
             transition: settling !== null ? `transform ${SETTLE_MS}ms ease-out` : undefined,
-            // Parked at -420px a wide card would still poke in, so the previous
-            // card shows only while it swings back.
-            visibility: offset > 1 || (offset < 0 && !(offset === -1 && dx > 0)) ? "hidden" : undefined,
+            // A wide card parked at -420px still pokes in, so it shows only while swinging back.
+            visibility: offset === 0 || offset === 1 || (offset === -1 && dx > 0) ? undefined : "hidden",
             zIndex: offset < 0 ? 3 : isTop ? 2 : 1,
           };
           return (

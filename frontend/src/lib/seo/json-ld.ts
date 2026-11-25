@@ -1,25 +1,17 @@
+import { EXTERNAL } from "@/lib/routes";
 import { defaultDescription, getSiteUrl, SITE_NAME } from "@/lib/seo/site";
 
+const base = () => ({
+  "@context": "https://schema.org",
+  name: SITE_NAME,
+  url: getSiteUrl(),
+  description: defaultDescription,
+});
+
 export function buildWebSiteJsonLd(): Record<string, unknown> {
-  const base = getSiteUrl();
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    url: base,
-    description: defaultDescription,
-    inLanguage: "en-IN",
-  };
+  return { ...base(), "@type": "WebSite", inLanguage: "en-IN" };
 }
 
 export function buildOrganizationJsonLd(): Record<string, unknown> {
-  const base = getSiteUrl();
-  return {
-    "@context": "https://schema.org",
-    "@type": "NewsMediaOrganization",
-    name: SITE_NAME,
-    url: base,
-    description: defaultDescription,
-    sameAs: ["https://github.com/imsks/Saransh"],
-  };
+  return { ...base(), "@type": "NewsMediaOrganization", sameAs: [EXTERNAL.repo] };
 }

@@ -1,21 +1,11 @@
 @import "tailwindcss";
 @import "@sutra_ui/tokens/css";
 
-/*
- * Sutra ships pre-composed Tailwind class strings inside its bundle. Tailwind
- * only generates the utilities it can see, so its dist must be a scan source.
- */
+/* Sutra ships Tailwind class strings in its bundle, so Tailwind must scan it. */
 @source "../../node_modules/@sutra_ui/ui/dist";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ---------------------------------------------------------------------------
- * Saransh newsprint palette — light
- *
- * Saransh reads like a broadsheet: warm paper ground, near-black ink, one
- * accent per meaning. Sutra's semantic tokens are re-skinned here so its
- * primitives inherit the same look without forking a single component.
- * ------------------------------------------------------------------------ */
 :root {
   --paper: #eeedea;
   --card: #ffffff;
@@ -33,33 +23,22 @@
   --amber: #b8691a;
   --amber-tint: #fbf1e6;
 
-  /*
-   * Body background and text. Aliases, declared once: they follow --paper and
-   * --ink into dark mode on their own. Never give them a hex of their own.
-   */
+  /* Aliases: never give them a hex of their own, so they follow dark mode. */
   --background: var(--paper);
   --foreground: var(--ink);
 
-  /* Web cards: a hard offset, no blur. Editorial, not soft. */
   --print-shadow: 4px 4px 0 rgba(15, 20, 25, 0.07);
 
-  /*
-   * Design system v1.2 — mobile app layer. Defined here so the app and the
-   * landing page share one palette; no web component uses them yet.
-   */
   --body: #2d3139;
   --edge: #e2e0d8;
   --tint: #e8e6e0;
   --img-bg: #dad7cf;
   --on-red: #ffffff;
   --scrim: rgba(15, 20, 25, 0.58);
-  /* Text on --scrim (the photo credit): white in both themes. */
   --on-scrim: #ffffff;
   --cta-shadow: #0f1419;
   --card-shadow: 0 10px 28px rgba(15, 20, 25, 0.1);
 
-  /* Topic accents (design system v1.3 §05): the topic label and the
-   * illustration wash only. */
   --topic-politics: #0b7f8a;
   --topic-politics-bg: #cbeef1;
   --topic-civic: #2457d6;
@@ -75,7 +54,6 @@
   --topic-sports: #4d7c0f;
   --topic-sports-bg: #ddf0c2;
 
-  /* Sutra override — masthead red is Saransh's accent. */
   --sutra-color-surface: var(--card);
   --sutra-color-surface-subtle: var(--paper);
   --sutra-color-surface-muted: #e5e3dd;
@@ -103,9 +81,6 @@
   --sutra-font-mono: var(--font-inter), system-ui, sans-serif;
 }
 
-/* ---------------------------------------------------------------------------
- * Newsprint palette — dark (night edition)
- * ------------------------------------------------------------------------ */
 .dark {
   --paper: #191816;
   --card: #211f1c;
@@ -134,7 +109,6 @@
   --scrim: rgba(0, 0, 0, 0.6);
   --on-scrim: #ffffff;
   --cta-shadow: #8e8a82;
-  /* Dark cards rely on --edge instead of a shadow. */
   --card-shadow: none;
 
   --topic-politics: #86d6dc;
@@ -144,7 +118,6 @@
   --topic-business: #f2c94c;
   --topic-entertainment: #e59bef;
   --topic-sports: #a9d46a;
-  /* Dark illustration wash: the accent mixed 18% into the card colour. */
   --topic-politics-bg: color-mix(
     in srgb,
     var(--topic-politics) 18%,
@@ -230,53 +203,6 @@ body {
   }
 }
 
-@keyframes card-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes pop-in {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-card-in {
-  animation: card-in 0.3s ease forwards;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.4s ease forwards;
-}
-
-.animate-pop-in {
-  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
-}
-
-/* ---------------------------------------------------------------------------
- * Splash intro animations
- * ------------------------------------------------------------------------ */
- 
 @keyframes splash-icon {
   0% {
     transform: scale(0.6);
@@ -381,7 +307,6 @@ body {
   --color-amber: var(--amber);
   --color-amber-tint: var(--amber-tint);
 
-  /* App layer (design system v1.2). */
   --color-body: var(--body);
   --color-edge: var(--edge);
   --color-tint: var(--tint);
@@ -405,7 +330,6 @@ body {
   --color-topic-sports: var(--topic-sports);
   --color-topic-sports-bg: var(--topic-sports-bg);
 
-  /* Sutra semantic utilities — the class names `@sutra_ui/ui` ships with. */
   --color-surface: var(--sutra-color-surface);
   --color-surface-subtle: var(--sutra-color-surface-subtle);
   --color-surface-muted: var(--sutra-color-surface-muted);
@@ -445,6 +369,6 @@ body {
 
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  /* Only two typefaces: Fraunces and Inter. font-mono is kept as an alias of Inter. */
+  /* Only Fraunces and Inter: font-mono is an alias of Inter. */
   --font-mono: var(--font-inter), system-ui, sans-serif;
 }

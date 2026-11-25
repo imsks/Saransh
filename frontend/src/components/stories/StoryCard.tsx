@@ -1,10 +1,10 @@
-import { Icon, cardClass, cx, focusRingClass } from "@/components/ui";
+import { ExternalLink, Icon, cardClass, cx, focusRingClass } from "@/components/ui";
 import type { Story, Topic } from "@/constants/stories";
 
 import StoryImage from "./StoryImage";
 import TimeAgo from "./TimeAgo";
 
-/** The Topic label: its name in its colour, never colour alone. */
+/** The Topic shows its name in its colour, never colour alone. */
 const TOPIC: Record<Topic, { name: string; className: string }> = {
   politics: { name: "Politics", className: "text-topic-politics" },
   civic: { name: "Civic", className: "text-topic-civic" },
@@ -15,17 +15,13 @@ const TOPIC: Record<Topic, { name: string; className: string }> = {
   sports: { name: "Sports", className: "text-topic-sports" },
 };
 
-/** The green tick. It means "Official Source" and nothing else. */
 const officialTick = (
   <Icon size={13} strokeWidth={3} data-official-tick="" className="shrink-0 text-green">
     <path d="M20 6 9 17l-5-5" />
   </Icon>
 );
 
-/**
- * The source line names the Citation Link's outlet and links to the original.
- * No label, no line; no URL, plain text. Saransh is never the source.
- */
+/** Saransh is never the source: no label, no line. */
 function SourceLine({ story }: { story: Story }) {
   if (!story.source) return null;
 
@@ -41,10 +37,8 @@ function SourceLine({ story }: { story: Story }) {
   }
 
   return (
-    <a
+    <ExternalLink
       href={story.sourceUrl}
-      target="_blank"
-      rel="noopener noreferrer"
       aria-label={`${story.source}, opens the original in a new tab`}
       className={cx(
         "inline-flex min-h-11 min-w-0 items-center gap-1.5 rounded-sm underline-offset-2 hover:underline focus-visible:underline",
@@ -52,15 +46,11 @@ function SourceLine({ story }: { story: Story }) {
       )}
     >
       {content}
-    </a>
+    </ExternalLink>
   );
 }
 
-/**
- * The story card (mock v5): photo, Topic row, headline, Summary, then one
- * footer row with the source link and how long ago. Fixed height: the longest
- * allowed text (a 3-line headline, a 60-word Summary) fits at 390px wide.
- */
+/** Fixed height: the longest allowed text (3-line headline, 60-word Summary) fits at 390px wide. */
 export default function StoryCard({ story }: { story: Story }) {
   const topic = TOPIC[story.topic];
 
@@ -78,7 +68,7 @@ export default function StoryCard({ story }: { story: Story }) {
           <span className={`text-[12px] font-bold leading-none ${topic.className}`}>
             {topic.name}
           </span>
-          {/* Kept free for the Share icon (#146). */}
+          {/* Kept free for the Share icon. */}
           <span aria-hidden="true" data-share-slot="" className="w-11 shrink-0" />
         </div>
 

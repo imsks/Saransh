@@ -12,11 +12,7 @@ const imageIcon = (
   </Icon>
 );
 
-/**
- * The card photo at 1.91:1, the ratio publishers use for share images, with a
- * "Photo: {source}" credit. A missing or broken photo becomes a neutral
- * placeholder of the same size, with no credit.
- */
+/** 1.91:1 is the ratio publishers use for share images. */
 export default function StoryImage({ src, source }: { src?: string; source?: string }) {
   const [failed, setFailed] = useState(!src);
   const ref = useRef<HTMLImageElement>(null);

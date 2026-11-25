@@ -3,14 +3,6 @@ import { describe, expect, it } from "@jest/globals";
 import { STORIES } from "@/constants/stories";
 
 describe("sample stories", () => {
-  it("covers National, State and International, and names no district", () => {
-    expect(STORIES.map((s) => s.category)).toEqual([
-      "National",
-      "State",
-      "International",
-    ]);
-  });
-
   it("picks its topics from the seven", () => {
     expect(STORIES.map((s) => s.topic)).toEqual([
       "politics",

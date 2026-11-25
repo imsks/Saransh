@@ -6,7 +6,6 @@ function ago(count: number, unit: string): string {
   return `${count} ${unit}${count === 1 ? "" : "s"} ago`;
 }
 
-/** "Just now", "N minutes ago", "N hours ago", then "N days ago". */
 export function timeAgo(iso: string, now: number = Date.now()): string {
   const elapsed = now - new Date(iso).getTime();
 

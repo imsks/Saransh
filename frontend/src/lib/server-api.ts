@@ -1,6 +1,5 @@
 import { getApiBaseUrl } from "@/lib/api-base";
 
-/** A question onboarding asks only when the shared `users` row lacks the answer. */
 export type OnboardingField = "name" | "state" | "topics";
 
 export interface Me {
@@ -25,10 +24,7 @@ export class BackendError extends Error {
   }
 }
 
-/**
- * Server-only call to FastAPI as the trusted Next.js server. The internal key is
- * not NEXT_PUBLIC, so it never reaches the browser bundle.
- */
+/** Server only: the internal key is not NEXT_PUBLIC, so it never reaches the browser. */
 export async function backend<T>(
   path: string,
   { userId, ...init }: RequestInit & { userId?: string } = {},

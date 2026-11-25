@@ -2,11 +2,11 @@ import Link from "next/link";
 
 import AccountButton from "@/components/auth/AccountButton";
 import ThemeSwitch from "@/components/layout/ThemeSwitch";
-import { Container } from "@/components/ui";
+import { Container, ExternalLink, navLinkClass } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
-const navLinkClass =
-  "inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted no-underline transition-colors hover:text-ink";
+/** Hidden on phones so the bar fits at 360px; the section is on the page. */
+const wideOnlyLinkClass = `${navLinkClass} max-[560px]:hidden`;
 
 export default function Navbar() {
   return (
@@ -26,18 +26,12 @@ export default function Navbar() {
           <Link href={ROUTES.stories} className={navLinkClass}>
             Stories
           </Link>
-          {/* Hidden on phones so the bar fits at 360px; the section is on the page. */}
-          <Link href={ROUTES.contribute} className={`${navLinkClass} max-[560px]:hidden`}>
+          <Link href={ROUTES.contribute} className={wideOnlyLinkClass}>
             Contribute
           </Link>
-          <a
-            href={EXTERNAL.repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${navLinkClass} max-[560px]:hidden`}
-          >
+          <ExternalLink href={EXTERNAL.repo} className={wideOnlyLinkClass}>
             GitHub
-          </a>
+          </ExternalLink>
           <AccountButton />
           <ThemeSwitch />
         </div>

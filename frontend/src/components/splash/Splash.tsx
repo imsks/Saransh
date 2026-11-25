@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import AppMark from "@/components/splash/AppMark";
 import SplashOffline from "@/components/splash/SplashOffline";
 import { isSharedStoryPath } from "@/lib/routes";
+import { SITE_TAGLINE } from "@/lib/seo/site";
 
-/** Just past the end of the intro (the footer's rise ends at 1.9s). Always played in full. */
+/** Just past the footer's rise, which ends at 1.9s. */
 export const SPLASH_INTRO_MS = 2000;
-/** How long the splash takes to fade out once the intro is done. */
 export const SPLASH_FADE_MS = 300;
 
 type Phase = "intro" | "offline" | "done";
@@ -37,7 +37,6 @@ export default function Splash() {
     const intro = setTimeout(() => {
       if (elapsed < SPLASH_INTRO_MS && !navigator.onLine) setPhase("offline");
     }, introLeft);
-    
     const done = setTimeout(
       () => setPhase((p) => (p === "offline" ? p : "done")),
       introLeft + SPLASH_FADE_MS,
@@ -49,7 +48,6 @@ export default function Splash() {
     };
   }, [skip]);
 
-  // The page underneath must not scroll while the splash covers it.
   useEffect(() => {
     if (phase === "done") return;
     document.body.style.overflow = "hidden";
@@ -78,7 +76,7 @@ export default function Splash() {
           Saransh
         </p>
         <p className="splash-rise max-w-[290px] font-sans text-[16.5px] leading-[1.6] text-body [animation-delay:1.15s]">
-          No noise. Just news. With proof.
+          {SITE_TAGLINE}
         </p>
       </div>
 

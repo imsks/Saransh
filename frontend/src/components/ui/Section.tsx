@@ -11,7 +11,6 @@ const CONTAINER_SIZE: Record<ContainerSize, string> = {
 
 type ContainerProps = HTMLAttributes<HTMLDivElement> & { size?: ContainerSize };
 
-/** The page column: one max width and gutter for every page. */
 export function Container({ size = "default", className, ...props }: ContainerProps) {
   return (
     <div
@@ -23,7 +22,6 @@ export function Container({ size = "default", className, ...props }: ContainerPr
 
 type SectionProps = HTMLAttributes<HTMLElement> & { size?: ContainerSize };
 
-/** A band of the page, ruled off from the one above like a broadsheet column. */
 export function Section({ size, className, children, ...props }: SectionProps) {
   return (
     <section className={cx("border-t border-line py-20 max-[560px]:py-14", className)} {...props}>
@@ -38,12 +36,10 @@ interface SectionHeaderProps {
   eyebrowTone?: EyebrowTone;
   lead?: ReactNode;
   align?: "start" | "center";
-  /** Lets the enclosing section point `aria-labelledby` at the heading. */
   id?: string;
   className?: string;
 }
 
-/** Eyebrow, heading and lead: the same type scale at the top of every section. */
 export function SectionHeader({
   title,
   eyebrow,

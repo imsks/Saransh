@@ -8,11 +8,9 @@ from app.api import router as api_router
 from app.config import settings
 from app.utils import get_logger, setup_logging
 
-# Setup logging
 setup_logging()
 logger = get_logger(__name__)
 
-# Create FastAPI app
 app = FastAPI(
     title="Saransh - AI News App",
     description="Story ingestion and signed-in User API for Saransh",
@@ -27,7 +25,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include versioned API router
 app.include_router(api_router, prefix="/api/v1")
 
 
@@ -47,7 +44,6 @@ async def shutdown_event():
 
 
 if __name__ == "__main__":
-    # Development configuration with auto-reload
     uvicorn.run(
         "main:app",
         host=settings.HOST,

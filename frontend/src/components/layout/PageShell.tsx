@@ -3,12 +3,11 @@ import type { ReactNode } from "react";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-/** Every page's frame: paper ground, sticky masthead, footer. */
-export default function PageShell({ children }: { children: ReactNode }) {
+export default function PageShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className="min-h-screen overflow-x-hidden bg-paper">
       <Navbar />
-      <main>{children}</main>
+      <main className={className}>{children}</main>
       <Footer />
     </div>
   );

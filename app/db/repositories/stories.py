@@ -1,5 +1,3 @@
-"""Persistence helpers for Stories."""
-
 from typing import List, Optional
 from uuid import UUID
 
@@ -18,14 +16,14 @@ def list_stories(
     state: Optional[str] = None,
     status: Optional[str] = None,
 ) -> List[Story]:
-    """Return stories newest-first, filtered by any supplied criteria."""
     query = db.query(Story)
-    if category is not None:
-        query = query.filter(Story.category == category)
-    if state is not None:
-        query = query.filter(Story.state == state)
-    if status is not None:
-        query = query.filter(Story.status == status)
+    for column, value in (
+        (Story.category, category),
+        (Story.state, state),
+        (Story.status, status),
+    ):
+        if value is not None:
+            query = query.filter(column == value)
     # id breaks created_at ties so offset paging stays stable.
     return (
         query.order_by(Story.created_at.desc(), Story.id.desc())
@@ -36,12 +34,10 @@ def list_stories(
 
 
 def get_story(db: Session, story_id: UUID) -> Optional[Story]:
-    """Return a single story by ID, or None if it does not exist."""
     return db.query(Story).filter(Story.id == story_id).first()
 
 
 def create_story(db: Session, payload: StoryIn) -> Story:
-    """Persist a story as published, rolling back on failure."""
     try:
         story = Story(
             title_en=payload.title_en,

@@ -4,6 +4,7 @@ import { Fraunces, Inter } from "next/font/google";
 import JsonLd from "@/components/seo/JsonLd";
 import Splash from "@/components/splash/Splash";
 import { AnalyticsProvider, AuthProvider, ThemeProvider } from "@/components/providers";
+import { EXTERNAL } from "@/lib/routes";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/json-ld";
 import {
   buildDefaultOg,
@@ -11,7 +12,9 @@ import {
   defaultDescription,
   getSiteUrl,
   SITE_NAME,
+  SITE_TAGLINE,
 } from "@/lib/seo/site";
+import { themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -24,23 +27,22 @@ const fraunces = Fraunces({
 
 const inter = Inter({
   subsets: ["latin"],
-  // 700 and 800 are for the app story card (time line, headline).
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter",
   display: "swap",
 });
 
+const defaultTitle = `${SITE_NAME} — ${SITE_TAGLINE}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${SITE_NAME} — No noise. Just news. With proof.`,
+    default: defaultTitle,
     template: `%s | ${SITE_NAME}`,
   },
   description: defaultDescription,
   applicationName: SITE_NAME,
-  authors: [
-    { name: "Saransh contributors", url: "https://github.com/imsks/Saransh" },
-  ],
+  authors: [{ name: "Saransh contributors", url: EXTERNAL.repo }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
   formatDetection: {
@@ -50,7 +52,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     ...buildDefaultOg(),
-    title: `${SITE_NAME} — No noise. Just news. With proof.`,
+    title: defaultTitle,
     description: defaultDescription,
   },
   twitter: buildDefaultTwitter(),
@@ -73,27 +75,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/*
-          Applies the stored theme before first paint so a dark-mode reader
-          never sees a white flash. Reads the same key as the ThemeProvider.
-        */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('saransh-theme');
-                  var useDark = theme === 'dark' || ((!theme || theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                  if (useDark) {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="antialiased">
         <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />

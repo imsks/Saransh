@@ -7,10 +7,8 @@ import { ThemeToggle } from "@sutra_ui/ui";
 const boxClass = "size-8 rounded-[2px] border border-line";
 
 /**
- * Sutra's ThemeToggle picks its icon from the reader's stored theme, which the
- * server cannot know, so rendering it during SSR breaks hydration for anyone
- * whose theme differs from the server's guess. It is mounted on the client
- * only; a same-sized box holds its place so the nav does not shift.
+ * Client only: the toggle's icon depends on the stored theme, which the server
+ * cannot know. A same-sized box holds its place so the nav does not shift.
  */
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);

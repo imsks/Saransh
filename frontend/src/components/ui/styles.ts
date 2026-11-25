@@ -1,11 +1,6 @@
-/**
- * Saransh's visual language in one place: rounded cards and controls on
- * newsprint paper. Plain class maps, so server and client components share them.
- */
-
 type ClassValue = string | false | null | undefined;
 
-/** Joins truthy class names. No conflict resolution: add layout classes, not overrides. */
+/** No conflict resolution: add layout classes, not overrides. */
 export function cx(...classes: ClassValue[]): string {
   return classes.filter(Boolean).join(" ");
 }
@@ -25,7 +20,6 @@ const CARD_PADDING: Record<CardPadding, string> = {
   lg: "p-8 max-[560px]:p-6",
 };
 
-/** The card surface. Every card on the site takes its curve and edge from here. */
 export function cardClass({
   variant = "outlined",
   padding = "md",
@@ -41,11 +35,9 @@ const BUTTON_VARIANT: Record<ButtonVariant, string> = {
     "border-[1.5px] border-ink bg-transparent text-ink hover:bg-card dark:border-line-heavy dark:hover:border-ink",
 };
 
-/** The visible focus ring every interactive element shares. */
 export const focusRingClass =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
 
-/** Mono, uppercase, rounded to match the cards. For buttons and links alike. */
 export function buttonClass({
   variant = "primary",
   fullWidth = false,
@@ -66,7 +58,6 @@ const EYEBROW_TONE: Record<EyebrowTone, string> = {
   info: "text-blue",
 };
 
-/** The small mono label above a heading or form. */
 export function eyebrowClass(tone: EyebrowTone = "muted"): string {
   return cx(
     "block font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em]",
@@ -74,6 +65,10 @@ export function eyebrowClass(tone: EyebrowTone = "muted"): string {
   );
 }
 
-/** A tinted rounded square that holds a section icon. */
 export const iconChipClass =
   "inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-tint text-red";
+
+export const navLinkClass =
+  "inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted no-underline transition-colors hover:text-ink";
+
+export const pageTitleClass = "font-serif text-[28px] font-semibold tracking-[-0.02em] text-ink";

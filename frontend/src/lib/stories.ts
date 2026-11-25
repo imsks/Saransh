@@ -1,5 +1,5 @@
 import { OFFICIAL_SOURCE_DOMAINS, OFFICIAL_SOURCE_LABELS } from "@/constants/sources";
-import type { Story, Topic } from "@/constants/stories";
+import { TOPICS, type Story, type Topic } from "@/constants/stories";
 import { getApiBaseUrl } from "@/lib/api-base";
 import { logger } from "@/lib/logger";
 
@@ -17,22 +17,6 @@ export interface ApiStory {
   created_at: string;
 }
 
-function categoryLabel(story: ApiStory): string {
-  const parts = [story.category];
-  if (story.state) parts.push(story.state);
-  return parts.join(" · ");
-}
-
-const TOPICS: Topic[] = [
-  "politics",
-  "civic",
-  "education",
-  "crime",
-  "business",
-  "entertainment",
-  "sports",
-];
-
 const TOPIC_KEYWORDS: [Topic, string[]][] = [
   ["politics", ["politic", "parliament", "election", "minister", "government"]],
   ["education", ["education", "school", "college", "university", "exam"]],
@@ -40,13 +24,10 @@ const TOPIC_KEYWORDS: [Topic, string[]][] = [
   ["business", ["business", "economy", "market", "trade", "job", "employment"]],
   ["entertainment", ["entertainment", "film", "cinema", "music", "bollywood"]],
   ["sports", ["sport", "cricket", "football", "olympic", "match"]],
-  ["civic",["civic", "road", "transport", "health", "hospital", "infrastructure"],],
+  ["civic", ["civic", "road", "transport", "health", "hospital", "infrastructure"]],
 ];
 
-/**
- * Pick the topic from the story's free-text category: an exact topic key first
- * (case-insensitive), then a keyword match. Civic is the default.
- */
+/** An exact topic key first, then a keyword match; civic by default. */
 export function topicFor(category: string): Topic {
   const lowered = category.trim().toLowerCase();
 
@@ -67,11 +48,7 @@ function hostOf(url: string): string | null {
   }
 }
 
-/**
- * An Official Source: a `source_url` host on gov.in or nic.in (or a
- * sub-domain), or a `source_label` on the short list in config.
- * A look-alike such as gov.in.example.com is not one.
- */
+/** A host on gov.in or nic.in (or a sub-domain, never a look-alike like gov.in.example.com), or a listed label. */
 export function isOfficialSource(
   sourceUrl?: string | null,
   sourceLabel?: string | null,
@@ -84,11 +61,9 @@ export function isOfficialSource(
   return !!label && OFFICIAL_SOURCE_LABELS.some((l) => l.toLowerCase() === label);
 }
 
-/** Map a FastAPI story payload into the card shape. Saransh is never the source. */
-export function mapApiStoryToCarousel(story: ApiStory): Story {
+export function toStory(story: ApiStory): Story {
   return {
     id: story.id,
-    category: categoryLabel(story),
     topic: topicFor(story.category),
     imageUrl: story.image_url || undefined,
     headline: story.title_en,
@@ -100,7 +75,7 @@ export function mapApiStoryToCarousel(story: ApiStory): Story {
   };
 }
 
-/** Latest published Stories for server rendering; an unreachable API yields none. */
+/** An unreachable API yields no stories rather than an error page. */
 export async function fetchStories(limit = 50): Promise<Story[]> {
   try {
     const response = await fetch(
@@ -112,7 +87,7 @@ export async function fetchStories(limit = 50): Promise<Story[]> {
       return [];
     }
     const stories = (await response.json()) as ApiStory[];
-    return stories.map(mapApiStoryToCarousel);
+    return stories.map(toStory);
   } catch (err) {
     logger.warn({ err }, "stories.fetch_failed");
     return [];

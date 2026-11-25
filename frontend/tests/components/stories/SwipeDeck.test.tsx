@@ -11,7 +11,6 @@ const WIDTH = 400;
 function story(headline: string): Story {
   return {
     topic: "civic",
-    category: "National",
     headline,
     body: "Body copy.",
     source: "PTI",

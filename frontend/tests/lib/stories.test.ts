@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
 import type { ApiStory } from "@/lib/stories";
-import { isOfficialSource, mapApiStoryToCarousel, topicFor } from "@/lib/stories";
+import { isOfficialSource, toStory, topicFor } from "@/lib/stories";
 
 function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   return {
@@ -19,13 +19,12 @@ function apiStory(overrides: Partial<ApiStory> = {}): ApiStory {
   };
 }
 
-describe("mapApiStoryToCarousel", () => {
-  it("maps API stories into carousel cards", () => {
-    const story = mapApiStoryToCarousel(apiStory());
+describe("toStory", () => {
+  it("maps an API story into a card", () => {
+    const story = toStory(apiStory());
 
     expect(story.headline).toBe("Parliament passes data bill");
     expect(story.body).toContain("Lok Sabha");
-    expect(story.category).toBe("National · Parliament");
     expect(story.source).toBe("PTI");
     expect(story.sourceUrl).toBe("https://example.com/canonical");
     expect(story.official).toBe(false);
@@ -34,7 +33,7 @@ describe("mapApiStoryToCarousel", () => {
   });
 
   it("leaves imageUrl undefined when the API sends an empty image_url", () => {
-    const story = mapApiStoryToCarousel(
+    const story = toStory(
       apiStory({ image_url: "", category: "State", state: "Bihar" }),
     );
 
@@ -42,7 +41,7 @@ describe("mapApiStoryToCarousel", () => {
   });
 
   it("never credits Saransh when the citation fields are empty", () => {
-    const story = mapApiStoryToCarousel(
+    const story = toStory(
       apiStory({ source_url: "", source_label: null }),
     );
 
@@ -51,13 +50,13 @@ describe("mapApiStoryToCarousel", () => {
   });
 
   it("passes created_at through for the time line", () => {
-    const story = mapApiStoryToCarousel(apiStory({ created_at: "2026-11-24T08:00:00Z" }));
+    const story = toStory(apiStory({ created_at: "2026-11-24T08:00:00Z" }));
     expect(story.createdAt).toBe("2026-11-24T08:00:00Z");
   });
 
   it("sets the tick from the source", () => {
     expect(
-      mapApiStoryToCarousel(apiStory({ source_url: "https://pib.gov.in/release" })).official,
+      toStory(apiStory({ source_url: "https://pib.gov.in/release" })).official,
     ).toBe(true);
   });
 });

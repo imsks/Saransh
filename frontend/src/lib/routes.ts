@@ -1,6 +1,3 @@
-/**
- * App paths and active external links.
- */
 export const ROUTES = {
   home: "/",
   stories: "/stories",
@@ -9,11 +6,8 @@ export const ROUTES = {
   privacy: "/privacy",
 } as const;
 
-export const SHARED_STORY_PREFIX = "/s/";
-
-/** True for a shared story link. The splash never shows on these. */
 export function isSharedStoryPath(pathname: string | null | undefined): boolean {
-  return !!pathname && pathname.startsWith(SHARED_STORY_PREFIX);
+  return pathname?.startsWith("/s/") ?? false;
 }
 
 export const EXTERNAL = {
