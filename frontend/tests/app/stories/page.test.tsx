@@ -36,7 +36,7 @@ async function renderPage() {
 }
 
 describe("StoriesPage", () => {
-  it("renders the latest published Stories as cards", async () => {
+  it("renders the latest published Stories in the swipe deck", async () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => [
@@ -61,6 +61,8 @@ describe("StoriesPage", () => {
     expect(
       screen.getByRole("heading", { name: "Parliament passes data bill" }),
     ).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Next story" })).toBeTruthy();
+    expect(screen.getByText("1 / 1")).toBeTruthy();
     expect(String(fetchMock.mock.calls[0][0])).toMatch(
       /\/stories\?status=published&limit=50$/,
     );
