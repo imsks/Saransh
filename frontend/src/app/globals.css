@@ -265,32 +265,6 @@ body {
   animation: card-in 0.3s ease forwards;
 }
 
-@keyframes story-slide-left {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes story-slide-right {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.animate-story-slide-left {
-  animation: story-slide-left 0.35s ease-out both;
-}
-
-.animate-story-slide-right {
-  animation: story-slide-right 0.35s ease-out both;
-}
-
 .animate-fade-in {
   animation: fade-in 0.4s ease forwards;
 }

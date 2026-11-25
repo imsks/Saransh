@@ -30,7 +30,7 @@ export interface Story {
 /**
  * Illustrative cards for the landing page: one National, one State and one
  * India-relevant International. They stand in for a story, they do not report
- * one, so they are always shown under a "Sample story" label. Each Summary
+ * one, so the page around them always says they are illustrative. Each Summary
  * stays within the 60-word limit so it fits the fixed card.
  */
 export const STORIES: Story[] = [
