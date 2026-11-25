@@ -1,10 +1,10 @@
 import { Avatar } from "@sutra_ui/ui";
 
-import { Section, SectionHeader, buttonClass, cardClass, cx, focusRingClass } from "@/components/ui";
+import { ExternalLink, Section, SectionHeader, buttonClass, cardClass, cx, focusRingClass } from "@/components/ui";
 import contributorsData from "@/data/contributors.json";
 import { EXTERNAL } from "@/lib/routes";
 
-/** One entry of `contributors.json`, which `scripts/generate_contributors.py` refreshes weekly. */
+/** `scripts/generate_contributors.py` refreshes `contributors.json` weekly. */
 export interface Contributor {
   login: string;
   avatar_url: string;
@@ -28,22 +28,18 @@ export default function ContributorsSection({
           lead="The code, prompts and source list are public on GitHub. Pick up an issue, suggest a source, or improve a prompt. These are the people who have shipped Saransh so far."
         />
         <div className="flex flex-wrap gap-3">
-          <a
+          <ExternalLink
             href={EXTERNAL.repo}
-            target="_blank"
-            rel="noopener noreferrer"
             className={buttonClass()}
           >
             Contribute on GitHub
-          </a>
-          <a
+          </ExternalLink>
+          <ExternalLink
             href={EXTERNAL.issues}
-            target="_blank"
-            rel="noopener noreferrer"
             className={buttonClass({ variant: "secondary" })}
           >
             Browse issues
-          </a>
+          </ExternalLink>
         </div>
       </div>
 
@@ -54,10 +50,8 @@ export default function ContributorsSection({
         >
           {contributors.map((contributor) => (
             <li key={contributor.login}>
-              <a
+              <ExternalLink
                 href={contributor.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={cx(
                   cardClass({ padding: "none" }),
                   "flex items-center gap-3.5 p-4 no-underline transition-colors hover:border-line-heavy",
@@ -74,7 +68,7 @@ export default function ContributorsSection({
                     {contributor.contributions === 1 ? "contribution" : "contributions"}
                   </span>
                 </span>
-              </a>
+              </ExternalLink>
             </li>
           ))}
         </ul>

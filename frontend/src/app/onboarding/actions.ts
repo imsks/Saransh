@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { BackendError, backend } from "@/lib/server-api";
 
-/** Only the questions that were asked; the API ignores anything else. */
 export interface OnboardingAnswers {
   name?: string;
   state?: string;
@@ -13,7 +12,6 @@ export interface OnboardingAnswers {
   coming_soon_interests?: string[];
 }
 
-/** Saves onboarding preferences as the signed-in User. */
 export async function submitOnboarding(
   answers: OnboardingAnswers,
 ): Promise<{ error?: string }> {

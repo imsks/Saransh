@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ROUTES } from "@/lib/routes";
 
-/** Guests read freely; a signed-in User answers onboarding before reading. */
+/** Guests read freely; a signed-in User finishes onboarding first. */
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const redirect = (path: string) => NextResponse.redirect(new URL(path, request.url));

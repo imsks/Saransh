@@ -6,7 +6,6 @@ import { track } from "@/lib/analytics";
 import { ROUTES } from "@/lib/routes";
 
 interface SignInButtonProps {
-  /** Where on the site the click came from, for the funnel. */
   location: "navbar" | "hero" | "bottom_cta";
   className: string;
   label?: string;

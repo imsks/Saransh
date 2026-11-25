@@ -1,12 +1,10 @@
 import type { PostHog } from "posthog-js";
 
-/** The sign-in funnel; everything else is autocaptured pageviews and clicks. */
 type FunnelEvent = "sign_in_clicked" | "signed_in" | "onboarding_completed";
 
 // Imported on demand so the ~100 kB SDK stays out of every page's first load.
 const loadPosthog = () => import("posthog-js").then((module) => module.default);
 
-/** Without a key (local, CI) PostHog is never loaded and nothing is sent. */
 export function initAnalytics() {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   if (!key) return;
@@ -32,7 +30,7 @@ export function track(event: FunnelEvent, properties: Record<string, unknown>) {
   whenReady((posthog) => posthog.capture(event, properties));
 }
 
-/** One ID per person: the anonymous history merges into the shared `users.id`. */
+/** Merges the anonymous history into the shared `users.id`. */
 export function identify(userId: string, newUser: boolean) {
   whenReady((posthog) => {
     if (posthog.get_distinct_id() === userId) return;

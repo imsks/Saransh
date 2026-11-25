@@ -14,7 +14,9 @@ jest.mock("next/navigation", () => ({
     throw new Error("NEXT_REDIRECT");
   }),
 }));
-jest.mock("@/components/layout", () => ({ Navbar: () => null, Footer: () => null }));
+jest.mock("@/components/layout", () => ({
+  PageShell: ({ children }: { children: React.ReactNode }) => <main>{children}</main>,
+}));
 jest.mock("@/components/onboarding/OnboardingForm", () => ({
   __esModule: true,
   default: ({ missingFields }: { missingFields: string[] }) => (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { PageShell } from "@/components/layout";
-import { Container, cardClass, cx } from "@/components/ui";
+import { Container, ExternalLink, cardClass, cx } from "@/components/ui";
 import { EXTERNAL } from "@/lib/routes";
 import {
   buildDefaultOg,
@@ -124,14 +124,12 @@ export default function PrivacyPage() {
           <Section heading="Who holds the data">
             <p className={paragraphClass}>
               Analytics is handled by{" "}
-              <a
+              <ExternalLink
                 href="https://posthog.com"
-                target="_blank"
-                rel="noopener noreferrer"
                 className={linkClass}
               >
                 PostHog
-              </a>
+              </ExternalLink>
               , on their cloud service in the United States. Your account
               details stay in our own database and are never sent to PostHog.
             </p>
@@ -142,23 +140,19 @@ export default function PrivacyPage() {
               Ask and it is deleted — your account, your answers and their
               analytics. Because the account is shared, this
               removes you from Rajniti too. Message the maintainer on GitHub at{" "}
-              <a
+              <ExternalLink
                 href={EXTERNAL.maintainer}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={linkClass}
               >
                 @imsks
-              </a>{" "}
+              </ExternalLink>{" "}
               or open an issue on the{" "}
-              <a
+              <ExternalLink
                 href={EXTERNAL.issues}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={linkClass}
               >
                 Saransh issue tracker
-              </a>
+              </ExternalLink>
               . An issue is public, so do not put your email address in it —
               say that you want your data removed and we will ask you for it
               privately.

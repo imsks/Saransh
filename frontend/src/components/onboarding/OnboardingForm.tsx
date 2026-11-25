@@ -16,7 +16,9 @@ const chipClass =
 
 const TOPIC_LIMIT = 3;
 
-/** Renders only the questions the shared `users` row has no answer for yet. */
+const toggle = (list: string[], value: string, on: boolean) =>
+  on ? [...list, value] : list.filter((item) => item !== value);
+
 export default function OnboardingForm({
   missingFields,
 }: {
@@ -34,8 +36,6 @@ export default function OnboardingForm({
   const [interests, setInterests] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const selectedTopics = new Set(topics);
-  const selectedInterests = new Set(interests);
   const filteredStates = STATES.filter((option) =>
     option.toLocaleLowerCase().includes(stateSearch.trim().toLocaleLowerCase()),
   );
@@ -151,7 +151,7 @@ export default function OnboardingForm({
                 <input
                   type="checkbox"
                   className="sr-only"
-                  checked={selectedTopics.has(topic.value)}
+                  checked={topics.includes(topic.value)}
                   onChange={(event) => {
                     const checked = event.target.checked;
                     if (checked && topics.length >= TOPIC_LIMIT) {
@@ -159,11 +159,7 @@ export default function OnboardingForm({
                       return;
                     }
                     setError("");
-                    setTopics((current) =>
-                      checked
-                        ? [...current, topic.value]
-                        : current.filter((value) => value !== topic.value),
-                    );
+                    setTopics((current) => toggle(current, topic.value, checked));
                   }}
                 />
                 {topic.label}
@@ -177,13 +173,9 @@ export default function OnboardingForm({
                 <input
                   type="checkbox"
                   className="sr-only"
-                  checked={selectedInterests.has(interest.value)}
+                  checked={interests.includes(interest.value)}
                   onChange={(event) =>
-                    setInterests((current) =>
-                      event.target.checked
-                        ? [...current, interest.value]
-                        : current.filter((value) => value !== interest.value),
-                    )
+                    setInterests((current) => toggle(current, interest.value, event.target.checked))
                   }
                 />
                 {interest.label}

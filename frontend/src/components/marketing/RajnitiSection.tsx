@@ -1,4 +1,4 @@
-import { Section, SectionHeader, buttonClass, cardClass, cx } from "@/components/ui";
+import { ExternalLink, Section, SectionHeader, buttonClass, cardClass, cx } from "@/components/ui";
 import { EXTERNAL } from "@/lib/routes";
 
 export default function RajnitiSection() {
@@ -20,14 +20,12 @@ export default function RajnitiSection() {
               </>
             }
           />
-          <a
+          <ExternalLink
             href={EXTERNAL.rajniti}
-            target="_blank"
-            rel="noopener noreferrer"
             className={cx(buttonClass({ variant: "secondary" }), "mt-7")}
           >
             Explore Rajniti
-          </a>
+          </ExternalLink>
         </div>
         <div className={cx(cardClass({ variant: "info", padding: "none" }), "overflow-hidden")}>
           <div className="px-6 py-6">
@@ -46,14 +44,12 @@ export default function RajnitiSection() {
               Promise: &quot;Road widening complete within two years&quot; · Status:{" "}
               <span className="not-italic font-semibold text-amber">Delayed, 60% complete</span>
             </p>
-            <a
+            <ExternalLink
               href={EXTERNAL.rajniti}
-              target="_blank"
-              rel="noopener noreferrer"
               className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
             >
               View profile on Rajniti
-            </a>
+            </ExternalLink>
           </div>
           <p className="border-t border-blue/25 bg-card/60 px-6 py-3.5 font-mono text-[10px] leading-[1.65] text-muted">
             This chip is illustrative. It shows how a Rajniti profile could carry Saransh stories

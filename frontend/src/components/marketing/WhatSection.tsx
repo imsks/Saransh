@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import StoryCarouselClient from "@/components/stories/StoryCarouselClient";
+import SwipeDeck from "@/components/stories/SwipeDeck";
 import { Icon, Section, SectionHeader, cardClass, cx, iconChipClass } from "@/components/ui";
 import { STORIES } from "@/constants/stories";
 
@@ -52,7 +52,7 @@ export default function WhatSection() {
   return (
     <Section id="how-it-works" aria-labelledby="how-it-works-title">
       <div className="grid grid-cols-1 items-start gap-10 min-[860px]:grid-cols-2 min-[860px]:gap-16">
-        <StoryCarouselClient stories={STORIES} />
+        <SwipeDeck stories={STORIES} />
 
         <div className="flex flex-col gap-8">
           <SectionHeader

@@ -1,6 +1,5 @@
 import type { ReactNode, SVGProps } from "react";
 
-/** A decorative line icon in the current text colour. Pass its paths as children. */
 export default function Icon({
   size,
   strokeWidth = 2,

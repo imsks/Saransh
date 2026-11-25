@@ -8,7 +8,6 @@ const css = readFileSync(
   "utf8",
 );
 
-/** Body of the first rule whose selector is exactly `selector`. */
 function block(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const match = css.match(new RegExp(`(?:^|\\n)${escaped}\\s*\\{([^}]*)\\}`));
@@ -16,7 +15,6 @@ function block(selector: string): string {
   return match[1];
 }
 
-/** Custom properties declared in a block, as name → value. */
 function tokens(body: string): Map<string, string> {
   const found = new Map<string, string>();
   for (const [, name, value] of Array.from(

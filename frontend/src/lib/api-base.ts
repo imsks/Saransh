@@ -1,65 +1,28 @@
-/** Strip trailing slash from a URL string. */
-function trimTrailingSlash(url: string): string {
-  return url.replace(/\/$/, "");
-}
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
 
-function isLocalhostHostname(hostname: string): boolean {
-  return (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname === "::1" ||
-    hostname === "[::1]"
-  );
-}
-
-function isBrowserOnlyApiUrl(url: string): boolean {
+function isLocalUrl(url: string): boolean {
   try {
-    return isLocalhostHostname(new URL(url).hostname);
+    return LOCAL_HOSTS.has(new URL(url).hostname);
   } catch {
     return false;
   }
 }
 
-/** SSR fetch base via the Next.js /api/v1 rewrite. */
-function getProxiedApiBaseUrl(): string {
-  const port = process.env.PORT || "3001";
-  const host = process.env.HOST || "127.0.0.1";
-  return `http://${host}:${port}/api/v1`;
-}
+export const trimTrailingSlash = (url: string) => url.replace(/\/$/, "");
 
 /**
- * Base URL for Saransh FastAPI requests.
- * Browser code uses NEXT_PUBLIC_API_URL locally. When that URL is remote
- * (Cloud Run), the browser stays on same-origin `/api/v1` so Next.js rewrites
- * proxy the request — production does not depend on Cloud Run CORS.
- * SSR loops back through Next rewrites when the public URL points at
- * localhost (Docker-safe).
+ * A remote API is reached through the Next.js /api/v1 rewrite, so production
+ * needs no Cloud Run CORS. SSR also loops back through it when the public URL
+ * is localhost, which the server cannot reach inside Docker.
  */
-export function getApiBaseUrl(options?: { forServer?: boolean }): string {
-  const useServerUrl =
-    options?.forServer === true ||
-    (options?.forServer !== false && typeof window === "undefined");
+export function getApiBaseUrl({ forServer = typeof window === "undefined" } = {}): string {
+  const publicUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  if (useServerUrl) {
-    const publicUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    if (publicUrl && isBrowserOnlyApiUrl(publicUrl)) {
-      return getProxiedApiBaseUrl();
-    }
-
-    if (publicUrl) {
-      return trimTrailingSlash(publicUrl);
-    }
-
-    return getProxiedApiBaseUrl();
+  if (forServer) {
+    if (publicUrl && !isLocalUrl(publicUrl)) return trimTrailingSlash(publicUrl);
+    return `http://${process.env.HOST || "127.0.0.1"}:${process.env.PORT || "3001"}/api/v1`;
   }
 
-  const publicUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001/api/v1";
-
-  if (isBrowserOnlyApiUrl(publicUrl)) {
-    return trimTrailingSlash(publicUrl);
-  }
-
-  return "/api/v1";
+  const browserUrl = publicUrl || "http://localhost:8001/api/v1";
+  return isLocalUrl(browserUrl) ? trimTrailingSlash(browserUrl) : "/api/v1";
 }

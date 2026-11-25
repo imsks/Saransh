@@ -1,5 +1,3 @@
-"""Request and response schemas for Stories."""
-
 from datetime import datetime
 from typing import Literal, Optional
 from uuid import UUID

@@ -1,17 +1,13 @@
 import Link from "next/link";
 
-import { Container } from "@/components/ui";
+import { Container, ExternalLink } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
   return (
     <footer className="border-t border-line pb-10 pt-7">
       <Container className="flex flex-wrap items-start justify-between gap-6 max-[560px]:flex-col">
-        <div>
-          <div className="mb-1.5 flex items-baseline gap-[7px]">
-            <span className="font-serif text-[16px] font-semibold text-red">Saransh</span>
-          </div>
-        </div>
+        <span className="font-serif text-[16px] font-semibold text-red">Saransh</span>
         <div className="flex flex-col items-end gap-2 max-[560px]:items-start">
           <Link
             href={ROUTES.privacy}
@@ -19,18 +15,13 @@ export default function Footer() {
           >
             Privacy
           </Link>
-          <div className="text-right font-mono text-[11px] leading-[1.65] text-muted max-[560px]:text-left mt-2">
+          <div className="mt-2 text-right font-mono text-[11px] leading-[1.65] text-muted max-[560px]:text-left">
             <div>Built with ❤️ for the AI and news community</div>
             <div>
               Follow the build →{" "}
-              <a
-                href={EXTERNAL.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-ink no-underline"
-              >
+              <ExternalLink href={EXTERNAL.repo} className="font-semibold text-ink no-underline">
                 Saransh
-              </a>
+              </ExternalLink>
             </div>
           </div>
         </div>
