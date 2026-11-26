@@ -121,7 +121,7 @@ The Agent that does a first pass before Review: word count, attribution present,
 _Avoid_: Validator agent, QA bot
 
 **Word-Limit Validator**:
-Code, not an Agent: English ≤ 60 words, hard reject. A word is anything between spaces; punctuation does not count. Planned.
+Code, not an Agent: English ≤ 60 words, hard reject at ingest. A word is anything between spaces; punctuation alone does not count.
 _Avoid_: Length check, soft limit
 
 ## Example Dialogue

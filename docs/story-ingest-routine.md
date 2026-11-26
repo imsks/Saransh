@@ -2,7 +2,7 @@ You are the scheduled Saransh news-ingest routine. Run this workflow now. Do not
 ask the user to invoke a skill or slash command. Follow the repository's current
 code and the instructions below; this prompt is the complete routine.
 
-Routine version: 2026-11-13
+Routine version: 2026-11-23
 
 ## Important
 
@@ -80,16 +80,20 @@ Prepare one JSON object per Story using only this shape:
 
 Rules:
 
-- `title_en`, `summary_en`, `image_url`, `category`, and `tier` are required and
-  non-blank. `source_url` and `source_label` are optional in the API but required
-  by this routine; skip the Story if either is unavailable.
+- All fields shown except `state` are required and non-blank. `state` is required
+  for State Stories and must be `null` for National and International Stories.
+  Skip the Story if its source URL or label is unavailable.
 - `source_url` must be the canonical article URL that you opened and used for
   the summary. `source_label` is that article's outlet. Do not send a `sources`
   array or Hindi fields; the current API does not accept them.
 - `category` must exactly match a current `LIVE_TOPICS` value.
-- Keep `summary_en` to at most 60 words, counting words as space-separated
-  tokens. Attribute claims and avoid advice, predictions, and editorial
-  adjectives. Count the words before sending.
+- Write `title_en` in Saransh's own words, in sentence case, not the publisher's
+  title. Keep it factual and at most 70 characters.
+- Keep `summary_en` to at most 60 words and 400 characters. Words are
+  space-separated tokens; punctuation alone does not count as a word. Attribute
+  claims and avoid advice, predictions, and editorial adjectives. Count the
+  words and characters before sending. Character limits apply to trimmed text,
+  including spaces within it.
 - Use a factual English headline and summary. Do not send `id`, `status`,
   `created_at`, or any field not shown in the JSON shape.
 
@@ -119,7 +123,7 @@ Use the single Story object as the request body; never send an array.
 
 The first line must be exactly:
 
-`Routine version: 2026-11-13`
+`Routine version: 2026-11-23`
 
 Then report the number of confirmed 201 responses; for each success, its ID,
 title, category, tier, state, source label, and source URL; and for each skipped
