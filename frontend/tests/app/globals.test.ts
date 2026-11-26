@@ -39,6 +39,14 @@ describe("globals.css tokens", () => {
     expect(dark.has("--foreground")).toBe(false);
   });
 
+  it("has no CTA shadow token left", () => {
+    expect(css).not.toContain("cta-shadow");
+  });
+
+  it("switches to the compact layout under 820px tall, except inside a data-regular box", () => {
+    expect(css).toMatch(/@custom-variant compact[\s\S]*max-height: 819\.98px[\s\S]*\[data-regular\]/);
+  });
+
   it("uses the warm dark paper, not the retired cold value", () => {
     expect(dark.get("--paper")).toBe("#191816");
     expect(css).not.toContain("#111417");

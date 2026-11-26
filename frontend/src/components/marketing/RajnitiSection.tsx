@@ -46,7 +46,7 @@ export default function RajnitiSection() {
             </p>
             <ExternalLink
               href={EXTERNAL.rajniti}
-              className="border-b border-blue font-mono text-[10.5px] font-semibold uppercase tracking-[0.05em] text-blue no-underline transition-opacity hover:opacity-70"
+              className="border-b border-blue font-sans text-[14px] font-medium text-blue no-underline transition-opacity hover:opacity-70"
             >
               View profile on Rajniti
             </ExternalLink>

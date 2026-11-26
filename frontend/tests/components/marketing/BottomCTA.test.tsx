@@ -26,7 +26,7 @@ describe("BottomCTA", () => {
     render(<BottomCTA />);
 
     expect(
-      screen.getByRole("button", { name: "Sign in with Google" }),
+      screen.getByRole("button", { name: "Continue with Google" }),
     ).toBeTruthy();
   });
 });

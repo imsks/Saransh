@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 
 import { PageShell } from "@/components/layout";
 import OnboardingForm from "@/components/onboarding/OnboardingForm";
-import { cx, pageTitleClass } from "@/components/ui";
 import { authOptions } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
 import { backend, type Me } from "@/lib/server-api";
@@ -22,7 +21,7 @@ export default async function OnboardingPage() {
 
   return (
     <PageShell className="mx-auto max-w-[496px] px-5 py-10">
-      <h1 className={cx(pageTitleClass, "mb-2")}>Set up your edition</h1>
+      <h1 className="mb-2 font-serif text-[28px] font-semibold tracking-[-0.02em] text-ink">Set up your edition</h1>
       <p className="mb-8 font-sans text-[14px] leading-[1.7] text-muted">
         A few details for your edition.
       </p>

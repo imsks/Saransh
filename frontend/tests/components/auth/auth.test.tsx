@@ -26,10 +26,23 @@ describe("SignInButton", () => {
   it("records where the click came from, then starts Google sign-in", () => {
     render(<SignInButton location="hero" className="btn" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
 
     expect(track).toHaveBeenCalledWith("sign_in_clicked", { location: "hero" });
     expect(signIn).toHaveBeenCalledWith("google", { callbackUrl: "/onboarding" });
+  });
+
+  it("shows the loading state until the redirect and ignores a second tap", () => {
+    render(<SignInButton location="hero" className="btn" />);
+    const button = screen.getByRole("button", { name: "Continue with Google" });
+
+    fireEvent.click(button);
+    fireEvent.click(button);
+
+    expect(button.getAttribute("aria-busy")).toBe("true");
+    expect(button.querySelector("[data-spinner]")).not.toBeNull();
+    expect(signIn).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -51,6 +64,15 @@ describe("AccountButton", () => {
 
     expect(screen.getByRole("button", { name: "Sign in" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Sign out" })).toBeNull();
+  });
+
+  it("offers the small primary Sign in button in the header, which never turns red", () => {
+    mockedSession.mockReturnValue({ data: null, status: "unauthenticated", update: jest.fn() } as never);
+    render(<AccountButton />);
+
+    const classes = screen.getByRole("button", { name: "Sign in" }).className.split(" ");
+    expect(classes).toEqual(expect.arrayContaining(["min-h-11", "text-[15px]", "font-semibold", "bg-ink", "enabled:hover:opacity-[0.92]"]));
+    expect(classes.join(" ")).not.toMatch(/hover:bg-red/);
   });
 
   it("offers sign-in to a Visitor", () => {

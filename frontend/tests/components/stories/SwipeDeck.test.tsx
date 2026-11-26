@@ -50,7 +50,7 @@ afterEach(() => {
 });
 
 function renderDeck() {
-  return render(<SwipeDeck stories={stories} />);
+  return render(<SwipeDeck stories={stories} title={<h1>Today&apos;s stories</h1>} />);
 }
 
 function card(offset: number): HTMLElement {
@@ -205,6 +205,35 @@ describe("SwipeDeck buttons", () => {
   });
 });
 
+describe("SwipeDeck strip", () => {
+  it("shows the heading, a politely announced counter and a bar that eases to its new width", () => {
+    renderDeck();
+
+    expect(screen.getByRole("heading", { level: 1, name: "Today's stories" })).toBeTruthy();
+    expect(screen.getByText("1 / 4").getAttribute("aria-live")).toBe("polite");
+    const bar = document.querySelector("[data-progress]") as HTMLElement;
+    expect(bar.style.width).toBe("25%");
+    expect(bar.className).toContain("duration-[240ms]");
+    expect(bar.className).toContain("motion-reduce:transition-none");
+
+    next();
+    settle();
+    expect(screen.getByText("2 / 4")).toBeTruthy();
+    expect(bar.style.width).toBe("50%");
+  });
+
+  it("puts the swipe hint between the Back and Next circles", () => {
+    renderDeck();
+
+    const hint = screen.getByText("Swipe for the next story");
+    const back = screen.getByRole("button", { name: "Previous story" });
+    const forward = screen.getByRole("button", { name: "Next story" });
+    expect(back.compareDocumentPosition(hint) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(hint.compareDocumentPosition(forward) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(forward.className).toContain("motion-safe:active:scale-[0.96]");
+  });
+});
+
 describe("SwipeDeck stack", () => {
   it("shows only the current and adjacent cards, and hides the rest from assistive tech", () => {
     renderDeck();
@@ -244,7 +273,7 @@ describe("SwipeDeck stack", () => {
   });
 
   it("renders nothing with no stories", () => {
-    const { container } = render(<SwipeDeck stories={[]} />);
+    const { container } = render(<SwipeDeck stories={[]} title="Stories" />);
     expect(container.firstChild).toBeNull();
   });
 

@@ -1,18 +1,22 @@
 "use client";
 
-import { Button, Field, Input } from "@sutra_ui/ui";
+import { Field, Input } from "@sutra_ui/ui";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { submitOnboarding } from "@/app/onboarding/actions";
+import { BusyButton, buttonClass, cx, pressTransitionClass } from "@/components/ui";
 import { COMING_SOON_INTERESTS, STATES, TOPICS } from "@/constants/onboarding";
 import { track } from "@/lib/analytics";
 import { ROUTES } from "@/lib/routes";
 import type { OnboardingField } from "@/lib/server-api";
 
-const chipClass =
-  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-4 font-sans text-[13.5px] text-ink transition-colors has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-paper has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-red";
+/** Selection shows through fill and border only, so a chip never changes width. */
+const chipClass = cx(
+  pressTransitionClass,
+  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-4 font-sans text-[14px] font-medium text-ink motion-safe:active:scale-[0.96] has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-paper has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-red",
+);
 
 const TOPIC_LIMIT = 3;
 
@@ -191,15 +195,14 @@ export default function OnboardingForm({
           {error}
         </p>
       )}
-      <Button
+      <BusyButton
         type="submit"
-        variant="primary"
-        fullWidth
-        isLoading={saving}
-        disabled={saving || status !== "authenticated"}
+        busy={saving}
+        disabled={status !== "authenticated"}
+        className={buttonClass({ variant: "action", fullWidth: true })}
       >
         Read today&apos;s edition
-      </Button>
+      </BusyButton>
     </form>
   );
 }

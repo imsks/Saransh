@@ -54,15 +54,47 @@ describe("StoryCard layout", () => {
     }
   });
 
-  it("keeps a fixed height, sets text in Inter, and never clips or scrolls the copy", () => {
-    const { container } = renderAtNow(story({ body: "Details ".repeat(60) }));
+  it("fills its slot and sets text in Inter", () => {
+    const { container } = renderAtNow(story());
 
     const card = container.querySelector("article")!;
-    expect(card.className).toContain("h-[612px]");
+    expect(card.className).toContain("h-full");
     expect(card.className).toContain("font-sans");
     expect(screen.getByRole("heading").className).toContain("font-sans");
-    const summary = screen.getByText(/Details/);
-    expect(summary.className).not.toMatch(/line-clamp|overflow-y-auto/);
+  });
+
+  it("uses one template whatever the story's length: same image, same type", () => {
+    const long = renderAtNow(story({ headline: "Long ".repeat(14), body: "Details ".repeat(60) }));
+    const longClasses = {
+      image: screen.getByTestId("story-image").className,
+      headline: screen.getByRole("heading").className,
+      body: screen.getByText(/Details/).className,
+    };
+    long.unmount();
+
+    renderAtNow(story({ headline: "Short", body: "Brief." }));
+    expect(screen.getByTestId("story-image").className).toBe(longClasses.image);
+    expect(screen.getByRole("heading").className).toBe(longClasses.headline);
+    expect(screen.getByText("Brief.").className).toBe(longClasses.body);
+  });
+
+  it("never scrolls the text, clamps the headline at 3 lines, and pins the source row", () => {
+    const { container } = renderAtNow(story());
+
+    expect(container.innerHTML).not.toMatch(/overflow-y-(auto|scroll)/);
+    expect(screen.getByRole("heading").className).toContain("line-clamp-3");
+    expect(screen.getByText("Civic").parentElement!.className).toContain("shrink-0");
+    expect(container.querySelector("footer")!.className).toContain("shrink-0");
+    expect(container.querySelector("footer")!.previousElementSibling!.className).toContain("flex-1");
+  });
+
+  it("switches to the compact image ratio and type sizes", () => {
+    renderAtNow(story());
+
+    expect(screen.getByTestId("story-image").className).toContain("aspect-[1.91/1]");
+    expect(screen.getByTestId("story-image").className).toContain("compact:aspect-[3/1]");
+    expect(screen.getByRole("heading").className).toContain("compact:text-[20px]");
+    expect(screen.getByText(/voice vote/).className).toContain("compact:text-[13.5px]");
   });
 
   it("keeps a 44px slot for Share and has no ⋮ menu", () => {
@@ -161,6 +193,8 @@ describe("StoryCard source line", () => {
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
     expect(link.textContent).toContain("PTI");
     expect(link.className).toContain("min-h-11");
+    expect(link.className).toContain("motion-safe:active:scale-[0.96]");
+    expect(link.className).toContain("active:opacity-70");
   });
 
   it("is plain text when there is no URL", () => {
