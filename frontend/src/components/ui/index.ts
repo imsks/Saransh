@@ -9,6 +9,7 @@ export {
   cx,
   eyebrowClass,
   focusRingClass,
+  iconButtonClass,
   iconChipClass,
   navLinkClass,
   pressTransitionClass,

@@ -150,7 +150,8 @@ export default function SwipeDeck({ stories, title }: { stories: Story[]; title:
       </div>
 
       {/* The clip reaches 16px (the gutter) past the cards so their shadow is not cut.
-          The gap below the card is where the card underneath shows. */}
+          The card underneath scales from its centre, so it stays hidden behind the top card
+          and the space below the card is a clean gap above the circles. */}
       <div className="relative -mx-4 min-h-0 flex-1 overflow-x-clip">
         {stories.map((story, i) => {
           const offset = i - index;
@@ -171,7 +172,7 @@ export default function SwipeDeck({ stories, title }: { stories: Story[]; title:
               data-deck-card={offset}
               style={style}
               className={cx(
-                "absolute inset-x-4 bottom-3.5 top-0 origin-bottom select-none compact:bottom-2.5",
+                "absolute inset-x-4 bottom-3.5 top-0 select-none compact:bottom-2.5",
                 isTop ? "touch-pan-y" : "pointer-events-none",
               )}
               {...(isTop && {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { buttonClass, cardClass, circleButtonClass, cx, eyebrowClass } from "@/components/ui";
+import { buttonClass, cardClass, circleButtonClass, cx, eyebrowClass, iconButtonClass } from "@/components/ui";
 
 describe("cx", () => {
   it("joins only truthy class names", () => {
@@ -132,6 +132,19 @@ describe("circleButtonClass", () => {
     }
     expect(next).toContain("bg-ink");
     expect(back).toContain("border-ink");
+  });
+});
+
+describe("iconButtonClass", () => {
+  it("is a bare icon control, not a primary or secondary button, that tints and presses to 0.9", () => {
+    const classes = iconButtonClass.split(" ");
+    expect(classes).toEqual(
+      expect.arrayContaining(["text-muted", "hover:bg-tint", "active:bg-tint", "motion-safe:active:scale-90"]),
+    );
+    expect(classes).toContain("bg-transparent");
+    for (const surface of ["bg-ink", "bg-card", "border-ink", "border-[1.5px]"]) {
+      expect(classes).not.toContain(surface);
+    }
   });
 });
 

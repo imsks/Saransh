@@ -30,7 +30,7 @@ export default function ContributorsSection({
         <div className="flex flex-wrap gap-3">
           <ExternalLink
             href={EXTERNAL.repo}
-            className={buttonClass()}
+            className={buttonClass({ variant: "primary" })}
           >
             Contribute on GitHub
           </ExternalLink>

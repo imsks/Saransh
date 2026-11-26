@@ -16,7 +16,7 @@ export default function Hero() {
             <SignInButton location="hero" className={buttonClass({ fullWidth: true })} />
             <Link
               href={ROUTES.stories}
-              className={buttonClass({ variant: "action", fullWidth: true })}
+              className={buttonClass({ variant: "secondary", fullWidth: true })}
             >
               Read today&apos;s stories
             </Link>

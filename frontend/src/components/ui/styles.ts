@@ -76,6 +76,12 @@ export function buttonClass({
   );
 }
 
+/** A bare icon control (theme toggle, Share): no fill or border until hovered or pressed. */
+export const iconButtonClass = cx(
+  pressableClass,
+  "size-8 shrink-0 rounded-xl border-0 bg-transparent text-muted hover:bg-tint hover:text-ink active:bg-tint motion-safe:active:scale-90",
+);
+
 /** Back is an outline, Next is filled; neither turns red, and a disabled one stays at 35%. */
 export function circleButtonClass(direction: "back" | "next"): string {
   return cx(
