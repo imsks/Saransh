@@ -63,7 +63,7 @@ export default function ContributorsSection({
                   <span className="block truncate font-sans text-[14.5px] font-semibold text-ink">
                     @{contributor.login}
                   </span>
-                  <span className="block font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted">
+                  <span className="block font-sans text-[12px] text-muted">
                     {contributor.contributions}{" "}
                     {contributor.contributions === 1 ? "contribution" : "contributions"}
                   </span>

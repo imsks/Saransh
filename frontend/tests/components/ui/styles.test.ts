@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { buttonClass, cardClass, cx, eyebrowClass } from "@/components/ui";
+import { buttonClass, cardClass, circleButtonClass, cx, eyebrowClass } from "@/components/ui";
 
 describe("cx", () => {
   it("joins only truthy class names", () => {
@@ -34,20 +34,104 @@ describe("cardClass", () => {
 });
 
 describe("buttonClass", () => {
-  it("rounds buttons to match the cards", () => {
-    expect(buttonClass()).toContain("rounded-xl");
-    expect(buttonClass({ variant: "secondary" })).toContain("rounded-xl");
+  const primary = buttonClass().split(" ");
+  const action = buttonClass({ variant: "action" }).split(" ");
+  const secondary = buttonClass({ variant: "secondary" }).split(" ");
+  const small = buttonClass({ size: "small" }).split(" ");
+
+  it("sets every label in Inter 15px / 600, sentence case, with a 12px radius and no shadow", () => {
+    for (const classes of [primary, action, secondary, small]) {
+      expect(classes).toEqual(
+        expect.arrayContaining(["rounded-xl", "font-sans", "text-[15px]", "font-semibold"]),
+      );
+      expect(classes.join(" ")).not.toMatch(/uppercase|shadow|tracking-/);
+    }
   });
 
-  it("fills the primary button and outlines the secondary", () => {
-    expect(buttonClass()).toContain("bg-ink");
-    expect(buttonClass({ variant: "secondary" })).toContain("border-ink");
-    expect(buttonClass({ variant: "secondary" })).not.toContain("bg-ink");
+  it("is 52px tall by default and 44px small; only height and padding change", () => {
+    expect(primary).toContain("min-h-[52px]");
+    expect(small).toContain("min-h-11");
+    expect(small).not.toContain("min-h-[52px]");
+  });
+
+  it("fills the primary with ink and fades it on hover and press, never red", () => {
+    expect(primary).toEqual(
+      expect.arrayContaining([
+        "bg-ink",
+        "text-paper",
+        "enabled:hover:opacity-[0.92]",
+        "enabled:active:opacity-[0.85]",
+        "disabled:bg-line-heavy",
+        "disabled:text-muted",
+      ]),
+    );
+    expect(primary.join(" ")).not.toMatch(/(bg|text|border)-red|on-red/);
+  });
+
+  it("turns only the action button red on hover and press", () => {
+    expect(action).toEqual(
+      expect.arrayContaining([
+        "bg-ink",
+        "hover:bg-red",
+        "hover:text-on-red",
+        "active:bg-red",
+        "active:text-on-red",
+        "disabled:bg-line-heavy",
+      ]),
+    );
+  });
+
+  it("gives the secondary a card fill and an ink border in both themes, tinting on hover and press", () => {
+    expect(secondary).toEqual(
+      expect.arrayContaining([
+        "bg-card",
+        "border-[1.5px]",
+        "border-ink",
+        "text-ink",
+        "hover:bg-tint",
+        "active:bg-tint",
+        "disabled:border-line-heavy",
+        "disabled:text-muted",
+      ]),
+    );
+    expect(secondary.join(" ")).not.toMatch(/dark:|(bg|text|border)-red|on-red/);
+  });
+
+  it("presses every variant to 0.98 over 120ms, only when motion is allowed", () => {
+    for (const classes of [primary, action, secondary]) {
+      expect(classes).toEqual(
+        expect.arrayContaining(["motion-safe:active:scale-[0.98]", "duration-[120ms]", "ease-out"]),
+      );
+    }
   });
 
   it("stretches only when asked", () => {
-    expect(buttonClass()).not.toContain("w-full");
+    expect(primary).not.toContain("w-full");
     expect(buttonClass({ fullWidth: true })).toContain("w-full");
+  });
+});
+
+describe("circleButtonClass", () => {
+  const back = circleButtonClass("back").split(" ");
+  const next = circleButtonClass("next").split(" ");
+
+  it("is 56px, 44px compact, fades on hover and press, presses to 0.96, and never turns red", () => {
+    for (const classes of [back, next]) {
+      expect(classes).toEqual(
+        expect.arrayContaining([
+          "rounded-full",
+          "size-14",
+          "compact:size-11",
+          "enabled:hover:opacity-[0.92]",
+          "enabled:active:opacity-[0.85]",
+          "motion-safe:active:scale-[0.96]",
+          "disabled:opacity-35",
+        ]),
+      );
+      expect(classes.join(" ")).not.toMatch(/(bg|text|border)-red|on-red/);
+    }
+    expect(next).toContain("bg-ink");
+    expect(back).toContain("border-ink");
   });
 });
 

@@ -4,7 +4,7 @@ import { Avatar } from "@sutra_ui/ui";
 import { signOut, useSession } from "next-auth/react";
 
 import SignInButton from "@/components/auth/SignInButton";
-import { navLinkClass } from "@/components/ui";
+import { buttonClass, navLinkClass } from "@/components/ui";
 import { forgetUser } from "@/lib/analytics";
 import { ROUTES } from "@/lib/routes";
 
@@ -13,7 +13,13 @@ export default function AccountButton() {
 
   if (status === "loading") return null;
   if (!data || data.expired) {
-    return <SignInButton location="navbar" className={navLinkClass} label="Sign in" />;
+    return (
+      <SignInButton
+        location="navbar"
+        className={buttonClass({ size: "small" })}
+        label="Sign in"
+      />
+    );
   }
 
   return (

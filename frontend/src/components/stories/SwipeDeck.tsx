@@ -6,9 +6,10 @@ import {
   type CSSProperties,
   type MouseEvent,
   type PointerEvent,
+  type ReactNode,
 } from "react";
 
-import { Icon, cx, focusRingClass } from "@/components/ui";
+import { Icon, circleButtonClass, cx } from "@/components/ui";
 import type { Story } from "@/constants/stories";
 
 import StoryCard from "./StoryCard";
@@ -25,8 +26,6 @@ const SINK_SCALE = 0.94;
 const SETTLE_MS = 260;
 
 type Move = 1 | -1;
-
-const circleClass = `inline-flex size-14 items-center justify-center rounded-full ${focusRingClass} disabled:cursor-not-allowed disabled:opacity-35`;
 
 function Chevron({ direction }: { direction: "back" | "next" }) {
   return (
@@ -52,7 +51,8 @@ function cardTransform(offset: number, dx: number): string {
   return raise(offset === 1 && dx < 0 ? p : 0);
 }
 
-export default function SwipeDeck({ stories }: { stories: Story[] }) {
+/** `title` sits left of the counter: the page's h1, or a plain label in a preview. */
+export default function SwipeDeck({ stories, title }: { stories: Story[]; title: ReactNode }) {
   const [index, setIndex] = useState(0);
   const [dx, setDx] = useState(0);
   /** 0 is a spring back; null is at rest. */
@@ -128,9 +128,30 @@ export default function SwipeDeck({ stories }: { stories: Story[] }) {
   };
 
   return (
-    <section aria-roledescription="carousel" aria-label="Stories" className="mx-auto w-full max-w-[496px]">
-      {/* The clip reaches 20px (the phone gutter) past the cards so their shadow is not cut. */}
-      <div className="relative -mx-5 h-[626px] overflow-x-clip">
+    <section
+      aria-roledescription="carousel"
+      aria-label="Stories"
+      className="flex h-full w-full flex-col pb-[22px] compact:pb-2.5"
+    >
+      <div className="mb-4 shrink-0 compact:mb-2.5">
+        <div className="flex items-baseline justify-between gap-3">
+          {title}
+          <span aria-live="polite" className="shrink-0 font-sans text-[13px] font-semibold text-muted">
+            {index + 1} / {stories.length}
+          </span>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+          <div
+            data-progress=""
+            className="h-full rounded-full bg-red transition-[width] duration-[240ms] ease-out motion-reduce:transition-none"
+            style={{ width: `${((index + 1) / stories.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* The clip reaches 16px (the gutter) past the cards so their shadow is not cut.
+          The gap below the card is where the card underneath shows. */}
+      <div className="relative -mx-4 min-h-0 flex-1 overflow-x-clip">
         {stories.map((story, i) => {
           const offset = i - index;
           const isTop = offset === 0;
@@ -150,7 +171,7 @@ export default function SwipeDeck({ stories }: { stories: Story[] }) {
               data-deck-card={offset}
               style={style}
               className={cx(
-                "absolute inset-x-5 top-0 origin-bottom select-none",
+                "absolute inset-x-4 bottom-3.5 top-0 origin-bottom select-none compact:bottom-2.5",
                 isTop ? "touch-pan-y" : "pointer-events-none",
               )}
               {...(isTop && {
@@ -173,25 +194,23 @@ export default function SwipeDeck({ stories }: { stories: Story[] }) {
         })}
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="flex shrink-0 items-center justify-between gap-3">
         <button
           type="button"
           onClick={() => go(-1)}
           disabled={index === 0}
           aria-label="Previous story"
-          className={`${circleClass} border-2 border-ink bg-transparent text-ink`}
+          className={circleButtonClass("back")}
         >
           <Chevron direction="back" />
         </button>
-        <span aria-live="polite" className="font-sans text-[13px] font-semibold text-muted">
-          {index + 1} / {stories.length}
-        </span>
+        <span className="text-center font-sans text-[13px] text-muted">Swipe for the next story</span>
         <button
           type="button"
           onClick={() => go(1)}
           disabled={index === last}
           aria-label="Next story"
-          className={`${circleClass} border-2 border-ink bg-ink text-paper`}
+          className={circleButtonClass("next")}
         >
           <Chevron direction="next" />
         </button>

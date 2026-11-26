@@ -139,12 +139,15 @@ describe("Splash", () => {
       expect(screen.getByRole("alert")).toBeTruthy();
     });
 
-    it("calls onRetry on Try again", () => {
+    it("calls onRetry once on Try again and shows the loading state", () => {
       const onRetry = jest.fn();
       render(<SplashOffline onRetry={onRetry} />);
 
-      fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+      const button = screen.getByRole("button", { name: "Try again" });
+      fireEvent.click(button);
+      fireEvent.click(button);
       expect(onRetry).toHaveBeenCalledTimes(1);
+      expect(button.getAttribute("aria-busy")).toBe("true");
     });
   });
 

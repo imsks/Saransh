@@ -12,7 +12,7 @@ const imageIcon = (
   </Icon>
 );
 
-/** 1.91:1 is the ratio publishers use for share images. */
+/** 1.91:1 is the ratio publishers use for share images; the compact layout crops it wider. */
 export default function StoryImage({ src, source }: { src?: string; source?: string }) {
   const [failed, setFailed] = useState(!src);
   const ref = useRef<HTMLImageElement>(null);
@@ -26,7 +26,7 @@ export default function StoryImage({ src, source }: { src?: string; source?: str
   return (
     <div
       data-testid="story-image"
-      className="relative flex aspect-[1.91/1] w-full shrink-0 items-center justify-center bg-img-bg"
+      className="relative flex aspect-[1.91/1] w-full shrink-0 items-center justify-center overflow-hidden bg-img-bg compact:aspect-[3/1]"
     >
       {failed ? (
         imageIcon

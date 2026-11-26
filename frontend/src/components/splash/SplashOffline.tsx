@@ -1,6 +1,12 @@
-import { buttonClass } from "@/components/ui/styles";
+"use client";
+
+import { useState } from "react";
+
+import { BusyButton, buttonClass } from "@/components/ui";
 
 export default function SplashOffline({ onRetry }: { onRetry: () => void }) {
+  const [retrying, setRetrying] = useState(false);
+
   return (
     <div
       role="alert"
@@ -10,13 +16,17 @@ export default function SplashOffline({ onRetry }: { onRetry: () => void }) {
       <p className="font-sans text-[14px] leading-[1.55] text-muted">
         Check your internet connection and try again.
       </p>
-      <button
+      <BusyButton
         type="button"
-        onClick={onRetry}
-        className={buttonClass({ variant: "primary", fullWidth: true })}
+        busy={retrying}
+        onClick={() => {
+          setRetrying(true);
+          onRetry();
+        }}
+        className={buttonClass({ fullWidth: true })}
       >
         Try again
-      </button>
+      </BusyButton>
     </div>
   );
 }

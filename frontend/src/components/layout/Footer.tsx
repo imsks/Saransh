@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Container, ExternalLink } from "@/components/ui";
+import { Container, ExternalLink, navLinkClass } from "@/components/ui";
 import { EXTERNAL, ROUTES } from "@/lib/routes";
 
 export default function Footer() {
@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="flex flex-col items-end gap-2 max-[560px]:items-start">
           <Link
             href={ROUTES.privacy}
-            className="inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.06em] text-muted no-underline transition-colors hover:text-ink"
+            className={navLinkClass}
           >
             Privacy
           </Link>

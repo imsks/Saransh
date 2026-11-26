@@ -1,7 +1,9 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
+import { BusyButton } from "@/components/ui";
 import { track } from "@/lib/analytics";
 import { ROUTES } from "@/lib/routes";
 
@@ -11,21 +13,26 @@ interface SignInButtonProps {
   label?: string;
 }
 
+/** Busy until the browser leaves for Google. */
 export default function SignInButton({
   location,
   className,
-  label = "Sign in with Google",
+  label = "Continue with Google",
 }: SignInButtonProps) {
+  const [loading, setLoading] = useState(false);
+
   return (
-    <button
+    <BusyButton
       type="button"
+      busy={loading}
       className={className}
       onClick={() => {
+        setLoading(true);
         track("sign_in_clicked", { location });
         void signIn("google", { callbackUrl: ROUTES.onboarding });
       }}
     >
       {label}
-    </button>
+    </BusyButton>
   );
 }

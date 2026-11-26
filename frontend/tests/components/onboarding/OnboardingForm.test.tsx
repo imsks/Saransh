@@ -166,6 +166,38 @@ describe("OnboardingForm", () => {
     expect(screen.getByLabelText(/Name/)).toHaveProperty("value", "Priya Sharma");
   });
 
+  it("shows the loading state while saving and ignores a second tap", async () => {
+    let finish: (value: { error?: string }) => void = () => {};
+    mockedSubmit.mockReturnValueOnce(new Promise((resolve) => (finish = resolve)));
+    mockUpdate.mockResolvedValueOnce({ user: { id: "google-1" } });
+    render(<OnboardingForm missingFields={["topics"]} />);
+    const submit = screen.getByRole("button", { name: "Read today's edition" });
+
+    fireEvent.click(submit);
+    await waitFor(() => expect(submit.getAttribute("aria-busy")).toBe("true"));
+    fireEvent.click(submit);
+    expect(mockedSubmit).toHaveBeenCalledTimes(1);
+
+    finish({});
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/stories"));
+  });
+
+  it("uses the red action button for Read today's edition", () => {
+    render(<OnboardingForm missingFields={["topics"]} />);
+
+    expect(screen.getByRole("button", { name: "Read today's edition" }).className).toContain("hover:bg-red");
+  });
+
+  it("keeps chips the same weight when selected and presses them to 0.96", () => {
+    render(<OnboardingForm missingFields={["topics"]} />);
+    const chip = screen.getByLabelText("Civic").closest("label")!;
+
+    expect(chip.className).toContain("font-medium");
+    expect(chip.className).toContain("text-[14px]");
+    expect(chip.className).not.toMatch(/has-\[:checked\]:font-/);
+    expect(chip.className).toContain("motion-safe:active:scale-[0.96]");
+  });
+
   it("waits for an authenticated session before allowing submission", async () => {
     mockStatus = "loading";
     mockedSubmit.mockResolvedValueOnce({});

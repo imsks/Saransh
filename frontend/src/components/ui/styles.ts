@@ -1,5 +1,8 @@
 type ClassValue = string | false | null | undefined;
 
+export const focusRingClass =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
+
 /** No conflict resolution: add layout classes, not overrides. */
 export function cx(...classes: ClassValue[]): string {
   return classes.filter(Boolean).join(" ");
@@ -27,26 +30,59 @@ export function cardClass({
   return cx("rounded-3xl", CARD_VARIANT[variant], CARD_PADDING[padding]);
 }
 
-export type ButtonVariant = "primary" | "secondary";
+/**
+ * Primary fades on hover and press; action is the one main action on a screen and
+ * turns red, so a screen never has two red actions; secondary is a plain outline.
+ */
+export type ButtonVariant = "primary" | "action" | "secondary";
+export type ButtonSize = "regular" | "small";
+
+const fade = "enabled:hover:opacity-[0.92] enabled:active:opacity-[0.85]";
+const inkFill = "bg-ink text-paper disabled:bg-line-heavy disabled:text-muted";
 
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-ink text-paper hover:bg-red disabled:bg-line-heavy",
+  primary: cx(inkFill, fade),
+  action: cx(inkFill, "hover:bg-red hover:text-on-red active:bg-red active:text-on-red"),
   secondary:
-    "border-[1.5px] border-ink bg-transparent text-ink hover:bg-card dark:border-line-heavy dark:hover:border-ink",
+    "border-[1.5px] border-ink bg-card text-ink hover:bg-tint active:bg-tint disabled:border-line-heavy disabled:text-muted",
 };
 
-export const focusRingClass =
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red";
+const BUTTON_SIZE: Record<ButtonSize, string> = {
+  regular: "min-h-[52px] px-5",
+  small: "min-h-11 px-4",
+};
+
+/** Colour, opacity and press scale ease together; pair it with a `motion-safe:active:scale-*` class. */
+export const pressTransitionClass =
+  "transition-[color,background-color,border-color,opacity,transform] duration-[120ms] ease-out";
+
+const pressableClass = cx(
+  "relative inline-flex items-center justify-center disabled:cursor-not-allowed aria-busy:cursor-progress",
+  pressTransitionClass,
+  focusRingClass,
+);
 
 export function buttonClass({
   variant = "primary",
+  size = "regular",
   fullWidth = false,
-}: { variant?: ButtonVariant; fullWidth?: boolean } = {}): string {
+}: { variant?: ButtonVariant; size?: ButtonSize; fullWidth?: boolean } = {}): string {
   return cx(
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] no-underline transition-colors disabled:cursor-not-allowed",
-    focusRingClass,
+    pressableClass,
+    "gap-2 rounded-xl font-sans text-[15px] font-semibold no-underline motion-safe:active:scale-[0.98]",
+    BUTTON_SIZE[size],
     BUTTON_VARIANT[variant],
     fullWidth && "w-full",
+  );
+}
+
+/** Back is an outline, Next is filled; neither turns red, and a disabled one stays at 35%. */
+export function circleButtonClass(direction: "back" | "next"): string {
+  return cx(
+    pressableClass,
+    "size-14 shrink-0 rounded-full compact:size-11 disabled:opacity-35 motion-safe:active:scale-[0.96]",
+    fade,
+    direction === "next" ? "bg-ink text-paper" : "border-2 border-ink bg-transparent text-ink",
   );
 }
 
@@ -69,6 +105,4 @@ export const iconChipClass =
   "inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-tint text-red";
 
 export const navLinkClass =
-  "inline-flex min-h-11 items-center font-mono text-[11.5px] font-normal uppercase tracking-[0.06em] text-muted no-underline transition-colors hover:text-ink";
-
-export const pageTitleClass = "font-serif text-[28px] font-semibold tracking-[-0.02em] text-ink";
+  "inline-flex min-h-11 items-center font-sans text-[14px] font-medium text-muted no-underline transition-colors hover:text-ink";

@@ -6,6 +6,19 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * The deck's compact layout, for screens under 820px tall. Its gaps (10px),
+ * circles (44px) and 3:1 photo are what a 60-word story needs to fit at 360 × 720.
+ * A `data-regular` box opts out.
+ */
+@custom-variant compact {
+  @media (max-height: 819.98px) {
+    &:where(:not([data-regular] *)) {
+      @slot;
+    }
+  }
+}
+
 :root {
   --paper: #eeedea;
   --card: #ffffff;
@@ -36,7 +49,6 @@
   --on-red: #ffffff;
   --scrim: rgba(15, 20, 25, 0.58);
   --on-scrim: #ffffff;
-  --cta-shadow: #0f1419;
   --card-shadow: 0 10px 28px rgba(15, 20, 25, 0.1);
 
   --topic-politics: #0b7f8a;
@@ -108,7 +120,6 @@
   --on-red: #191816;
   --scrim: rgba(0, 0, 0, 0.6);
   --on-scrim: #ffffff;
-  --cta-shadow: #8e8a82;
   --card-shadow: none;
 
   --topic-politics: #86d6dc;
@@ -314,7 +325,6 @@ body {
   --color-on-red: var(--on-red);
   --color-scrim: var(--scrim);
   --color-on-scrim: var(--on-scrim);
-  --color-cta-shadow: var(--cta-shadow);
   --color-topic-politics: var(--topic-politics);
   --color-topic-politics-bg: var(--topic-politics-bg);
   --color-topic-civic: var(--topic-civic);

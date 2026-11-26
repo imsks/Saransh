@@ -7,11 +7,14 @@ import { STORIES } from "@/constants/stories";
 afterEach(cleanup);
 
 describe("WhatSection", () => {
-  it("renders all the branded sample stories with unchanged default labeling", () => {
+  it("renders the sample stories in a regular-layout box under a plain Sample stories label", () => {
     render(<WhatSection />);
 
     expect(screen.getByText(`1 / ${STORIES.length}`)).toBeTruthy();
-    expect(screen.queryByText("Sample story")).toBeNull();
+    const label = screen.getByText("Sample stories");
+    expect(label.tagName).toBe("P");
+    expect(screen.queryByRole("heading", { name: "Sample stories" })).toBeNull();
+    expect(label.closest("[data-regular]")).not.toBeNull();
     for (const story of STORIES) {
       expect(screen.getByText(story.headline)).toBeTruthy();
       fireEvent.click(screen.getByRole("button", { name: "Next story" }));
